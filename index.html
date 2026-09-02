@@ -398,9 +398,9 @@
             <div>
               <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
                 <i class="bi bi-clipboard2-check-fill text-teal text-success"></i> 
-                <span>Master Report Presensi & Geotagging</span>
+                <span>Master Report Presensi & Geotagging (Masuk & Pulang)</span>
               </h6>
-              <small class="text-muted">Laporan audit absensi lengkap dengan waktu, tanggal, alamat GPS, activity, SOW, result, remark, dan approval</small>
+              <small class="text-muted">Laporan audit absensi terpadu: waktu & lokasi masuk, jobs progress, waktu & lokasi pulang, serta approval</small>
             </div>
 
             <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -416,19 +416,15 @@
                 <thead>
                   <tr class="table-light text-center">
                     <th>No</th>
-                    <th>Date & Time</th>
+                    <th>Tanggal</th>
                     <th>Nama & ID</th>
                     <th>Role</th>
-                    <th>Site ID & SOW (Technician)</th>
-                    <th>Lokasi GPS Lengkap</th>
-                    <th>Activity Description</th>
-                    <th>Result</th>
-                    <th>Staff Remark</th>
-                    <th>Approval 1</th>
-                    <th>PM Remark</th>
-                    <th>Approval 2</th>
-                    <th>PD Remark</th>
-                    <th>Foto Bukti</th>
+                    <th>Presensi Masuk (Jam, GPS & Foto)</th>
+                    <th>Daily Jobs Progress & Result</th>
+                    <th>Site ID & SOW</th>
+                    <th>Presensi Pulang (Jam, GPS & Foto)</th>
+                    <th>Approval 1 (PM)</th>
+                    <th>Approval 2 (PD)</th>
                   </tr>
                 </thead>
                 <tbody id="tablePresensiBody">
@@ -442,113 +438,251 @@
     </div>
 
     <div id="formProgressSection" class="app-card d-none">
-      <div class="brand-gradient p-3 text-white">
-        <h5 class="fw-bold mb-0"><i class="bi bi-pencil-square me-2"></i>Form Input Absensi & Daily Jobs Progress Hari Ini</h5>
-        <small class="text-white-50">Lengkapi bukti kehadiran foto GPS dan rincian pekerjaan harian Anda</small>
+      <div class="brand-gradient p-3 text-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h5 class="fw-bold mb-0"><i class="bi bi-calendar-check me-2"></i>Portal Presensi & Progress Harian</h5>
+          <small class="text-white-50">Sistem terstruktur: Absen Masuk &rarr; Jobs Progress &rarr; Absen Pulang (Terkunci)</small>
+        </div>
+        <div class="badge bg-white text-dark px-3 py-2 fw-semibold" id="labelTodayDate">
+          <!-- Rendered date -->
+        </div>
       </div>
 
       <div class="p-3 p-md-4">
-        <form id="dailyForm">
+        <!-- STATUS STEPPER TRACKER -->
+        <div class="row g-2 mb-4 text-center">
+          <div class="col-md-4">
+            <div class="p-3 rounded-3 border bg-light" id="cardStatusMasuk">
+              <div class="small text-muted fw-bold text-uppercase mb-1">Tahap 1: Absen Masuk</div>
+              <div class="h6 fw-bold mb-1" id="textStatusMasuk"><span class="badge bg-secondary">Belum Absen</span></div>
+              <small class="text-muted" id="subStatusMasuk">Swafoto & GPS Alamat Masuk</small>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 rounded-3 border bg-light" id="cardStatusJobs">
+              <div class="small text-muted fw-bold text-uppercase mb-1">Tahap 2: Jobs Progress</div>
+              <div class="h6 fw-bold mb-1" id="textStatusJobs"><span class="badge bg-secondary">Belum Terisi</span></div>
+              <small class="text-muted" id="subStatusJobs">Diisi sebelum pulang / lembur malam</small>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 rounded-3 border bg-light" id="cardStatusPulang">
+              <div class="small text-muted fw-bold text-uppercase mb-1">Tahap 3: Absen Pulang</div>
+              <div class="h6 fw-bold mb-1" id="textStatusPulang"><span class="badge bg-danger"><i class="bi bi-lock-fill me-1"></i>Terkunci</span></div>
+              <small class="text-muted" id="subStatusPulang">Buka kunci setelah isi Jobs Progress</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACCORDION / TABS WORKFLOW -->
+        <div class="accordion shadow-sm rounded-3" id="accordionAbsensi">
           
-          <!-- CAMERA SECTION -->
-          <div class="section-title"><i class="bi bi-camera"></i> 1. Bukti Swafoto / Live Camera Kehadiran</div>
-          
-          <div class="camera-container mb-2">
-            <video id="videoFeed" autoplay playsinline></video>
-            <img id="photoPreview" alt="Hasil Foto Swafoto" />
-            <div class="camera-overlay-badge" id="cameraStatus">
-              <i class="bi bi-circle-fill text-success me-1 small"></i> Kamera Standby
-            </div>
-
-            <div class="camera-control-bar">
-              <button type="button" id="btnSwitchCamera" class="btn btn-dark btn-sm rounded-pill shadow">
-                <i class="bi bi-arrow-repeat"></i> Ganti Kamera
+          <!-- STEP 1: FORM ABSEN MASUK -->
+          <div class="accordion-item border-0 border-bottom">
+            <h2 class="accordion-header" id="headingMasuk">
+              <button class="accordion-button fw-bold text-dark bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMasuk" aria-expanded="true">
+                <i class="bi bi-box-arrow-in-right text-primary me-2 fs-5"></i> 1. Absensi Masuk (Selfie + Alamat GPS Otomatis)
               </button>
-              <button type="button" id="btnCapture" class="btn btn-warning btn-sm rounded-pill fw-bold shadow">
-                <i class="bi bi-camera-fill me-1"></i> Ambil Foto
+            </h2>
+            <div id="collapseMasuk" class="accordion-collapse collapse show" data-bs-parent="#accordionAbsensi">
+              <div class="accordion-body bg-light bg-opacity-25 p-3 p-md-4">
+                <div id="checkedInSuccessAlert" class="alert alert-success d-none mb-3">
+                  <i class="bi bi-check-circle-fill me-2"></i><strong>Anda sudah absen masuk hari ini.</strong> Data waktu dan lokasi masuk telah tersimpan rapi.
+                </div>
+
+                <div id="areaAbsenMasuk">
+                  <div class="row g-3">
+                    <div class="col-lg-6">
+                      <label class="form-label small fw-bold text-muted text-uppercase">Live Camera Selfie Masuk:</label>
+                      <div class="camera-container mb-2" id="cameraBoxMasuk">
+                        <video id="videoFeedMasuk" autoplay playsinline></video>
+                        <img id="photoPreviewMasuk" alt="Foto Masuk" />
+                        <div class="camera-overlay-badge" id="cameraStatusMasuk">
+                          <i class="bi bi-circle-fill text-success me-1 small"></i> Kamera Standby
+                        </div>
+
+                        <div class="camera-control-bar">
+                          <button type="button" id="btnSwitchCameraMasuk" class="btn btn-dark btn-sm rounded-pill shadow">
+                            <i class="bi bi-arrow-repeat"></i> Ganti
+                          </button>
+                          <button type="button" id="btnCaptureMasuk" class="btn btn-primary btn-sm rounded-pill fw-bold shadow">
+                            <i class="bi bi-camera-fill me-1"></i> Ambil Foto Masuk
+                          </button>
+                          <button type="button" id="btnRetakeMasuk" class="btn btn-outline-light btn-sm rounded-pill shadow d-none">
+                            <i class="bi bi-arrow-counterclockwise"></i> Ulangi
+                          </button>
+                        </div>
+                      </div>
+                      <canvas id="canvasCaptureMasuk" class="d-none"></canvas>
+                    </div>
+
+                    <div class="col-lg-6 d-flex flex-column justify-content-between">
+                      <div>
+                        <label class="form-label small fw-bold text-muted text-uppercase">Alamat GPS Masuk (Reverse Geocoding):</label>
+                        <div class="input-group mb-2">
+                          <span class="input-group-text bg-white text-primary"><i class="bi bi-geo-alt-fill"></i></span>
+                          <textarea id="txtAddressMasuk" class="form-control" rows="3" readonly placeholder="Mendeteksi nama jalan dan alamat lengkap..."></textarea>
+                          <button type="button" id="btnRefreshGpsMasuk" class="btn btn-outline-secondary" title="Segarkan Titik GPS">
+                            <i class="bi bi-arrow-clockwise"></i>
+                          </button>
+                        </div>
+                        <small class="text-muted d-block mb-3" id="gpsStatusMasuk">Membaca lokasi via OpenStreetMap Nominatim...</small>
+
+                        <div class="p-3 bg-white rounded border small">
+                          <div class="row g-2">
+                            <div class="col-6"><strong>Karyawan:</strong> <span id="labelKaryawanMasuk">-</span></div>
+                            <div class="col-6"><strong>ID:</strong> <span id="labelIdMasuk">-</span></div>
+                            <div class="col-6"><strong>Role:</strong> <span id="labelRoleMasuk">-</span></div>
+                            <div class="col-6"><strong>Project:</strong> <span id="labelProjectMasuk">-</span></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mt-3">
+                        <button type="button" id="btnSubmitAbsenMasuk" class="btn btn-primary w-100 py-2 fw-bold shadow">
+                          <i class="bi bi-box-arrow-in-right me-1"></i> Kirim Presensi Masuk
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: FORM JOBS PROGRESS (CAN BE FILLED LATER / NIGHT) -->
+          <div class="accordion-item border-0 border-bottom">
+            <h2 class="accordion-header" id="headingJobs">
+              <button class="accordion-button collapsed fw-bold text-dark bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJobs" aria-expanded="false">
+                <i class="bi bi-journal-text text-warning me-2 fs-5"></i> 2. Laporan Jobs Progress Harian (Bisa Diisi Sore / Malam)
               </button>
-              <button type="button" id="btnRetake" class="btn btn-outline-light btn-sm rounded-pill shadow d-none">
-                <i class="bi bi-arrow-counterclockwise"></i> Ulangi Foto
+            </h2>
+            <div id="collapseJobs" class="accordion-collapse collapse" data-bs-parent="#accordionAbsensi">
+              <div class="accordion-body bg-light bg-opacity-25 p-3 p-md-4">
+                <form id="formJobsProgress">
+                  <div class="alert alert-info py-2 px-3 small mb-3">
+                    <i class="bi bi-info-circle-fill me-1"></i> Anda dapat mengisi laporan pekerjaan ini saat sore hari menjelang pulang atau malam hari jika lembur. Mengisi jobs progress ini <strong>wajib</strong> untuk membuka akses Absen Pulang.
+                  </div>
+
+                  <div class="row g-2 mb-2">
+                    <div class="col-md-6">
+                      <label class="form-label small fw-semibold">Tanggal Pekerjaan <span class="text-danger">*</span></label>
+                      <input type="date" id="inputDate" class="form-control" required />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label small fw-semibold">Hasil / Progres (Result) <span class="text-danger">*</span></label>
+                      <input type="text" id="inputResult" class="form-control" placeholder="Contoh: done / 80% / in progress" required />
+                    </div>
+                  </div>
+
+                  <!-- Technician Specific Row -->
+                  <div id="technicianFieldRow" class="row g-2 mb-2 d-none">
+                    <div class="col-md-6">
+                      <label class="form-label small fw-semibold">Site ID <span class="text-danger">*</span></label>
+                      <input type="text" id="inputSiteId" class="form-control" placeholder="Contoh: JKT-0492" />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label small fw-semibold">SOW (Scope of Work) <span class="text-danger">*</span></label>
+                      <input type="text" id="inputSOW" class="form-control" placeholder="Contoh: Dismantle / Instalasi Feeder" />
+                    </div>
+                  </div>
+
+                  <div class="mb-2">
+                    <label class="form-label small fw-semibold">Deskripsi Aktivitas Pekerjaan (Activity Description) <span class="text-danger">*</span></label>
+                    <textarea id="inputActivityDesc" class="form-control" rows="3" placeholder="Tuliskan aktivitas atau tugas yang telah Anda selesaikan hari ini..." required></textarea>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold">Catatan Karyawan (Staff/Technician Remarks)</label>
+                    <input type="text" id="inputStaffRemarks" class="form-control" placeholder="Contoh: Menunggu approval atau kendala sparepart di lapangan" />
+                  </div>
+
+                  <button type="submit" id="btnSubmitJobsProgress" class="btn btn-warning w-100 py-2 fw-bold shadow text-dark">
+                    <i class="bi bi-save2-fill me-1"></i> Simpan Jobs Progress & Buka Akses Absen Pulang
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: FORM ABSEN PULANG (LOCKED UNTIL JOBS PROGRESS IS SAVED) -->
+          <div class="accordion-item border-0">
+            <h2 class="accordion-header" id="headingPulang">
+              <button class="accordion-button collapsed fw-bold text-dark bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePulang" aria-expanded="false">
+                <i class="bi bi-box-arrow-left text-danger me-2 fs-5"></i> 3. Absensi Pulang (Selfie + Alamat GPS Otomatis)
               </button>
+            </h2>
+            <div id="collapsePulang" class="accordion-collapse collapse" data-bs-parent="#accordionAbsensi">
+              <div class="accordion-body bg-light bg-opacity-25 p-3 p-md-4">
+                
+                <!-- GATED WARNING: IF JOBS PROGRESS NOT FILLED -->
+                <div id="pulangLockedAlert" class="alert alert-danger py-3 px-3">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-lock-fill fs-3 text-danger flex-shrink-0"></i>
+                    <div>
+                      <h6 class="fw-bold mb-1">Absen Pulang Masih Terkunci!</h6>
+                      <p class="mb-0 small">Anda belum dapat mengambil foto dan melakukan absen pulang karena <strong>Daily Jobs Progress hari ini belum diisi</strong>. Silakan isi dan simpan Jobs Progress pada Tab no. 2 di atas terlebih dahulu.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="checkedOutSuccessAlert" class="alert alert-success d-none mb-3">
+                  <i class="bi bi-check-circle-fill me-2"></i><strong>Anda telah menyelesaikan seluruh rangkaian presensi hari ini.</strong> Selamat beristirahat!
+                </div>
+
+                <div id="areaAbsenPulang" class="d-none">
+                  <div class="row g-3">
+                    <div class="col-lg-6">
+                      <label class="form-label small fw-bold text-muted text-uppercase">Live Camera Selfie Pulang:</label>
+                      <div class="camera-container mb-2" id="cameraBoxPulang">
+                        <video id="videoFeedPulang" autoplay playsinline></video>
+                        <img id="photoPreviewPulang" alt="Foto Pulang" />
+                        <div class="camera-overlay-badge" id="cameraStatusPulang">
+                          <i class="bi bi-circle-fill text-success me-1 small"></i> Kamera Pulang Siap
+                        </div>
+
+                        <div class="camera-control-bar">
+                          <button type="button" id="btnSwitchCameraPulang" class="btn btn-dark btn-sm rounded-pill shadow">
+                            <i class="bi bi-arrow-repeat"></i> Ganti
+                          </button>
+                          <button type="button" id="btnCapturePulang" class="btn btn-danger btn-sm rounded-pill fw-bold shadow">
+                            <i class="bi bi-camera-fill me-1"></i> Ambil Foto Pulang
+                          </button>
+                          <button type="button" id="btnRetakePulang" class="btn btn-outline-light btn-sm rounded-pill shadow d-none">
+                            <i class="bi bi-arrow-counterclockwise"></i> Ulangi
+                          </button>
+                        </div>
+                      </div>
+                      <canvas id="canvasCapturePulang" class="d-none"></canvas>
+                    </div>
+
+                    <div class="col-lg-6 d-flex flex-column justify-content-between">
+                      <div>
+                        <label class="form-label small fw-bold text-muted text-uppercase">Alamat GPS Pulang (Reverse Geocoding):</label>
+                        <div class="input-group mb-2">
+                          <span class="input-group-text bg-white text-danger"><i class="bi bi-geo-alt-fill"></i></span>
+                          <textarea id="txtAddressPulang" class="form-control" rows="3" readonly placeholder="Mendeteksi nama jalan dan alamat kepulangan..."></textarea>
+                          <button type="button" id="btnRefreshGpsPulang" class="btn btn-outline-secondary" title="Segarkan Titik GPS">
+                            <i class="bi bi-arrow-clockwise"></i>
+                          </button>
+                        </div>
+                        <small class="text-muted d-block mb-3" id="gpsStatusPulang">Membaca lokasi via OpenStreetMap Nominatim...</small>
+                      </div>
+
+                      <div class="mt-3">
+                        <button type="button" id="btnSubmitAbsenPulang" class="btn btn-danger w-100 py-2 fw-bold shadow">
+                          <i class="bi bi-box-arrow-left me-1"></i> Kirim Presensi Pulang
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
-          <canvas id="canvasCapture" class="d-none"></canvas>
-          <input type="hidden" id="photoBase64Input" required />
 
-          <!-- GPS ADDRESS SECTION -->
-          <div class="section-title"><i class="bi bi-geo-alt"></i> 2. Alamat GPS Otomatis (Reverse Geocoding)</div>
-          <div class="mb-3">
-            <div class="input-group">
-              <span class="input-group-text bg-light text-primary"><i class="bi bi-pin-map-fill"></i></span>
-              <textarea id="txtAddress" class="form-control" rows="2" readonly placeholder="Mendeteksi titik koordinat dan alamat lengkap..." required></textarea>
-              <button type="button" id="btnRefreshGps" class="btn btn-outline-secondary" title="Segarkan Alamat">
-                <i class="bi bi-arrow-clockwise"></i>
-              </button>
-            </div>
-            <small class="text-muted" id="gpsStatusMessage">Membaca lokasi via OpenStreetMap Nominatim...</small>
-          </div>
-
-          <!-- PROFILE SUMMARY -->
-          <div class="section-title"><i class="bi bi-person-lines-fill"></i> 3. Data Karyawan & Project (Sesuai Akun Login)</div>
-          <div class="row g-2 mb-2">
-            <div class="col-md-3">
-              <label class="form-label small fw-semibold">Nama Karyawan</label>
-              <input type="text" id="inputNama" class="form-control bg-light" readonly />
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-semibold">No ID Karyawan</label>
-              <input type="text" id="inputIdKaryawan" class="form-control bg-light" readonly />
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-semibold">Keterangan / Role</label>
-              <input type="text" id="inputRoleDesc" class="form-control bg-light" readonly />
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-semibold">Project Name & Code</label>
-              <input type="text" id="inputProjectInfo" class="form-control bg-light" readonly />
-            </div>
-          </div>
-
-          <!-- PROGRESS ENTRY DETAILS -->
-          <div class="section-title"><i class="bi bi-journal-text"></i> 4. Detail Laporan Pekerjaan Harian (Daily Progress)</div>
-          
-          <div class="row g-2 mb-2">
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold">Tanggal Pekerjaan (Date) <span class="text-danger">*</span></label>
-              <input type="date" id="inputDate" class="form-control" required />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold">Hasil / Progres (Result) <span class="text-danger">*</span></label>
-              <input type="text" id="inputResult" class="form-control" placeholder="Contoh: done / 80% / in progress" required />
-            </div>
-          </div>
-
-          <!-- TECHNICIAN SPECIFIC FIELDS -->
-          <div id="technicianFieldRow" class="row g-2 mb-2 d-none">
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold">Site ID <span class="text-danger">*</span></label>
-              <input type="text" id="inputSiteId" class="form-control" placeholder="Contoh: JKT-0492" />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold">SOW (Scope of Work) <span class="text-danger">*</span></label>
-              <input type="text" id="inputSOW" class="form-control" placeholder="Contoh: Dismantle / Instalasi Radio" />
-            </div>
-          </div>
-
-          <div class="mb-2">
-            <label class="form-label small fw-semibold">Deskripsi Aktivitas (Activity Description) <span class="text-danger">*</span></label>
-            <textarea id="inputActivityDesc" class="form-control" rows="3" placeholder="Tuliskan rincian tugas dan aktivitas yang dikerjakan hari ini..." required></textarea>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label small fw-semibold">Catatan Karyawan (Staff/Technician Remarks)</label>
-            <input type="text" id="inputStaffRemarks" class="form-control" placeholder="Contoh: Menunggu approval atau kendala cuaca di lapangan" />
-          </div>
-
-          <button type="submit" id="btnSubmitProgress" class="btn btn-primary w-100 py-2 fw-semibold shadow">
-            <i class="bi bi-cloud-arrow-up-fill me-1"></i> Kirim Laporan Absensi & Jobs Progress
-          </button>
-        </form>
+        </div>
       </div>
     </div>
 
@@ -820,13 +954,18 @@
 
   <script>
     let currentUser = null;
-    let currentFilter = "week"; // "week", "month", "all"
-    let capturedPhotoBase64 = null;
+    let currentFilter = "week";
     let mediaStream = null;
+    let activeCameraType = "masuk"; // "masuk" or "pulang"
     let currentFacingMode = "user";
-    let detectedAddress = "";
 
-    // In-memory Database with 6 distinct role designations
+    let capturedPhotoMasuk = null;
+    let detectedAddressMasuk = "";
+
+    let capturedPhotoPulang = null;
+    let detectedAddressPulang = "";
+
+    // In-memory Database with checkIn and checkOut structures
     let db = {
       users: [
         { username: "admin", password: "admin123", name: "System Administrator", idKaryawan: "AS-001", role: "Admin System", projectName: "Management", projectCode: "MGT", periode: "2026", noWa: "08120000000" },
@@ -847,17 +986,20 @@
           projectCode: "RO",
           periode: "agustus - desember 26",
           date: "2026-08-31",
-          time: "08:30:15",
+          timeMasuk: "08:10:15",
+          alamatMasuk: "Jl. Gatot Subroto No. 52, Jakarta Selatan",
+          photoMasuk: "https://placehold.co/400x300/1e293b/ffffff?text=Selfie+Masuk+Denizar",
+          hasJobsProgress: true,
           activityDesc: "Membuat proposal ke Telkominfra & persiapan materi",
           result: "done",
           staffRemarks: "sip",
+          timePulang: "17:35:40",
+          alamatPulang: "Jl. Gatot Subroto No. 52, Jakarta Selatan",
+          photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Selfie+Pulang+Denizar",
           approval1: "ok",
           pmRemark: "Proposal sudah ditinjau, sangat rapi.",
           approval2: "ok",
-          pdRemark: "Disetujui untuk dikirimkan.",
-          alamatLengkap: "Jl. Gatot Subroto No. 52, Jakarta Selatan",
-          photoUrl: "https://placehold.co/400x300/1e293b/ffffff?text=Bukti+Foto+Denizar",
-          timestamp: "2026-08-31 08:30:15"
+          pdRemark: "Disetujui untuk dikirimkan."
         },
         {
           id: "PROG-102",
@@ -869,17 +1011,20 @@
           projectCode: "RO",
           periode: "agustus - desember 26",
           date: "2026-09-01",
-          time: "08:45:20",
+          timeMasuk: "08:25:30",
+          alamatMasuk: "Jl. Kebon Sirih No. 10, Jakarta Pusat",
+          photoMasuk: "https://placehold.co/400x300/1e293b/ffffff?text=Selfie+Masuk+Selasa",
+          hasJobsProgress: true,
           activityDesc: "Memperbaiki modul aplikasi absensi & integrasi GPS",
           result: "80%",
           staffRemarks: "bisa dipercepat",
+          timePulang: "17:15:10",
+          alamatPulang: "Jl. Kebon Sirih No. 10, Jakarta Pusat",
+          photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Selfie+Pulang+Selasa",
           approval1: "ok",
-          pmRemark: "Lanjutkan ke tahap pengetesan kamera dan watermarking.",
+          pmRemark: "Lanjutkan ke pengetesan kamera dan reverse geocoding.",
           approval2: "pending",
-          pdRemark: "-",
-          alamatLengkap: "Jl. Kebon Sirih No. 10, Jakarta Pusat",
-          photoUrl: "https://placehold.co/400x300/1e293b/ffffff?text=Bukti+Foto+Selasa",
-          timestamp: "2026-09-01 08:45:20"
+          pdRemark: "-"
         },
         {
           id: "PROG-103",
@@ -890,20 +1035,23 @@
           projectName: "Telkom infra",
           projectCode: "RO",
           siteId: "JKT-0492",
-          sow: "Instalasi Radio & Alignment",
+          sow: "Instalasi Radio & Feeder",
           periode: "agustus - desember 26",
           date: "2026-08-31",
-          time: "09:12:00",
+          timeMasuk: "08:00:20",
+          alamatMasuk: "Site Telkom Kalibata, Jakarta Selatan",
+          photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+Masuk+JKT-0492",
+          hasJobsProgress: true,
           activityDesc: "Pemasangan kabel feeder dan grounding tower site",
           result: "done",
           staffRemarks: "Cuaca cerah, selesai tepat waktu",
+          timePulang: "18:05:00",
+          alamatPulang: "Site Telkom Kalibata, Jakarta Selatan",
+          photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Site+Pulang+JKT-0492",
           approval1: "ok",
           pmRemark: "SOP K3 terpasang baik di foto.",
           approval2: "ok",
-          pdRemark: "Good job",
-          alamatLengkap: "Site Telkom Kalibata, Jakarta Selatan",
-          photoUrl: "https://placehold.co/400x300/0f172a/ffffff?text=Site+JKT-0492",
-          timestamp: "2026-08-31 09:12:00"
+          pdRemark: "Good job"
         }
       ]
     };
@@ -922,23 +1070,34 @@
     const navRoleBadge = document.getElementById("navRoleBadge");
     const btnHeaderLogout = document.getElementById("btnHeaderLogout");
 
-    const videoFeed = document.getElementById("videoFeed");
-    const photoPreview = document.getElementById("photoPreview");
-    const canvasCapture = document.getElementById("canvasCapture");
-    const btnCapture = document.getElementById("btnCapture");
-    const btnRetake = document.getElementById("btnRetake");
-    const btnSwitchCamera = document.getElementById("btnSwitchCamera");
-    const cameraStatus = document.getElementById("cameraStatus");
-    const photoBase64Input = document.getElementById("photoBase64Input");
-
-    const txtAddress = document.getElementById("txtAddress");
-    const btnRefreshGps = document.getElementById("btnRefreshGps");
-    const gpsStatusMessage = document.getElementById("gpsStatusMessage");
-
     const inputDate = document.getElementById("inputDate");
     const technicianFieldRow = document.getElementById("technicianFieldRow");
     const inputSiteId = document.getElementById("inputSiteId");
     const inputSOW = document.getElementById("inputSOW");
+
+    // Camera elements Masuk
+    const videoFeedMasuk = document.getElementById("videoFeedMasuk");
+    const photoPreviewMasuk = document.getElementById("photoPreviewMasuk");
+    const canvasCaptureMasuk = document.getElementById("canvasCaptureMasuk");
+    const btnCaptureMasuk = document.getElementById("btnCaptureMasuk");
+    const btnRetakeMasuk = document.getElementById("btnRetakeMasuk");
+    const btnSwitchCameraMasuk = document.getElementById("btnSwitchCameraMasuk");
+    const cameraStatusMasuk = document.getElementById("cameraStatusMasuk");
+    const txtAddressMasuk = document.getElementById("txtAddressMasuk");
+    const btnRefreshGpsMasuk = document.getElementById("btnRefreshGpsMasuk");
+    const btnSubmitAbsenMasuk = document.getElementById("btnSubmitAbsenMasuk");
+
+    // Camera elements Pulang
+    const videoFeedPulang = document.getElementById("videoFeedPulang");
+    const photoPreviewPulang = document.getElementById("photoPreviewPulang");
+    const canvasCapturePulang = document.getElementById("canvasCapturePulang");
+    const btnCapturePulang = document.getElementById("btnCapturePulang");
+    const btnRetakePulang = document.getElementById("btnRetakePulang");
+    const btnSwitchCameraPulang = document.getElementById("btnSwitchCameraPulang");
+    const cameraStatusPulang = document.getElementById("cameraStatusPulang");
+    const txtAddressPulang = document.getElementById("txtAddressPulang");
+    const btnRefreshGpsPulang = document.getElementById("btnRefreshGpsPulang");
+    const btnSubmitAbsenPulang = document.getElementById("btnSubmitAbsenPulang");
 
     if (localStorage.getItem("prosync_gas_api")) {
       gasApiUrlInput.value = localStorage.getItem("prosync_gas_api");
@@ -947,9 +1106,11 @@
       localStorage.setItem("prosync_gas_api", gasApiUrlInput.value.trim());
     });
 
-    inputDate.valueAsDate = new Date();
+    const todayStr = new Date().toISOString().slice(0, 10);
+    inputDate.value = todayStr;
+    document.getElementById("labelTodayDate").textContent = new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
-    // Quick demo buttons click handler
+    // Quick demo shortcuts
     document.querySelectorAll(".btn-demo").forEach(btn => {
       btn.addEventListener("click", () => {
         document.getElementById("loginUsername").value = btn.dataset.user;
@@ -1007,7 +1168,7 @@
     });
 
     btnHeaderLogout.addEventListener("click", () => {
-      stopCamera();
+      stopActiveCamera();
       currentUser = null;
       mainNavbar.classList.add("d-none");
       adminSection.classList.add("d-none");
@@ -1025,7 +1186,6 @@
       navUserName.textContent = currentUser.name;
       navUserRole.textContent = `${currentUser.role} (${currentUser.username})`;
 
-      // Set Badge Color
       navRoleBadge.className = "badge-role me-2";
       if (currentUser.role === "Admin System" || currentUser.role === "Admin") navRoleBadge.classList.add("badge-as");
       else if (currentUser.role === "RPM") navRoleBadge.classList.add("badge-rpm");
@@ -1035,7 +1195,6 @@
       else navRoleBadge.classList.add("badge-tech");
       navRoleBadge.textContent = currentUser.role;
 
-      // Role Views
       if (currentUser.role === "Admin System" || currentUser.role === "Admin") {
         adminSection.classList.remove("d-none");
         recapSection.classList.remove("d-none");
@@ -1060,11 +1219,10 @@
         formProgressSection.classList.remove("d-none");
         document.getElementById("thActionHeader").classList.add("d-none");
 
-        // Populate read-only profile inputs
-        document.getElementById("inputNama").value = currentUser.name;
-        document.getElementById("inputIdKaryawan").value = currentUser.idKaryawan;
-        document.getElementById("inputRoleDesc").value = currentUser.role;
-        document.getElementById("inputProjectInfo").value = `${currentUser.projectName} [${currentUser.projectCode}]`;
+        document.getElementById("labelKaryawanMasuk").textContent = currentUser.name;
+        document.getElementById("labelIdMasuk").textContent = currentUser.idKaryawan;
+        document.getElementById("labelRoleMasuk").textContent = currentUser.role;
+        document.getElementById("labelProjectMasuk").textContent = `${currentUser.projectName} [${currentUser.projectCode}]`;
 
         if (currentUser.role === "Technician") {
           technicianFieldRow.classList.remove("d-none");
@@ -1078,10 +1236,494 @@
 
         renderRecapTable();
         renderPresensiReport();
-        startCamera();
-        fetchGpsAddress();
+        refreshTodayWorkflowState();
       }
     }
+
+    function getTodayEntry() {
+      if (!currentUser) return null;
+      const today = inputDate.value || todayStr;
+      return db.progress.find(p => p.username === currentUser.username && p.date === today);
+    }
+
+    function refreshTodayWorkflowState() {
+      const entry = getTodayEntry();
+
+      const textStatusMasuk = document.getElementById("textStatusMasuk");
+      const subStatusMasuk = document.getElementById("subStatusMasuk");
+      const textStatusJobs = document.getElementById("textStatusJobs");
+      const subStatusJobs = document.getElementById("subStatusJobs");
+      const textStatusPulang = document.getElementById("textStatusPulang");
+      const subStatusPulang = document.getElementById("subStatusPulang");
+
+      const checkedInAlert = document.getElementById("checkedInSuccessAlert");
+      const areaAbsenMasuk = document.getElementById("areaAbsenMasuk");
+      const pulangLockedAlert = document.getElementById("pulangLockedAlert");
+      const areaAbsenPulang = document.getElementById("areaAbsenPulang");
+      const checkedOutAlert = document.getElementById("checkedOutSuccessAlert");
+
+      // 1. EVALUATE CHECK-IN
+      if (entry && entry.timeMasuk) {
+        textStatusMasuk.innerHTML = `<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Sudah (${entry.timeMasuk})</span>`;
+        subStatusMasuk.textContent = "Check-in berhasil tercatat";
+        checkedInAlert.classList.remove("d-none");
+        areaAbsenMasuk.classList.add("d-none");
+      } else {
+        textStatusMasuk.innerHTML = `<span class="badge bg-primary">Siap Absen</span>`;
+        subStatusMasuk.textContent = "Swafoto & GPS Masuk";
+        checkedInAlert.classList.add("d-none");
+        areaAbsenMasuk.classList.remove("d-none");
+        activeCameraType = "masuk";
+        startCamera("masuk");
+        fetchGpsAddress("masuk");
+      }
+
+      // 2. EVALUATE JOBS PROGRESS
+      const hasJobs = entry && entry.hasJobsProgress && entry.activityDesc;
+      if (hasJobs) {
+        textStatusJobs.innerHTML = `<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Terisi (${entry.result})</span>`;
+        subStatusJobs.textContent = "Laporan harian sudah tersimpan";
+        document.getElementById("inputActivityDesc").value = entry.activityDesc;
+        document.getElementById("inputResult").value = entry.result;
+        document.getElementById("inputStaffRemarks").value = entry.staffRemarks || "";
+        if (currentUser.role === "Technician") {
+          inputSiteId.value = entry.siteId || "";
+          inputSOW.value = entry.sow || "";
+        }
+      } else {
+        textStatusJobs.innerHTML = `<span class="badge bg-warning text-dark">Belum Diisi</span>`;
+        subStatusJobs.textContent = "Wajib diisi sebelum absen pulang";
+      }
+
+      // 3. EVALUATE CHECK-OUT (LOCKED UNTIL JOBS PROGRESS IS SAVED)
+      if (!hasJobs) {
+        // Locked
+        textStatusPulang.innerHTML = `<span class="badge bg-secondary"><i class="bi bi-lock-fill me-1"></i>Terkunci</span>`;
+        subStatusPulang.textContent = "Isi Jobs Progress terlebih dahulu";
+        pulangLockedAlert.classList.remove("d-none");
+        areaAbsenPulang.classList.add("d-none");
+        checkedOutAlert.classList.add("d-none");
+      } else {
+        // Unlocked
+        if (entry && entry.timePulang) {
+          textStatusPulang.innerHTML = `<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Selesai (${entry.timePulang})</span>`;
+          subStatusPulang.textContent = "Presensi pulang berhasil";
+          pulangLockedAlert.classList.add("d-none");
+          areaAbsenPulang.classList.add("d-none");
+          checkedOutAlert.classList.remove("d-none");
+        } else {
+          textStatusPulang.innerHTML = `<span class="badge bg-danger">Siap Absen Pulang</span>`;
+          subStatusPulang.textContent = "Akses terbuka, silakan selfie";
+          pulangLockedAlert.classList.add("d-none");
+          areaAbsenPulang.classList.remove("d-none");
+          checkedOutAlert.classList.add("d-none");
+          if (!entry.timeMasuk) {
+            // keep camera on masuk
+          } else {
+            activeCameraType = "pulang";
+            startCamera("pulang");
+            fetchGpsAddress("pulang");
+          }
+        }
+      }
+    }
+
+    async function startCamera(type) {
+      stopActiveCamera();
+      activeCameraType = type;
+
+      const videoElement = type === "masuk" ? videoFeedMasuk : videoFeedPulang;
+      const previewElement = type === "masuk" ? photoPreviewMasuk : photoPreviewPulang;
+      const btnCapture = type === "masuk" ? btnCaptureMasuk : btnCapturePulang;
+      const btnRetake = type === "masuk" ? btnRetakeMasuk : btnRetakePulang;
+      const cameraStatus = type === "masuk" ? cameraStatusMasuk : cameraStatusPulang;
+
+      try {
+        const constraints = {
+          video: { facingMode: currentFacingMode, width: { ideal: 1280 }, height: { ideal: 960 } },
+          audio: false
+        };
+
+        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+        videoElement.srcObject = mediaStream;
+
+        if (currentFacingMode === "user") {
+          videoElement.classList.add("camera-mirrored");
+        } else {
+          videoElement.classList.remove("camera-mirrored");
+        }
+
+        videoElement.style.display = "block";
+        previewElement.style.display = "none";
+        btnCapture.classList.remove("d-none");
+        btnRetake.classList.add("d-none");
+        cameraStatus.innerHTML = '<i class="bi bi-circle-fill text-success me-1 small"></i> Kamera Aktif';
+      } catch (err) {
+        console.error("Camera error:", err);
+        cameraStatus.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-warning me-1 small"></i> Izin Kamera Diperlukan';
+      }
+    }
+
+    function stopActiveCamera() {
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+        mediaStream = null;
+      }
+    }
+
+    btnSwitchCameraMasuk.addEventListener("click", () => {
+      currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
+      startCamera("masuk");
+    });
+    btnSwitchCameraPulang.addEventListener("click", () => {
+      currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
+      startCamera("pulang");
+    });
+
+    function capturePhoto(type) {
+      if (!mediaStream) {
+        Swal.fire("Kamera Belum Aktif", "Silakan periksa izin akses kamera.", "warning");
+        return;
+      }
+
+      const videoEl = type === "masuk" ? videoFeedMasuk : videoFeedPulang;
+      const canvasEl = type === "masuk" ? canvasCaptureMasuk : canvasCapturePulang;
+      const previewEl = type === "masuk" ? photoPreviewMasuk : photoPreviewPulang;
+      const btnCap = type === "masuk" ? btnCaptureMasuk : btnCapturePulang;
+      const btnRet = type === "masuk" ? btnRetakeMasuk : btnRetakePulang;
+      const cameraStat = type === "masuk" ? cameraStatusMasuk : cameraStatusPulang;
+      const addressText = type === "masuk" ? (detectedAddressMasuk || "GPS Terverifikasi") : (detectedAddressPulang || "GPS Terverifikasi");
+
+      const width = videoEl.videoWidth || 640;
+      const height = videoEl.videoHeight || 480;
+
+      canvasEl.width = width;
+      canvasEl.height = height;
+      const ctx = canvasEl.getContext("2d");
+
+      if (currentFacingMode === "user") {
+        ctx.translate(width, 0);
+        ctx.scale(-1, 1);
+      }
+      ctx.drawImage(videoEl, 0, 0, width, height);
+
+      if (currentFacingMode === "user") {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+      }
+
+      // Watermark Bar
+      const now = new Date();
+      const dateString = now.toLocaleDateString("id-ID", { weekday: "long", year: "numeric", month: "short", day: "numeric" });
+      const timeString = now.toLocaleTimeString("id-ID") + " WIB";
+      const eventLabel = type === "masuk" ? "PRESENSI MASUK" : "PRESENSI PULANG";
+
+      const barHeight = 65;
+      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+      ctx.fillRect(0, height - barHeight, width, barHeight);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText(`${eventLabel} | ${dateString} ${timeString} | ${currentUser.name} (${currentUser.role})`, 12, height - 38);
+
+      ctx.fillStyle = "#38bdf8";
+      ctx.font = "12px sans-serif";
+      ctx.fillText(addressText.substring(0, 95), 12, height - 16);
+
+      const base64Data = canvasEl.toDataURL("image/jpeg", 0.85);
+
+      if (type === "masuk") {
+        capturedPhotoMasuk = base64Data;
+      } else {
+        capturedPhotoPulang = base64Data;
+      }
+
+      previewEl.src = base64Data;
+      previewEl.style.display = "block";
+      videoEl.style.display = "none";
+      btnCap.classList.add("d-none");
+      btnRet.classList.remove("d-none");
+      cameraStat.innerHTML = '<i class="bi bi-check-circle-fill text-info me-1 small"></i> Swafoto Siap';
+
+      stopActiveCamera();
+    }
+
+    btnCaptureMasuk.addEventListener("click", () => capturePhoto("masuk"));
+    btnCapturePulang.addEventListener("click", () => capturePhoto("pulang"));
+
+    btnRetakeMasuk.addEventListener("click", () => {
+      capturedPhotoMasuk = null;
+      startCamera("masuk");
+    });
+    btnRetakePulang.addEventListener("click", () => {
+      capturedPhotoPulang = null;
+      startCamera("pulang");
+    });
+
+    function fetchGpsAddress(type) {
+      const txtEl = type === "masuk" ? txtAddressMasuk : txtAddressPulang;
+      const statusEl = type === "masuk" ? document.getElementById("gpsStatusMasuk") : document.getElementById("gpsStatusPulang");
+
+      txtEl.value = "Mencari titik lokasi dan nama jalan...";
+      statusEl.textContent = "Mengakses GPS perangkat...";
+
+      if (!navigator.geolocation) {
+        txtEl.value = "Geolocation tidak didukung pada perangkat ini.";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          statusEl.textContent = "Menerjemahkan ke alamat lengkap via OpenStreetMap...";
+
+          try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`, {
+              headers: { "Accept-Language": "id" }
+            });
+            const data = await res.json();
+            const fullAddress = data.display_name || `Lat: ${lat}, Lon: ${lon}`;
+            txtEl.value = fullAddress;
+            if (type === "masuk") detectedAddressMasuk = fullAddress;
+            else detectedAddressPulang = fullAddress;
+            statusEl.textContent = "Alamat GPS terverifikasi otomatis.";
+          } catch (e) {
+            const fallbackAddr = `Koordinat: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+            txtEl.value = fallbackAddr;
+            if (type === "masuk") detectedAddressMasuk = fallbackAddr;
+            else detectedAddressPulang = fallbackAddr;
+            statusEl.textContent = "Gagal memuat nama jalan, titik GPS tersimpan.";
+          }
+        },
+        (err) => {
+          console.warn("GPS error:", err);
+          txtEl.value = "GPS tidak aktif. Mohon izinkan akses lokasi.";
+          statusEl.textContent = "Izin akses lokasi tidak diberikan.";
+        },
+        { enableHighAccuracy: true, timeout: 12000 }
+      );
+    }
+
+    btnRefreshGpsMasuk.addEventListener("click", () => fetchGpsAddress("masuk"));
+    btnRefreshGpsPulang.addEventListener("click", () => fetchGpsAddress("pulang"));
+
+    btnSubmitAbsenMasuk.addEventListener("click", async () => {
+      if (!capturedPhotoMasuk) {
+        Swal.fire("Foto Masuk Diperlukan", "Silakan klik tombol 'Ambil Foto Masuk' terlebih dahulu.", "warning");
+        return;
+      }
+
+      const today = inputDate.value || todayStr;
+      const now = new Date();
+      const timeNow = now.toLocaleTimeString("id-ID", { hour12: false });
+
+      showLoading("Menyimpan presensi masuk...");
+
+      let entry = db.progress.find(p => p.username === currentUser.username && p.date === today);
+      if (!entry) {
+        entry = {
+          id: "PROG-" + Date.now(),
+          username: currentUser.username,
+          name: currentUser.name,
+          idKaryawan: currentUser.idKaryawan,
+          role: currentUser.role,
+          projectName: currentUser.projectName,
+          projectCode: currentUser.projectCode,
+          periode: currentUser.periode,
+          date: today,
+          timeMasuk: timeNow,
+          alamatMasuk: txtAddressMasuk.value.trim() || detectedAddressMasuk,
+          photoMasuk: capturedPhotoMasuk,
+          hasJobsProgress: false,
+          activityDesc: "-",
+          result: "-",
+          staffRemarks: "-",
+          timePulang: "-",
+          alamatPulang: "-",
+          photoPulang: "-",
+          approval1: "pending",
+          pmRemark: "-",
+          approval2: "pending",
+          pdRemark: "-"
+        };
+        db.progress.push(entry);
+      } else {
+        entry.timeMasuk = timeNow;
+        entry.alamatMasuk = txtAddressMasuk.value.trim() || detectedAddressMasuk;
+        entry.photoMasuk = capturedPhotoMasuk;
+      }
+
+      // Sync Backend GAS
+      const apiUrl = gasApiUrlInput.value.trim();
+      if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
+        try {
+          await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: "submitCheckIn",
+              data: {
+                username: currentUser.username,
+                date: today,
+                timeMasuk: timeNow,
+                alamatMasuk: entry.alamatMasuk,
+                photoMasuk: capturedPhotoMasuk
+              }
+            })
+          });
+        } catch (err) {
+          console.warn("GAS checkin sync error:", err);
+        }
+      }
+
+      setTimeout(() => {
+        hideLoading();
+        Swal.fire("Absen Masuk Berhasil!", "Presensi masuk Anda telah tercatat. Anda dapat mulai bekerja dan mengisi jobs progress nanti sore/malam.", "success");
+        capturedPhotoMasuk = null;
+        refreshTodayWorkflowState();
+        renderRecapTable();
+        renderPresensiReport();
+      }, 400);
+    });
+
+    document.getElementById("formJobsProgress").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const today = inputDate.value || todayStr;
+      let entry = db.progress.find(p => p.username === currentUser.username && p.date === today);
+
+      if (!entry) {
+        entry = {
+          id: "PROG-" + Date.now(),
+          username: currentUser.username,
+          name: currentUser.name,
+          idKaryawan: currentUser.idKaryawan,
+          role: currentUser.role,
+          projectName: currentUser.projectName,
+          projectCode: currentUser.projectCode,
+          periode: currentUser.periode,
+          date: today,
+          timeMasuk: "-",
+          alamatMasuk: "-",
+          photoMasuk: "-",
+          timePulang: "-",
+          alamatPulang: "-",
+          photoPulang: "-",
+          approval1: "pending",
+          pmRemark: "-",
+          approval2: "pending",
+          pdRemark: "-"
+        };
+        db.progress.push(entry);
+      }
+
+      entry.hasJobsProgress = true;
+      entry.activityDesc = document.getElementById("inputActivityDesc").value.trim();
+      entry.result = document.getElementById("inputResult").value.trim();
+      entry.staffRemarks = document.getElementById("inputStaffRemarks").value.trim() || "-";
+      if (currentUser.role === "Technician") {
+        entry.siteId = inputSiteId.value.trim() || "-";
+        entry.sow = inputSOW.value.trim() || "-";
+      }
+
+      showLoading("Menyimpan Daily Jobs Progress & Membuka Kunci Absen Pulang...");
+
+      const apiUrl = gasApiUrlInput.value.trim();
+      if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
+        try {
+          await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: "submitJobsProgress",
+              data: {
+                username: currentUser.username,
+                date: today,
+                activityDesc: entry.activityDesc,
+                result: entry.result,
+                staffRemarks: entry.staffRemarks,
+                siteId: entry.siteId || "-",
+                sow: entry.sow || "-"
+              }
+            })
+          });
+        } catch (err) {
+          console.warn("GAS jobs progress sync error:", err);
+        }
+      }
+
+      setTimeout(() => {
+        hideLoading();
+        Swal.fire({
+          icon: "success",
+          title: "Jobs Progress Tersimpan!",
+          text: "Akses Absen Pulang kini telah TERBUKA. Anda dapat mengambil swafoto pulang sekarang."
+        });
+
+        refreshTodayWorkflowState();
+        renderRecapTable();
+        renderPresensiReport();
+
+        // Switch accordion to step 3
+        const collapsePulangEl = document.getElementById("collapsePulang");
+        new bootstrap.Collapse(collapsePulangEl, { toggle: true });
+      }, 400);
+    });
+
+    btnSubmitAbsenPulang.addEventListener("click", async () => {
+      const today = inputDate.value || todayStr;
+      const entry = db.progress.find(p => p.username === currentUser.username && p.date === today);
+
+      if (!entry || !entry.hasJobsProgress) {
+        Swal.fire("Terkunci!", "Anda wajib mengisi dan menyimpan Daily Jobs Progress terlebih dahulu sebelum absen pulang.", "warning");
+        return;
+      }
+
+      if (!capturedPhotoPulang) {
+        Swal.fire("Foto Pulang Diperlukan", "Silakan klik tombol 'Ambil Foto Pulang' terlebih dahulu.", "warning");
+        return;
+      }
+
+      const now = new Date();
+      const timeNow = now.toLocaleTimeString("id-ID", { hour12: false });
+
+      showLoading("Menyimpan presensi pulang...");
+
+      entry.timePulang = timeNow;
+      entry.alamatPulang = txtAddressPulang.value.trim() || detectedAddressPulang;
+      entry.photoPulang = capturedPhotoPulang;
+
+      const apiUrl = gasApiUrlInput.value.trim();
+      if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
+        try {
+          await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: "submitCheckOut",
+              data: {
+                username: currentUser.username,
+                date: today,
+                timePulang: timeNow,
+                alamatPulang: entry.alamatPulang,
+                photoPulang: capturedPhotoPulang
+              }
+            })
+          });
+        } catch (err) {
+          console.warn("GAS checkout sync error:", err);
+        }
+      }
+
+      setTimeout(() => {
+        hideLoading();
+        Swal.fire("Presensi Pulang Selesai!", "Data absensi masuk, progress pekerjaan, dan kepulangan Anda telah lengkap tercatat hari ini.", "success");
+        capturedPhotoPulang = null;
+        refreshTodayWorkflowState();
+        renderRecapTable();
+        renderPresensiReport();
+      }, 400);
+    });
 
     function renderRecapTable() {
       const tbody = document.getElementById("tableRecapBody");
@@ -1138,10 +1780,10 @@
           actionBtnHtml = `<button class="btn btn-warning btn-sm py-1 px-2 fw-semibold text-dark" onclick="openApprovalModal('${row.id}', 'Approval 2')"><i class="bi bi-check-all me-1"></i>Approval 2</button>`;
         }
 
-        const photoAvailable = (row.photoUrl && row.photoUrl !== "-") || (row.photoBase64 && row.photoBase64 !== "-");
-        const viewPhotoBtn = photoAvailable ? 
-          `<button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 shadow-sm" onclick="previewItemPhoto('${row.id}')" title="Buka Bukti Foto"><i class="bi bi-image"></i> Foto</button>` : 
-          `<span class="text-muted">-</span>`;
+        const viewPhotoMasukBtn = (row.photoMasuk && row.photoMasuk !== "-") ? 
+          `<button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 shadow-sm mb-1" onclick="previewItemPhoto('${row.id}', 'masuk')" title="Foto Masuk"><i class="bi bi-box-arrow-in-right"></i> Masuk</button>` : '';
+        const viewPhotoPulangBtn = (row.photoPulang && row.photoPulang !== "-") ? 
+          `<button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 shadow-sm" onclick="previewItemPhoto('${row.id}', 'pulang')" title="Foto Pulang"><i class="bi bi-box-arrow-left"></i> Pulang</button>` : '';
 
         tr.innerHTML = `
           <td class="text-center fw-bold">${index + 1}</td>
@@ -1158,9 +1800,9 @@
           <td class="small text-muted" style="max-width: 140px;">${escapeHtml(row.pmRemark || "-")}</td>
           <td class="text-center">${app2Badge}</td>
           <td class="small text-muted" style="max-width: 140px;">${escapeHtml(row.pdRemark || "-")}</td>
-          <td class="text-center">
-            ${viewPhotoBtn}
-            <div class="text-truncate text-muted mt-1" style="max-width: 110px; font-size: 0.68rem;" title="${escapeHtml(row.alamatLengkap || '')}">${escapeHtml(row.alamatLengkap || '-')}</div>
+          <td class="text-center text-nowrap">
+            ${viewPhotoMasukBtn} ${viewPhotoPulangBtn}
+            ${(!viewPhotoMasukBtn && !viewPhotoPulangBtn) ? '<span class="text-muted">-</span>' : ''}
           </td>
           ${(currentUser.role === "PM" || currentUser.role === "RPM" || currentUser.role === "PD") ? `<td class="text-center text-nowrap">${actionBtnHtml}</td>` : ""}
         `;
@@ -1181,82 +1823,105 @@
       list.sort((a, b) => new Date(b.date) - new Date(a.date));
 
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="14" class="text-center py-4 text-muted">Belum ada data presensi.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" class="text-center py-4 text-muted">Belum ada data presensi.</td></tr>`;
         return;
       }
 
       list.forEach((item, idx) => {
         const tr = document.createElement("tr");
-        const timeDisplay = item.time || (item.timestamp ? item.timestamp.split(" ")[1] : "08:00");
-        const dateDisplay = item.date;
 
-        const photoAvailable = (item.photoUrl && item.photoUrl !== "-") || (item.photoBase64 && item.photoBase64 !== "-");
-        const viewPhotoBtn = photoAvailable ? 
-          `<button type="button" class="btn btn-outline-primary btn-sm py-0 px-2 fw-semibold shadow-sm" onclick="previewItemPhoto('${item.id}')"><i class="bi bi-image"></i> Lihat</button>` : 
-          `<span class="text-muted">-</span>`;
+        const btnMasuk = (item.photoMasuk && item.photoMasuk !== "-") ? 
+          `<button type="button" class="btn btn-outline-primary btn-sm py-0 px-2 fw-semibold shadow-sm ms-1" onclick="previewItemPhoto('${item.id}', 'masuk')"><i class="bi bi-image"></i></button>` : '';
+        const btnPulang = (item.photoPulang && item.photoPulang !== "-") ? 
+          `<button type="button" class="btn btn-outline-danger btn-sm py-0 px-2 fw-semibold shadow-sm ms-1" onclick="previewItemPhoto('${item.id}', 'pulang')"><i class="bi bi-image"></i></button>` : '';
+
+        const masukHtml = (item.timeMasuk && item.timeMasuk !== "-") ? 
+          `<div><span class="badge bg-primary me-1"><i class="bi bi-clock me-1"></i>${item.timeMasuk}</span> ${btnMasuk}</div>
+           <div class="small text-muted mt-1" style="font-size: 0.72rem; max-width: 170px;" title="${escapeHtml(item.alamatMasuk || '')}"><i class="bi bi-geo-alt-fill text-danger"></i> ${escapeHtml(item.alamatMasuk || '-')}</div>` : '<span class="text-muted">Belum Absen</span>';
+
+        const pulangHtml = (item.timePulang && item.timePulang !== "-") ? 
+          `<div><span class="badge bg-danger me-1"><i class="bi bi-clock me-1"></i>${item.timePulang}</span> ${btnPulang}</div>
+           <div class="small text-muted mt-1" style="font-size: 0.72rem; max-width: 170px;" title="${escapeHtml(item.alamatPulang || '')}"><i class="bi bi-geo-alt-fill text-danger"></i> ${escapeHtml(item.alamatPulang || '-')}</div>` : '<span class="text-muted">Belum Pulang</span>';
 
         tr.innerHTML = `
           <td class="text-center fw-bold">${idx + 1}</td>
-          <td class="text-nowrap">
-            <span class="fw-semibold">${dateDisplay}</span><br/>
-            <small class="text-muted"><i class="bi bi-clock me-1"></i>${timeDisplay}</small>
-          </td>
+          <td class="text-nowrap fw-semibold">${item.date}</td>
           <td>
             <div class="fw-bold">${escapeHtml(item.name)}</div>
             <small class="text-muted">${escapeHtml(item.idKaryawan || '-')}</small>
           </td>
           <td><span class="badge bg-light text-dark border">${escapeHtml(item.role)}</span></td>
+          <td>${masukHtml}</td>
+          <td>
+            <div class="fw-semibold text-primary">${escapeHtml(item.result || '-')}</div>
+            <small class="text-muted" style="max-width: 180px; display: block;">${escapeHtml(item.activityDesc || '-')}</small>
+          </td>
           <td>
             ${item.role === 'Technician' ? `<strong>Site:</strong> ${escapeHtml(item.siteId || '-')}<br/><small class="text-muted"><strong>SOW:</strong> ${escapeHtml(item.sow || '-')}</small>` : '<span class="text-muted">-</span>'}
           </td>
-          <td>
-            <div style="max-width: 200px; font-size: 0.75rem;" title="${escapeHtml(item.alamatLengkap || '')}">
-              <i class="bi bi-geo-alt-fill text-danger me-1"></i>${escapeHtml(item.alamatLengkap || '-')}
-            </div>
-          </td>
-          <td><div style="max-width: 180px; white-space: normal;">${escapeHtml(item.activityDesc)}</div></td>
-          <td class="fw-semibold text-primary">${escapeHtml(item.result)}</td>
-          <td class="small text-muted">${escapeHtml(item.staffRemarks || '-')}</td>
+          <td>${pulangHtml}</td>
           <td class="text-center">${getApprovalBadge(item.approval1)}</td>
-          <td class="small text-muted">${escapeHtml(item.pmRemark || '-')}</td>
           <td class="text-center">${getApprovalBadge(item.approval2)}</td>
-          <td class="small text-muted">${escapeHtml(item.pdRemark || '-')}</td>
-          <td class="text-center">
-            ${viewPhotoBtn}
-          </td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    window.previewItemPhoto = function(progressId) {
+    window.previewItemPhoto = function(progressId, photoType) {
       const item = db.progress.find(p => p.id === progressId);
       if (!item) return;
 
-      const photoSource = item.photoBase64 || item.photoUrl;
+      const photoSource = photoType === "masuk" ? (item.photoMasuk || item.photoUrl) : item.photoPulang;
       if (!photoSource || photoSource === "-") {
-        Swal.fire("Foto Tidak Tersedia", "Catatan ini tidak menyertakan foto bukti kehadiran.", "info");
+        Swal.fire("Foto Tidak Tersedia", "Foto bukti kehadiran belum diunggah.", "info");
         return;
       }
 
-      document.getElementById("photoViewerTitle").textContent = `Bukti Foto: ${item.name} (${item.date})`;
+      const label = photoType === "masuk" ? "Presensi Masuk" : "Presensi Pulang";
+      document.getElementById("photoViewerTitle").textContent = `Bukti ${label}: ${item.name} (${item.date})`;
       const imgEl = document.getElementById("modalPhotoImg");
       imgEl.src = photoSource;
 
       const downloadBtn = document.getElementById("btnDownloadPhoto");
       downloadBtn.href = photoSource;
-      downloadBtn.download = `Presensi_${item.name.replace(/\s+/g, "_")}_${item.date}.jpg`;
+      downloadBtn.download = `${label}_${item.name.replace(/\s+/g, "_")}_${item.date}.jpg`;
+
+      const timeVal = photoType === "masuk" ? item.timeMasuk : item.timePulang;
+      const addrVal = photoType === "masuk" ? item.alamatMasuk : item.alamatPulang;
 
       document.getElementById("modalPhotoMeta").innerHTML = `
         <div><strong>Karyawan:</strong> ${escapeHtml(item.name)} [${escapeHtml(item.idKaryawan || '-')}] - <em>${escapeHtml(item.role)}</em></div>
-        <div><strong>Waktu Presensi:</strong> ${escapeHtml(item.date)} ${escapeHtml(item.time || '')}</div>
-        <div><strong>Lokasi GPS:</strong> <i class="bi bi-geo-alt text-warning"></i> ${escapeHtml(item.alamatLengkap || '-')}</div>
-        ${item.siteId && item.siteId !== '-' ? `<div><strong>Site & SOW:</strong> ${escapeHtml(item.siteId)} (${escapeHtml(item.sow || '-')})</div>` : ''}
+        <div><strong>Waktu ${label}:</strong> ${escapeHtml(item.date)} ${escapeHtml(timeVal || '')}</div>
+        <div><strong>Lokasi GPS:</strong> <i class="bi bi-geo-alt text-warning"></i> ${escapeHtml(addrVal || '-')}</div>
       `;
 
       const viewerModal = new bootstrap.Modal(document.getElementById("modalPhotoViewer"));
       viewerModal.show();
     };
+
+    document.getElementById("btnExportPresensiCsv").addEventListener("click", () => {
+      let list = [...db.progress];
+      if (currentUser.role === "Staff" || currentUser.role === "Technician") {
+        list = list.filter(item => item.username === currentUser.username);
+      }
+
+      if (list.length === 0) {
+        Swal.fire("Informasi", "Tidak ada data presensi untuk diekspor.", "info");
+        return;
+      }
+
+      const headers = ["No", "Date", "Name", "ID Karyawan", "Role", "Jam Masuk", "Alamat GPS Masuk", "Foto Masuk", "Activity Description", "Result", "Remarks", "Site ID", "SOW", "Jam Pulang", "Alamat GPS Pulang", "Foto Pulang", "Approval 1", "PM Remark", "Approval 2", "PD Remark"];
+      const rows = list.map((item, i) => [
+        i + 1, item.date, `"${item.name.replace(/"/g, '""')}"`, item.idKaryawan, item.role,
+        item.timeMasuk || "-", `"${(item.alamatMasuk || '-').replace(/"/g, '""')}"`, item.photoMasuk || "-",
+        `"${(item.activityDesc || '-').replace(/"/g, '""')}"`, `"${(item.result || '-').replace(/"/g, '""')}"`, `"${(item.staffRemarks || '-').replace(/"/g, '""')}"`,
+        item.siteId || "-", `"${(item.sow || '-').replace(/"/g, '""')}"`,
+        item.timePulang || "-", `"${(item.alamatPulang || '-').replace(/"/g, '""')}"`, item.photoPulang || "-",
+        item.approval1 || "-", `"${(item.pmRemark || '-').replace(/"/g, '""')}"`, item.approval2 || "-", `"${(item.pdRemark || '-').replace(/"/g, '""')}"`
+      ]);
+
+      downloadCsvFile([headers.join(","), ...rows.map(r => r.join(","))].join("\r\n"), `Report_Presensi_Masuk_Pulang_${new Date().toISOString().slice(0, 10)}.csv`);
+    });
 
     function getApprovalBadge(status) {
       if (!status || status === "-" || status === "pending") {
@@ -1309,39 +1974,16 @@
         return;
       }
 
-      const headers = ["No", "Date", "Name", "ID Karyawan", "Role", "Project", "Site ID", "SOW", "Activity Description", "Result", "Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark", "Alamat GPS", "Foto Link"];
+      const headers = ["No", "Date", "Name", "ID Karyawan", "Role", "Project", "Site ID", "SOW", "Activity Description", "Result", "Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark", "Alamat GPS Masuk", "Alamat GPS Pulang"];
       const rows = list.map((item, i) => [
         i + 1, item.date, `"${item.name.replace(/"/g, '""')}"`, item.idKaryawan, item.role, item.projectName,
-        item.siteId || "-", `"${(item.sow || '-').replace(/"/g, '""')}"`, `"${item.activityDesc.replace(/"/g, '""')}"`,
-        `"${item.result.replace(/"/g, '""')}"`, `"${(item.staffRemarks || '-').replace(/"/g, '""')}"`,
+        item.siteId || "-", `"${(item.sow || '-').replace(/"/g, '""')}"`, `"${(item.activityDesc || '-').replace(/"/g, '""')}"`,
+        `"${(item.result || '-').replace(/"/g, '""')}"`, `"${(item.staffRemarks || '-').replace(/"/g, '""')}"`,
         item.approval1 || "-", `"${(item.pmRemark || '-').replace(/"/g, '""')}"`, item.approval2 || "-", `"${(item.pdRemark || '-').replace(/"/g, '""')}"`,
-        `"${(item.alamatLengkap || '-').replace(/"/g, '""')}"`, item.photoUrl || "-"
+        `"${(item.alamatMasuk || '-').replace(/"/g, '""')}"`, `"${(item.alamatPulang || '-').replace(/"/g, '""')}"`
       ]);
 
       downloadCsvFile([headers.join(","), ...rows.map(r => r.join(","))].join("\r\n"), `Rekap_Jobs_Progress_${currentFilter}_${new Date().toISOString().slice(0, 10)}.csv`);
-    });
-
-    document.getElementById("btnExportPresensiCsv").addEventListener("click", () => {
-      let list = [...db.progress];
-      if (currentUser.role === "Staff" || currentUser.role === "Technician") {
-        list = list.filter(item => item.username === currentUser.username);
-      }
-
-      if (list.length === 0) {
-        Swal.fire("Informasi", "Tidak ada data presensi untuk diekspor.", "info");
-        return;
-      }
-
-      const headers = ["No", "Date", "Time", "Name", "ID Karyawan", "Role", "Site ID", "SOW", "Alamat GPS", "Activity Description", "Result", "Staff Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark", "Foto Link"];
-      const rows = list.map((item, i) => [
-        i + 1, item.date, item.time || "08:00:00", `"${item.name.replace(/"/g, '""')}"`, item.idKaryawan, item.role,
-        item.siteId || "-", `"${(item.sow || '-').replace(/"/g, '""')}"`, `"${(item.alamatLengkap || '-').replace(/"/g, '""')}"`,
-        `"${item.activityDesc.replace(/"/g, '""')}"`, `"${item.result.replace(/"/g, '""')}"`, `"${(item.staffRemarks || '-').replace(/"/g, '""')}"`,
-        item.approval1 || "-", `"${(item.pmRemark || '-').replace(/"/g, '""')}"`, item.approval2 || "-", `"${(item.pdRemark || '-').replace(/"/g, '""')}"`,
-        item.photoUrl || "-"
-      ]);
-
-      downloadCsvFile([headers.join(","), ...rows.map(r => r.join(","))].join("\r\n"), `Report_Presensi_Lengkap_${new Date().toISOString().slice(0, 10)}.csv`);
     });
 
     function downloadCsvFile(content, fileName) {
@@ -1366,11 +2008,11 @@
       document.getElementById("labelApprovalRemark").textContent = approverType === "Approval 1" ? "PM/RPM Remark (Catatan Verifikasi)" : "PD Remark (Catatan Direktur)";
 
       document.getElementById("modalProgressDetail").innerHTML = `
-        <strong>Karyawan:</strong> ${target.name} (${target.idKaryawan}) - <em>${target.role}</em><br/>
-        <strong>Tanggal:</strong> ${target.date} | <strong>Progres:</strong> ${target.result}<br/>
-        ${target.siteId && target.siteId !== '-' ? `<strong>Site:</strong> ${target.siteId} | <strong>SOW:</strong> ${target.sow}<br/>` : ''}
-        <strong>Aktivitas:</strong> ${target.activityDesc}<br/>
-        <strong>Remarks Karyawan:</strong> ${target.staffRemarks || '-'}
+        <strong>Karyawan:</strong> ${escapeHtml(target.name)} (${escapeHtml(target.idKaryawan || '-')}) - <em>${escapeHtml(target.role)}</em><br/>
+        <strong>Tanggal:</strong> ${target.date} | <strong>Progres:</strong> ${escapeHtml(target.result || '-')}<br/>
+        ${target.siteId && target.siteId !== '-' ? `<strong>Site:</strong> ${escapeHtml(target.siteId)} | <strong>SOW:</strong> ${escapeHtml(target.sow || '-')}<br/>` : ''}
+        <strong>Aktivitas:</strong> ${escapeHtml(target.activityDesc || '-')}<br/>
+        <strong>Remarks Karyawan:</strong> ${escapeHtml(target.staffRemarks || '-')}
       `;
 
       if (approverType === "Approval 1") {
@@ -1404,7 +2046,6 @@
         item.pdRemark = remark;
       }
 
-      // Sync GAS
       const apiUrl = gasApiUrlInput.value.trim();
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
         try {
@@ -1626,9 +2267,7 @@
           return;
         }
 
-        const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ''));
         const newUsers = [];
-
         for (let i = 1; i < lines.length; i++) {
           const cols = lines[i].split(",").map(c => c.trim().replace(/^"|"$/g, ''));
           if (cols.length >= 4) {
@@ -1648,7 +2287,6 @@
 
         showLoading(`Mengunggah ${newUsers.length} data karyawan...`);
 
-        // Merge into local DB
         newUsers.forEach(nu => {
           const existIdx = db.users.findIndex(u => u.username === nu.username);
           if (existIdx >= 0) {
@@ -1658,7 +2296,6 @@
           }
         });
 
-        // Sync with Google Apps Script
         const apiUrl = gasApiUrlInput.value.trim();
         if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
           try {
@@ -1682,226 +2319,6 @@
       };
 
       reader.readAsText(file);
-    });
-
-    async function startCamera() {
-      stopCamera();
-      try {
-        const constraints = {
-          video: { facingMode: currentFacingMode, width: { ideal: 1280 }, height: { ideal: 960 } },
-          audio: false
-        };
-
-        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-        videoFeed.srcObject = mediaStream;
-
-        if (currentFacingMode === "user") {
-          videoFeed.classList.add("camera-mirrored");
-        } else {
-          videoFeed.classList.remove("camera-mirrored");
-        }
-
-        videoFeed.style.display = "block";
-        photoPreview.style.display = "none";
-        btnCapture.classList.remove("d-none");
-        btnRetake.classList.add("d-none");
-        cameraStatus.innerHTML = '<i class="bi bi-circle-fill text-success me-1 small"></i> Kamera Aktif';
-      } catch (err) {
-        console.error("Camera access error:", err);
-        cameraStatus.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-warning me-1 small"></i> Izin Kamera Diperlukan';
-      }
-    }
-
-    function stopCamera() {
-      if (mediaStream) {
-        mediaStream.getTracks().forEach(track => track.stop());
-        mediaStream = null;
-      }
-    }
-
-    btnSwitchCamera.addEventListener("click", () => {
-      currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
-      startCamera();
-    });
-
-    btnCapture.addEventListener("click", () => {
-      if (!mediaStream) {
-        Swal.fire("Kamera Tidak Siap", "Silakan periksa izin kamera.", "warning");
-        return;
-      }
-
-      const videoWidth = videoFeed.videoWidth || 640;
-      const videoHeight = videoFeed.videoHeight || 480;
-
-      canvasCapture.width = videoWidth;
-      canvasCapture.height = videoHeight;
-      const ctx = canvasCapture.getContext("2d");
-
-      if (currentFacingMode === "user") {
-        ctx.translate(videoWidth, 0);
-        ctx.scale(-1, 1);
-      }
-      ctx.drawImage(videoFeed, 0, 0, videoWidth, videoHeight);
-
-      if (currentFacingMode === "user") {
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-      }
-
-      // Watermarking
-      const now = new Date();
-      const dateString = now.toLocaleDateString("id-ID", { weekday: "long", year: "numeric", month: "short", day: "numeric" });
-      const timeString = now.toLocaleTimeString("id-ID") + " WIB";
-
-      const barHeight = 65;
-      ctx.fillStyle = "rgba(15, 23, 42, 0.82)";
-      ctx.fillRect(0, videoHeight - barHeight, videoWidth, barHeight);
-
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 15px sans-serif";
-      ctx.fillText(`${dateString} | ${timeString} | ${currentUser ? currentUser.name : ''} (${currentUser ? currentUser.role : ''})`, 12, videoHeight - 38);
-
-      ctx.fillStyle = "#38bdf8";
-      ctx.font = "12px sans-serif";
-      const shortAddr = (detectedAddress || "GPS Terverifikasi").substring(0, 95);
-      ctx.fillText(shortAddr, 12, videoHeight - 16);
-
-      capturedPhotoBase64 = canvasCapture.toDataURL("image/jpeg", 0.85);
-      photoBase64Input.value = capturedPhotoBase64;
-
-      photoPreview.src = capturedPhotoBase64;
-      photoPreview.style.display = "block";
-      videoFeed.style.display = "none";
-      btnCapture.classList.add("d-none");
-      btnRetake.classList.remove("d-none");
-      cameraStatus.innerHTML = '<i class="bi bi-check-circle-fill text-info me-1 small"></i> Swafoto Terverifikasi';
-
-      stopCamera();
-    });
-
-    btnRetake.addEventListener("click", () => {
-      capturedPhotoBase64 = null;
-      photoBase64Input.value = "";
-      startCamera();
-    });
-
-    function fetchGpsAddress() {
-      txtAddress.value = "Mencari koordinat GPS...";
-      gpsStatusMessage.textContent = "Mengakses sensor lokasi perangkat...";
-
-      if (!navigator.geolocation) {
-        txtAddress.value = "Geolocation tidak didukung pada perangkat ini.";
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-          gpsStatusMessage.textContent = "Menerjemahkan koordinat ke nama jalan via OpenStreetMap...";
-
-          try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`, {
-              headers: { "Accept-Language": "id" }
-            });
-            const data = await res.json();
-            detectedAddress = data.display_name || `Lat: ${lat}, Lon: ${lon}`;
-            txtAddress.value = detectedAddress;
-            gpsStatusMessage.textContent = "Alamat GPS terverifikasi otomatis.";
-          } catch (e) {
-            detectedAddress = `Koordinat: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-            txtAddress.value = detectedAddress;
-            gpsStatusMessage.textContent = "Gagal memuat nama jalan spesifik, koordinat GPS tersimpan.";
-          }
-        },
-        (err) => {
-          console.warn("GPS error:", err);
-          txtAddress.value = "GPS tidak aktif. Mohon izinkan akses lokasi.";
-          gpsStatusMessage.textContent = "Izin lokasi tidak diberikan.";
-        },
-        { enableHighAccuracy: true, timeout: 12000 }
-      );
-    }
-    btnRefreshGps.addEventListener("click", fetchGpsAddress);
-
-    document.getElementById("dailyForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      if (!capturedPhotoBase64) {
-        Swal.fire("Foto Presensi Wajib", "Silakan klik tombol 'Ambil Foto' terlebih dahulu.", "warning");
-        return;
-      }
-
-      const now = new Date();
-      const timeNow = now.toLocaleTimeString("id-ID", { hour12: false });
-
-      const payload = {
-        id: "PROG-" + Date.now(),
-        username: currentUser.username,
-        name: currentUser.name,
-        idKaryawan: currentUser.idKaryawan,
-        role: currentUser.role,
-        projectName: currentUser.projectName,
-        projectCode: currentUser.projectCode,
-        periode: currentUser.periode,
-        date: inputDate.value,
-        time: timeNow,
-        siteId: currentUser.role === "Technician" ? inputSiteId.value.trim() : "-",
-        sow: currentUser.role === "Technician" ? inputSOW.value.trim() : "-",
-        activityDesc: document.getElementById("inputActivityDesc").value.trim(),
-        result: document.getElementById("inputResult").value.trim(),
-        staffRemarks: document.getElementById("inputStaffRemarks").value.trim() || "-",
-        approval1: "pending",
-        pmRemark: "-",
-        approval2: "pending",
-        pdRemark: "-",
-        alamatLengkap: txtAddress.value.trim(),
-        photoBase64: capturedPhotoBase64,
-        photoUrl: capturedPhotoBase64,
-        timestamp: `${inputDate.value} ${timeNow}`
-      };
-
-      showLoading("Menyimpan presensi & progres pekerjaan harian...");
-      db.progress.push(payload);
-
-      const apiUrl = gasApiUrlInput.value.trim();
-      if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
-        try {
-          const res = await fetch(apiUrl, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ action: "submitProgress", data: payload })
-          });
-          const result = await res.json();
-          if (result.status === "success" && result.photoUrl) {
-            payload.photoUrl = result.photoUrl;
-          }
-        } catch (err) {
-          console.warn("GAS save error:", err);
-        }
-      }
-
-      setTimeout(() => {
-        hideLoading();
-        Swal.fire({
-          icon: "success",
-          title: "Laporan Hari Ini Tersimpan!",
-          text: "Data presensi & progres pekerjaan telah terekam dan masuk dalam antrean approval."
-        });
-
-        document.getElementById("inputActivityDesc").value = "";
-        document.getElementById("inputResult").value = "";
-        document.getElementById("inputStaffRemarks").value = "";
-        if (currentUser.role === "Technician") {
-          inputSiteId.value = "";
-          inputSOW.value = "";
-        }
-        capturedPhotoBase64 = null;
-        photoBase64Input.value = "";
-        startCamera();
-        fetchGpsAddress();
-        renderRecapTable();
-        renderPresensiReport();
-      }, 500);
     });
 
     function showLoading(text) {
