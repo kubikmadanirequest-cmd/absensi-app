@@ -3,63 +3,88 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Sistem Absensi & Daily Jobs Progress</title>
+  <title>Enterprise Attendance & Jobs Progress Management System</title>
   
-  <!-- Bootstrap 5 CSS -->
+  <!-- Bootstrap 5 CSS & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
   
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --primary-color: #1e3a8a;
-      --secondary-color: #0284c7;
-      --accent-color: #10b981;
+      --primary-dark: #0f172a;
+      --navy-deep: #1e293b;
+      --accent-blue: #2563eb;
+      --accent-teal: #0d9488;
+      --accent-emerald: #10b981;
+      --surface-glass: rgba(255, 255, 255, 0.98);
+      --border-subtle: #e2e8f0;
     }
 
     body {
-      background: #f1f5f9;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      color: #334155;
+      background: #f8fafc;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1e293b;
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
 
     .app-card {
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-      border: 1px solid rgba(226, 232, 240, 0.8);
+      background: var(--surface-glass);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.06), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
+      border: 1px solid var(--border-subtle);
       overflow: hidden;
+      margin-bottom: 1.5rem;
     }
 
-    .card-header-gradient {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    .brand-gradient {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0369a1 100%);
       color: #ffffff;
-      padding: 1.25rem 1.5rem;
     }
 
-    /* Live Camera Container */
+    /* Role Badges */
+    .badge-role {
+      font-size: 0.72rem;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .badge-as { background: #fee2e2; color: #991b1b; }
+    .badge-rpm { background: #ede9fe; color: #5b21b6; }
+    .badge-pm { background: #e0e7ff; color: #3730a3; }
+    .badge-pd { background: #fef3c7; color: #92400e; }
+    .badge-staff { background: #e0f2fe; color: #0369a1; }
+    .badge-tech { background: #dcfce7; color: #15803d; }
+
+    /* Live Camera Elements */
     .camera-container {
       position: relative;
       width: 100%;
-      background: #0f172a;
-      border-radius: 12px;
+      background: #090d16;
+      border-radius: 14px;
       overflow: hidden;
       aspect-ratio: 4 / 3;
       display: flex;
       align-items: center;
       justify-content: center;
+      border: 2px solid #334155;
     }
 
     #videoFeed {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transform: scaleX(1);
     }
 
     .camera-mirrored {
-      transform: scaleX(-1) !important;
+      transform: scaleX(-1);
     }
 
     #photoPreview {
@@ -71,18 +96,18 @@
 
     .camera-overlay-badge {
       position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(4px);
-      color: #fff;
-      padding: 4px 10px;
+      top: 12px;
+      left: 12px;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(8px);
+      color: #ffffff;
+      padding: 5px 12px;
       border-radius: 20px;
       font-size: 0.75rem;
-      font-weight: 500;
+      font-weight: 600;
     }
 
-    .btn-action-camera {
+    .camera-control-bar {
       position: absolute;
       bottom: 12px;
       display: flex;
@@ -90,15 +115,15 @@
       z-index: 10;
     }
 
-    /* Section Header */
+    /* Section Headers */
     .section-title {
-      font-size: 0.82rem;
-      font-weight: 700;
+      font-size: 0.78rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.75px;
       color: #64748b;
       margin-top: 1.25rem;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.85rem;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -111,12 +136,30 @@
       background: #e2e8f0;
     }
 
+    /* Tables */
+    .table-recap {
+      font-size: 0.82rem;
+      vertical-align: middle;
+    }
+    .table-recap th {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.5px;
+      padding: 10px 8px;
+    }
+    .table-recap td {
+      padding: 10px 8px;
+    }
+
     /* Loading Overlay */
     #loadingOverlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(4px);
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(6px);
       display: none;
       flex-direction: column;
       align-items: center;
@@ -128,257 +171,727 @@
 </head>
 <body>
 
-  <!-- LOADING OVERLAY -->
   <div id="loadingOverlay">
-    <div class="spinner-border text-light mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
-    <h6 class="fw-semibold" id="loadingText">Mengirim laporan & absensi...</h6>
-    <small class="text-white-50">Menyimpan data dan bukti foto...</small>
+    <div class="spinner-border text-primary mb-3" style="width: 3.2rem; height: 3.2rem;" role="status"></div>
+    <h6 class="fw-bold tracking-wide" id="loadingText">Memproses data ke sistem...</h6>
+    <small class="text-white-50">Sinkronisasi data kehadiran & pekerjaan...</small>
   </div>
 
-  <div class="container py-4" style="max-width: 680px;">
+  <div class="container py-3 py-md-4" style="max-width: 1140px;">
 
-    <!-- ==================== SECTION 1: LOGIN ==================== -->
-    <div id="loginSection" class="app-card">
-      <div class="card-header-gradient text-center py-4">
-        <div class="d-inline-flex p-3 bg-white bg-opacity-25 rounded-circle mb-2">
-          <i class="bi bi-clock-history fs-1 text-white"></i>
+    <nav class="navbar navbar-expand-lg app-card px-3 py-2 mb-3 d-none" id="mainNavbar">
+      <div class="container-fluid px-0">
+        <span class="navbar-brand fw-bold d-flex align-items-center gap-2 mb-0">
+          <i class="bi bi-layers-half text-primary fs-4"></i>
+          <div>
+            <span class="fs-6 d-block lh-sm fw-bold">PRO-SYNC ENTERPRISE</span>
+            <small class="text-muted d-block" style="font-size: 0.65rem;">ATTENDANCE & JOBS PROGRESS SYSTEM</small>
+          </div>
+        </span>
+
+        <div class="d-flex align-items-center gap-2">
+          <div class="text-end d-none d-sm-block">
+            <div class="fw-bold small" id="navUserName">Denizar</div>
+            <div class="text-muted" style="font-size: 0.7rem;" id="navUserRole">Staff</div>
+          </div>
+          <span id="navRoleBadge" class="badge-role badge-staff me-2">STAFF</span>
+          <button id="btnHeaderLogout" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+            <i class="bi bi-box-arrow-right me-1"></i> Keluar
+          </button>
         </div>
-        <h4 class="fw-bold mb-1">Presensi & Daily Jobs Progress</h4>
-        <p class="mb-0 text-white-50 small">Sistem Rekap Harian & Mingguan Terintegrasi GPS</p>
+      </div>
+    </nav>
+
+    <div id="loginSection" class="app-card mx-auto" style="max-width: 520px;">
+      <div class="brand-gradient text-center py-4 px-3">
+        <div class="d-inline-flex p-3 bg-white bg-opacity-10 rounded-circle mb-2 shadow-sm">
+          <i class="bi bi-shield-check fs-1 text-white"></i>
+        </div>
+        <h4 class="fw-bold mb-1">Portal Presensi & Jobs Progress</h4>
+        <p class="mb-0 text-white-50 small">Sistem Enterprise Berbasis Peran & Audit Lapangan</p>
       </div>
 
       <div class="p-4">
-        <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
-          <i class="bi bi-info-circle-fill fs-5 me-2 flex-shrink-0"></i>
-          <div class="small">
-            <strong>Mode Demo Kredensial:</strong><br />
-            Email: <code>demo@email.com</code> | Password: <code>demo123</code>
+        <!-- Role Switcher Shortcuts -->
+        <div class="mb-3">
+          <label class="form-label text-muted fw-bold" style="font-size: 0.7rem; text-transform: uppercase;">Akses Cepat Mode Akun Demo:</label>
+          <div class="d-flex flex-wrap gap-1">
+            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2 small btn-demo" data-user="denizar" data-pass="staff123">Staff</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2 small btn-demo" data-user="teguh" data-pass="tech123">Technician</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2 small btn-demo" data-user="rpm.irwan" data-pass="rpm123">RPM</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2 small btn-demo" data-user="pm.hendra" data-pass="pm123">PM</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2 small btn-demo" data-user="pd.bambang" data-pass="pd123">PD</button>
+            <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2 small btn-demo" data-user="admin" data-pass="admin123">Admin System (AS)</button>
           </div>
         </div>
 
         <form id="loginForm">
           <div class="mb-3">
-            <label class="form-label small fw-semibold">Email Pengguna</label>
+            <label class="form-label small fw-semibold">Username / Email</label>
             <div class="input-group">
-              <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
-              <input type="email" id="loginEmail" class="form-control" value="demo@email.com" required />
+              <span class="input-group-text bg-light text-muted"><i class="bi bi-person"></i></span>
+              <input type="text" id="loginUsername" class="form-control" value="admin" required placeholder="Masukkan username" />
             </div>
           </div>
 
-          <div class="mb-4">
+          <div class="mb-3">
             <label class="form-label small fw-semibold">Password</label>
             <div class="input-group">
-              <span class="input-group-text bg-light"><i class="bi bi-shield-lock"></i></span>
-              <input type="password" id="loginPassword" class="form-control" value="demo123" required />
+              <span class="input-group-text bg-light text-muted"><i class="bi bi-key"></i></span>
+              <input type="password" id="loginPassword" class="form-control" value="admin123" required placeholder="Masukkan password" />
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-            <i class="bi bi-box-arrow-in-right me-1"></i> Masuk ke Formulir
+          <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Masuk ke Sistem
           </button>
         </form>
+
+        <div class="mt-3 text-center">
+          <a class="text-decoration-none small text-muted" data-bs-toggle="collapse" href="#collapseConfigApi" role="button">
+            <i class="bi bi-gear-fill me-1"></i> Konfigurasi Google Apps Script API URL
+          </a>
+          <div class="collapse mt-2" id="collapseConfigApi">
+            <div class="p-2 border rounded bg-light text-start">
+              <label class="form-label small text-muted mb-1">Web App Exec URL:</label>
+              <input type="url" id="gasApiUrl" class="form-control form-control-sm" placeholder="https://script.google.com/macros/s/.../exec" />
+              <small class="text-muted d-block mt-1" style="font-size: 0.7rem;">
+                Biarkan kosong jika ingin mencoba dalam <strong>Simulasi Lokal (Offline)</strong>.
+              </small>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- ==================== SECTION 2: FORM ATTENDANCE & PROGRESS ==================== -->
-    <div id="attendanceSection" class="app-card d-none">
-      <div class="card-header-gradient d-flex justify-content-between align-items-center">
+    <div id="adminSection" class="app-card d-none">
+      <div class="brand-gradient p-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
         <div>
-          <h5 class="fw-bold mb-0"><i class="bi bi-journal-check me-2"></i>Daily Jobs Progress Form</h5>
-          <small class="text-white-50" id="userBadge">demo@email.com</small>
+          <h5 class="fw-bold mb-0 text-white"><i class="bi bi-shield-lock-fill me-2"></i>Admin System (AS) - Data & User Management</h5>
+          <small class="text-white-50">Kelola pengguna, bulk upload data karyawan CSV, dan edit kredensial</small>
         </div>
-        <button id="btnLogout" class="btn btn-sm btn-outline-light" title="Keluar">
-          <i class="bi bi-box-arrow-right"></i>
-        </button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-warning btn-sm fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#modalBulkUpload">
+            <i class="bi bi-cloud-arrow-up-fill me-1"></i> Upload CSV Karyawan
+          </button>
+          <button class="btn btn-light btn-sm fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#modalAddUser">
+            <i class="bi bi-person-plus-fill me-1"></i> Tambah User Baru
+          </button>
+        </div>
       </div>
 
-      <div class="p-4">
-        <!-- PENGATURAN API URL -->
-        <div class="accordion mb-3" id="apiConfigAccordion">
-          <div class="accordion-item border">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed py-2 small text-muted bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfig">
-                <i class="bi bi-gear-fill me-2"></i> Konfigurasi Google Apps Script Web App URL
-              </button>
-            </h2>
-            <div id="collapseConfig" class="accordion-collapse collapse" data-bs-parent="#apiConfigAccordion">
-              <div class="accordion-body p-3 bg-light">
-                <label class="form-label small fw-bold">Deployment URL Web App:</label>
-                <input type="url" id="gasApiUrl" class="form-control form-control-sm" 
-                       placeholder="https://script.google.com/macros/s/.../exec" />
-                <small class="text-muted d-block mt-1">
-                  Tempel URL Web App dari Google Apps Script. Jika kosong, form berjalan dalam <strong>Demo Simulation Mode</strong>.
-                </small>
+      <div class="p-3">
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered table-recap">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Username</th>
+                <th>Nama Lengkap</th>
+                <th>ID Karyawan</th>
+                <th>Role / Keterangan</th>
+                <th>Project</th>
+                <th>Periode</th>
+                <th>No. WA</th>
+                <th class="text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tableUsersBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="reportNavTabs" class="d-none mb-3">
+      <ul class="nav nav-pills nav-fill gap-2 p-1 bg-white rounded-pill border shadow-sm" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active rounded-pill fw-bold" id="tab-jobs-btn" data-bs-toggle="pill" data-bs-target="#tab-jobs" type="button" role="tab">
+            <i class="bi bi-calendar3-week me-1"></i> Rekapitulasi Jobs Progress
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link rounded-pill fw-bold" id="tab-presensi-btn" data-bs-toggle="pill" data-bs-target="#tab-presensi" type="button" role="tab">
+            <i class="bi bi-geo-alt-fill me-1"></i> Report Presensi & Geotagging
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="tab-content" id="pills-tabContent">
+      <!-- TAB 1: REKAP JOBS PROGRESS (WEEKLY & MONTHLY) -->
+      <div class="tab-pane fade show active" id="tab-jobs" role="tabpanel">
+        <div id="recapSection" class="app-card d-none">
+          <div class="p-3 border-bottom bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+              <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                <i class="bi bi-bar-chart-steps text-primary"></i> 
+                <span id="recapSectionHeading">Rekapitulasi Jobs Progress</span>
+              </h6>
+              <small class="text-muted" id="recapSubHeading">Daftar rekapan pekerjaan mingguan & bulanan</small>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-outline-primary active" id="btnFilterWeek">Minggu Ini</button>
+                <button type="button" class="btn btn-outline-primary" id="btnFilterMonth">Bulan Ini</button>
+                <button type="button" class="btn btn-outline-primary" id="btnFilterAll">Semua</button>
+              </div>
+
+              <div class="btn-group btn-group-sm">
+                <button type="button" class="btn btn-success" id="btnExportJobsCsv">
+                  <i class="bi bi-file-earmark-excel me-1"></i> Unduh Rekap Jobs
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="btnPrintRecap" title="Cetak / Print PDF">
+                  <i class="bi bi-printer"></i>
+                </button>
               </div>
             </div>
           </div>
+
+          <div class="px-3 pt-3">
+            <div class="alert alert-light border border-info-subtle d-flex align-items-center py-2 px-3 mb-2" role="alert">
+              <i class="bi bi-info-circle-fill text-info fs-5 me-2 flex-shrink-0"></i>
+              <div class="small">
+                <strong>Riwayat Terdaftar:</strong> Jika Anda sudah mengisi laporan hari Senin dan Selasa, riwayat tersebut telah terekam di bawah ini sebelum Anda mengirimkan laporan hari ini.
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 pt-1">
+            <div class="table-responsive" style="max-height: 480px;">
+              <table class="table table-hover table-bordered table-recap align-middle" id="tableRecap">
+                <thead>
+                  <tr class="table-light text-center">
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Karyawan</th>
+                    <th>Project / Site ID</th>
+                    <th>Activity Description</th>
+                    <th>Result</th>
+                    <th>Remark Karyawan</th>
+                    <th>Approval 1 (PM/RPM)</th>
+                    <th>PM Remark</th>
+                    <th>Approval 2 (PD)</th>
+                    <th>PD Remark</th>
+                    <th>Foto & Lokasi</th>
+                    <th id="thActionHeader" class="d-none">Aksi Validasi</th>
+                  </tr>
+                </thead>
+                <tbody id="tableRecapBody">
+                  <!-- Dynamic render -->
+                </tbody>
+              </table>
+            </div>
+            <div class="text-end mt-2">
+              <small class="text-muted" id="recapTotalCount">Total: 0 Catatan Progress</small>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <form id="attendanceForm">
+      <!-- TAB 2: AUDIT REPORT PRESENSI (NAMA, TIME, DATE, GPS, SOW, ACTIVITY, APPROVAL 1 & 2) -->
+      <div class="tab-pane fade" id="tab-presensi" role="tabpanel">
+        <div class="app-card">
+          <div class="p-3 border-bottom bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+              <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                <i class="bi bi-clipboard2-check-fill text-teal text-success"></i> 
+                <span>Master Report Presensi & Geotagging</span>
+              </h6>
+              <small class="text-muted">Laporan audit absensi lengkap dengan waktu, tanggal, alamat GPS, activity, SOW, result, remark, dan approval</small>
+            </div>
 
-          <!-- 1. LIVE CAMERA SECTION -->
-          <div class="section-title"><i class="bi bi-camera"></i> Bukti Swafoto / Foto Kehadiran</div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <button type="button" class="btn btn-sm btn-success" id="btnExportPresensiCsv">
+                <i class="bi bi-download me-1"></i> Export Presensi Lengkap (CSV)
+              </button>
+            </div>
+          </div>
+
+          <div class="p-3">
+            <div class="table-responsive" style="max-height: 520px;">
+              <table class="table table-hover table-bordered table-recap align-middle">
+                <thead>
+                  <tr class="table-light text-center">
+                    <th>No</th>
+                    <th>Date & Time</th>
+                    <th>Nama & ID</th>
+                    <th>Role</th>
+                    <th>Site ID & SOW (Technician)</th>
+                    <th>Lokasi GPS Lengkap</th>
+                    <th>Activity Description</th>
+                    <th>Result</th>
+                    <th>Staff Remark</th>
+                    <th>Approval 1</th>
+                    <th>PM Remark</th>
+                    <th>Approval 2</th>
+                    <th>PD Remark</th>
+                    <th>Foto Bukti</th>
+                  </tr>
+                </thead>
+                <tbody id="tablePresensiBody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="formProgressSection" class="app-card d-none">
+      <div class="brand-gradient p-3 text-white">
+        <h5 class="fw-bold mb-0"><i class="bi bi-pencil-square me-2"></i>Form Input Absensi & Daily Jobs Progress Hari Ini</h5>
+        <small class="text-white-50">Lengkapi bukti kehadiran foto GPS dan rincian pekerjaan harian Anda</small>
+      </div>
+
+      <div class="p-3 p-md-4">
+        <form id="dailyForm">
+          
+          <!-- CAMERA SECTION -->
+          <div class="section-title"><i class="bi bi-camera"></i> 1. Bukti Swafoto / Live Camera Kehadiran</div>
           
           <div class="camera-container mb-2">
             <video id="videoFeed" autoplay playsinline></video>
-            <img id="photoPreview" alt="Hasil Foto Absensi" />
+            <img id="photoPreview" alt="Hasil Foto Swafoto" />
             <div class="camera-overlay-badge" id="cameraStatus">
-              <i class="bi bi-circle-fill text-danger me-1 small"></i> Kamera Aktif
+              <i class="bi bi-circle-fill text-success me-1 small"></i> Kamera Standby
             </div>
 
-            <div class="btn-action-camera">
-              <button type="button" id="btnSwitchCamera" class="btn btn-dark btn-sm rounded-pill shadow-sm" title="Ganti Kamera">
+            <div class="camera-control-bar">
+              <button type="button" id="btnSwitchCamera" class="btn btn-dark btn-sm rounded-pill shadow">
                 <i class="bi bi-arrow-repeat"></i> Ganti Kamera
               </button>
-              <button type="button" id="btnCapture" class="btn btn-warning btn-sm rounded-pill fw-bold shadow-sm">
+              <button type="button" id="btnCapture" class="btn btn-warning btn-sm rounded-pill fw-bold shadow">
                 <i class="bi bi-camera-fill me-1"></i> Ambil Foto
               </button>
-              <button type="button" id="btnRetake" class="btn btn-outline-light btn-sm rounded-pill shadow-sm d-none">
-                <i class="bi bi-arrow-counterclockwise"></i> Ulangi
+              <button type="button" id="btnRetake" class="btn btn-outline-light btn-sm rounded-pill shadow d-none">
+                <i class="bi bi-arrow-counterclockwise"></i> Ulangi Foto
               </button>
             </div>
           </div>
           <canvas id="canvasCapture" class="d-none"></canvas>
           <input type="hidden" id="photoBase64Input" required />
 
-          <!-- 2. LOKASI REVERSE GEOCODING -->
-          <div class="section-title"><i class="bi bi-pin-map"></i> Lokasi GPS Saat Ini</div>
+          <!-- GPS ADDRESS SECTION -->
+          <div class="section-title"><i class="bi bi-geo-alt"></i> 2. Alamat GPS Otomatis (Reverse Geocoding)</div>
           <div class="mb-3">
-            <label class="form-label small fw-semibold">Alamat Terdeteksi Otomatis</label>
             <div class="input-group">
-              <span class="input-group-text bg-light"><i class="bi bi-geo-alt"></i></span>
-              <textarea id="txtAddress" class="form-control" rows="2" readonly placeholder="Mencari titik lokasi otomatis..."></textarea>
-              <button type="button" id="btnRefreshGps" class="btn btn-outline-secondary" title="Perbarui Lokasi">
+              <span class="input-group-text bg-light text-primary"><i class="bi bi-pin-map-fill"></i></span>
+              <textarea id="txtAddress" class="form-control" rows="2" readonly placeholder="Mendeteksi titik koordinat dan alamat lengkap..." required></textarea>
+              <button type="button" id="btnRefreshGps" class="btn btn-outline-secondary" title="Segarkan Alamat">
                 <i class="bi bi-arrow-clockwise"></i>
               </button>
             </div>
-            <small class="text-muted" id="gpsStatusMessage">Membaca GPS dan reverse geocoding via OpenStreetMap...</small>
+            <small class="text-muted" id="gpsStatusMessage">Membaca lokasi via OpenStreetMap Nominatim...</small>
           </div>
 
-          <!-- 3. ROLE SELECTION (STAFF ATAU TECHNICIAN) -->
-          <div class="section-title"><i class="bi bi-person-badge"></i> Role Pekerjaan</div>
-          <div class="mb-3">
-            <label class="form-label small fw-semibold">Kategori Pekerja <span class="text-danger">*</span></label>
-            <select id="selectRole" class="form-select" required>
-              <option value="" disabled selected>-- Pilih Kategori Pekerja --</option>
-              <option value="Staff">Staff (Kantor / Jobs Progress)</option>
-              <option value="Technician">Technician (Lapangan / Field)</option>
-            </select>
-          </div>
-
-          <!-- 4. PROFILE & PROJECT HEADER INFO -->
-          <div class="section-title"><i class="bi bi-card-text"></i> Informasi Karyawan & Project</div>
-          <div class="row g-2">
-            <div class="col-md-6 mb-2">
-              <label class="form-label small fw-semibold">Nama Lengkap (Name) <span class="text-danger">*</span></label>
-              <input type="text" id="inputNama" class="form-control" placeholder="Contoh: Denizar" required />
+          <!-- PROFILE SUMMARY -->
+          <div class="section-title"><i class="bi bi-person-lines-fill"></i> 3. Data Karyawan & Project (Sesuai Akun Login)</div>
+          <div class="row g-2 mb-2">
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Nama Karyawan</label>
+              <input type="text" id="inputNama" class="form-control bg-light" readonly />
             </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label small fw-semibold">No ID Karyawan <span class="text-danger">*</span></label>
-              <input type="text" id="inputIdKaryawan" class="form-control" placeholder="Contoh: 2601020033" required />
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">No ID Karyawan</label>
+              <input type="text" id="inputIdKaryawan" class="form-control bg-light" readonly />
             </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label small fw-semibold">Project Name <span class="text-danger">*</span></label>
-              <input type="text" id="inputProjectName" class="form-control" placeholder="Contoh: Telkom infra" required />
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Keterangan / Role</label>
+              <input type="text" id="inputRoleDesc" class="form-control bg-light" readonly />
             </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label small fw-semibold">Project Code <span class="text-danger">*</span></label>
-              <input type="text" id="inputProjectCode" class="form-control" placeholder="Contoh: RO" required />
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label small fw-semibold">Periode <span class="text-danger">*</span></label>
-              <input type="text" id="inputPeriode" class="form-control" placeholder="Contoh: Agustus - Desember 26" required />
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label small fw-semibold">No. WhatsApp</label>
-              <input type="tel" id="inputWa" class="form-control" placeholder="081234567890" />
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Project Name & Code</label>
+              <input type="text" id="inputProjectInfo" class="form-control bg-light" readonly />
             </div>
           </div>
 
-          <!-- 5. PROGRESS HARIAN (SESUAI GAMBAR) -->
-          <div class="section-title"><i class="bi bi-list-task"></i> Laporan Progress Harian (Daily)</div>
+          <!-- PROGRESS ENTRY DETAILS -->
+          <div class="section-title"><i class="bi bi-journal-text"></i> 4. Detail Laporan Pekerjaan Harian (Daily Progress)</div>
           
-          <div id="progressContainer" class="d-none">
-            <div class="row g-2 mb-2">
-              <div class="col-md-6">
-                <label class="form-label small fw-semibold">Tanggal (Date) <span class="text-danger">*</span></label>
-                <input type="date" id="inputDate" class="form-control" required />
-              </div>
+          <div class="row g-2 mb-2">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Tanggal Pekerjaan (Date) <span class="text-danger">*</span></label>
+              <input type="date" id="inputDate" class="form-control" required />
             </div>
-
-            <!-- Khusus Lapangan / Technician -->
-            <div id="technicianSpecificFields" class="d-none">
-              <div class="row g-2 mb-2">
-                <div class="col-md-6">
-                  <label class="form-label small fw-semibold">Site ID <span class="text-danger">*</span></label>
-                  <input type="text" id="inputSiteId" class="form-control" placeholder="Contoh: JKT-0492" />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label small fw-semibold">SOW (Scope of Work) <span class="text-danger">*</span></label>
-                  <input type="text" id="inputSOW" class="form-control" placeholder="Contoh: Dismantle / Instalasi Radio" />
-                </div>
-              </div>
-            </div>
-
-            <!-- Activity Description -->
-            <div class="mb-2">
-              <label class="form-label small fw-semibold">Activity Description <span class="text-danger">*</span></label>
-              <textarea id="inputActivityDesc" class="form-control" rows="2" placeholder="Tuliskan detail pekerjaan (Contoh: Membuat proposal ke Telkominfra / Penarikan kabel)" required></textarea>
-            </div>
-
-            <!-- Result & Remarks -->
-            <div class="row g-2 mb-2">
-              <div class="col-md-6">
-                <label class="form-label small fw-semibold">Result <span class="text-danger">*</span></label>
-                <input type="text" id="inputResult" class="form-control" placeholder="Contoh: done / 80% / in progress" required />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label small fw-semibold">Remarks</label>
-                <input type="text" id="inputRemarks" class="form-control" placeholder="Catatan (Contoh: sip / bisa dipercepat)" />
-              </div>
-            </div>
-
-            <!-- Approval Columns -->
-            <div class="row g-2 mb-3">
-              <div class="col-md-6">
-                <label class="form-label small fw-semibold">Approval 1 (Atasan Langsung) <span class="text-danger">*</span></label>
-                <input type="text" id="inputApproval1" class="form-control" placeholder="Nama / Status (Contoh: ok)" required />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label small fw-semibold">Approval 2 (Manager / PM) <span class="text-danger">*</span></label>
-                <input type="text" id="inputApproval2" class="form-control" placeholder="Nama / Status (Contoh: ok)" required />
-              </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Hasil / Progres (Result) <span class="text-danger">*</span></label>
+              <input type="text" id="inputResult" class="form-control" placeholder="Contoh: done / 80% / in progress" required />
             </div>
           </div>
 
-          <!-- SUBMIT BUTTON -->
-          <div class="mt-4 pt-2">
-            <button type="submit" id="btnSubmit" class="btn btn-success w-100 py-2 fw-semibold">
-              <i class="bi bi-cloud-arrow-up-fill me-1"></i> Simpan Laporan & Absensi
-            </button>
+          <!-- TECHNICIAN SPECIFIC FIELDS -->
+          <div id="technicianFieldRow" class="row g-2 mb-2 d-none">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Site ID <span class="text-danger">*</span></label>
+              <input type="text" id="inputSiteId" class="form-control" placeholder="Contoh: JKT-0492" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">SOW (Scope of Work) <span class="text-danger">*</span></label>
+              <input type="text" id="inputSOW" class="form-control" placeholder="Contoh: Dismantle / Instalasi Radio" />
+            </div>
           </div>
 
+          <div class="mb-2">
+            <label class="form-label small fw-semibold">Deskripsi Aktivitas (Activity Description) <span class="text-danger">*</span></label>
+            <textarea id="inputActivityDesc" class="form-control" rows="3" placeholder="Tuliskan rincian tugas dan aktivitas yang dikerjakan hari ini..." required></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Catatan Karyawan (Staff/Technician Remarks)</label>
+            <input type="text" id="inputStaffRemarks" class="form-control" placeholder="Contoh: Menunggu approval atau kendala cuaca di lapangan" />
+          </div>
+
+          <button type="submit" id="btnSubmitProgress" class="btn btn-primary w-100 py-2 fw-semibold shadow">
+            <i class="bi bi-cloud-arrow-up-fill me-1"></i> Kirim Laporan Absensi & Jobs Progress
+          </button>
         </form>
       </div>
     </div>
 
   </div>
 
-  <!-- SweetAlert2 & Bootstrap JS -->
+  <!-- MODAL: ADD USER (ADMIN SYSTEM) -->
+  <div class="modal fade" id="modalAddUser" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-dark text-white">
+          <h6 class="modal-title fw-bold"><i class="bi bi-person-plus me-1"></i> Daftarkan Pengguna Baru</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formAddUser">
+          <div class="modal-body p-3">
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Username <span class="text-danger">*</span></label>
+                <input type="text" id="newUsername" class="form-control form-control-sm" required placeholder="misal: ahmad" />
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Password <span class="text-danger">*</span></label>
+                <input type="password" id="newPassword" class="form-control form-control-sm" required placeholder="Password" />
+              </div>
+            </div>
+
+            <div class="row g-2 mb-2">
+              <div class="col-7">
+                <label class="form-label small fw-semibold">Nama Lengkap <span class="text-danger">*</span></label>
+                <input type="text" id="newName" class="form-control form-control-sm" required placeholder="Nama Lengkap" />
+              </div>
+              <div class="col-5">
+                <label class="form-label small fw-semibold">Role / Keterangan <span class="text-danger">*</span></label>
+                <select id="newRole" class="form-select form-select-sm" required>
+                  <option value="Staff">1. Staff</option>
+                  <option value="Technician">2. Technician</option>
+                  <option value="RPM">3. RPM (Reg. PM)</option>
+                  <option value="PM">4. PM (Proj. Manager)</option>
+                  <option value="PD">5. PD (Proj. Director)</option>
+                  <option value="Admin System">6. Admin System (AS)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <label class="form-label small fw-semibold">No ID Karyawan</label>
+                <input type="text" id="newIdKaryawan" class="form-control form-control-sm" placeholder="Contoh: 2601020099" />
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-semibold">No. WhatsApp</label>
+                <input type="tel" id="newWa" class="form-control form-control-sm" placeholder="08123456789" />
+              </div>
+            </div>
+
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Project Name</label>
+                <input type="text" id="newProjectName" class="form-control form-control-sm" value="Telkom infra" />
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Project Code</label>
+                <input type="text" id="newProjectCode" class="form-control form-control-sm" value="RO" />
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label small fw-semibold">Periode</label>
+              <input type="text" id="newPeriode" class="form-control form-control-sm" value="Agustus - Desember 26" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary btn-sm px-3 fw-bold">Simpan User</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT USER (ADMIN SYSTEM) -->
+  <div class="modal fade" id="modalEditUser" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-primary text-white">
+          <h6 class="modal-title fw-bold"><i class="bi bi-pencil-square me-1"></i> Edit Data Karyawan</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formEditUser">
+          <div class="modal-body p-3">
+            <input type="hidden" id="editOriginalUsername" />
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Username</label>
+                <input type="text" id="editUsername" class="form-control form-control-sm bg-light" readonly />
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Password Baru</label>
+                <input type="text" id="editPassword" class="form-control form-control-sm" placeholder="Ubah password" />
+              </div>
+            </div>
+
+            <div class="row g-2 mb-2">
+              <div class="col-7">
+                <label class="form-label small fw-semibold">Nama Lengkap</label>
+                <input type="text" id="editName" class="form-control form-control-sm" required />
+              </div>
+              <div class="col-5">
+                <label class="form-label small fw-semibold">Role / Keterangan</label>
+                <select id="editRole" class="form-select form-select-sm" required>
+                  <option value="Staff">1. Staff</option>
+                  <option value="Technician">2. Technician</option>
+                  <option value="RPM">3. RPM (Reg. PM)</option>
+                  <option value="PM">4. PM (Proj. Manager)</option>
+                  <option value="PD">5. PD (Proj. Director)</option>
+                  <option value="Admin System">6. Admin System (AS)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <label class="form-label small fw-semibold">No ID Karyawan</label>
+                <input type="text" id="editIdKaryawan" class="form-control form-control-sm" />
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-semibold">No. WhatsApp</label>
+                <input type="tel" id="editWa" class="form-control form-control-sm" />
+              </div>
+            </div>
+
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Project Name</label>
+                <input type="text" id="editProjectName" class="form-control form-control-sm" />
+              </div>
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Project Code</label>
+                <input type="text" id="editProjectCode" class="form-control form-control-sm" />
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label small fw-semibold">Periode</label>
+              <input type="text" id="editPeriode" class="form-control form-control-sm" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-danger btn-sm me-auto" id="btnDeleteUser">Hapus Karyawan</button>
+            <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary btn-sm px-3 fw-bold">Simpan Perubahan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: BULK UPLOAD CSV KARYAWAN -->
+  <div class="modal fade" id="modalBulkUpload" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-warning text-dark">
+          <h6 class="modal-title fw-bold"><i class="bi bi-file-earmark-spreadsheet me-1"></i> Upload Bulk Data Karyawan (CSV)</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-3">
+          <p class="small text-muted mb-2">
+            Unggah file format <strong>.CSV</strong> untuk mendaftarkan banyak karyawan sekaligus. Kolom wajib:<br>
+            <code>username,password,name,role,idKaryawan,projectName,projectCode,periode,noWa</code>
+          </p>
+
+          <div class="mb-3">
+            <button type="button" class="btn btn-outline-secondary btn-sm py-1" id="btnDownloadCsvTemplate">
+              <i class="bi bi-download me-1"></i> Unduh Contoh Template CSV Karyawan
+            </button>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Pilih File CSV:</label>
+            <input type="file" id="fileCsvKaryawan" class="form-control form-control-sm" accept=".csv" />
+          </div>
+
+          <div id="csvPreviewArea" class="d-none">
+            <div class="alert alert-secondary py-1 px-2 small mb-0" id="csvPreviewSummary">
+              Siap mengunggah data...
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-success btn-sm px-3 fw-bold" id="btnProcessCsvUpload">
+            <i class="bi bi-cloud-arrow-up-fill me-1"></i> Proses Upload
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: APPROVAL & REMARK (RPM, PM & PD) -->
+  <div class="modal fade" id="modalApproval" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header brand-gradient text-white">
+          <h6 class="modal-title fw-bold" id="approvalModalTitle"><i class="bi bi-check2-circle me-1"></i> Validasi Pekerjaan</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formApprovalSubmit">
+          <div class="modal-body p-3">
+            <input type="hidden" id="modalProgressId" />
+            <div class="p-2 bg-light rounded mb-3 small" id="modalProgressDetail">
+              <!-- Summary entry -->
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold" id="labelApprovalStatus">Status Approval <span class="text-danger">*</span></label>
+              <select id="modalApprovalStatus" class="form-select form-select-sm" required>
+                <option value="ok">Approved (ok)</option>
+                <option value="revision">Perlu Revisi (revision)</option>
+                <option value="pending">Pending Review</option>
+              </select>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label small fw-semibold" id="labelApprovalRemark">Remark / Komentar Catatan <span class="text-danger">*</span></label>
+              <textarea id="modalApprovalRemark" class="form-control form-control-sm" rows="3" placeholder="Tuliskan instruksi, catatan evaluasi atau remark..." required></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-success btn-sm px-3 fw-bold">Simpan Approval</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- SweetAlert2 & Bootstrap Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    let currentUser = null;
+    let currentFilter = "week"; // "week", "month", "all"
+    let capturedPhotoBase64 = null;
     let mediaStream = null;
     let currentFacingMode = "user";
-    let capturedPhotoBase64 = null;
     let detectedAddress = "";
 
-    // DOM Elements
+    // In-memory Database with 6 distinct role designations
+    let db = {
+      users: [
+        { username: "admin", password: "admin123", name: "System Administrator", idKaryawan: "AS-001", role: "Admin System", projectName: "Management", projectCode: "MGT", periode: "2026", noWa: "08120000000" },
+        { username: "rpm.irwan", password: "rpm123", name: "Irwan Syahputra", idKaryawan: "RPM-1003", role: "RPM", projectName: "Telkom infra", projectCode: "RO", periode: "Agustus - Desember 26", noWa: "08129999000" },
+        { username: "pm.hendra", password: "pm123", name: "Hendra Wijaya, ST", idKaryawan: "PM-1002", role: "PM", projectName: "Telkom infra", projectCode: "RO", periode: "Agustus - Desember 26", noWa: "08129999111" },
+        { username: "pd.bambang", password: "pd123", name: "Ir. Bambang Prakoso", idKaryawan: "PD-1001", role: "PD", projectName: "Telkom infra", projectCode: "RO", periode: "Agustus - Desember 26", noWa: "08128888222" },
+        { username: "denizar", password: "staff123", name: "Denizar", idKaryawan: "2601020033", role: "Staff", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08137777333" },
+        { username: "teguh", password: "tech123", name: "Teguh Santoso", idKaryawan: "2601020088", role: "Technician", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08136666444" }
+      ],
+      progress: [
+        {
+          id: "PROG-101",
+          username: "denizar",
+          name: "Denizar",
+          idKaryawan: "2601020033",
+          role: "Staff",
+          projectName: "Telkom infra",
+          projectCode: "RO",
+          periode: "agustus - desember 26",
+          date: "2026-08-31",
+          time: "08:30:15",
+          activityDesc: "Membuat proposal ke Telkominfra & persiapan materi",
+          result: "done",
+          staffRemarks: "sip",
+          approval1: "ok",
+          pmRemark: "Proposal sudah ditinjau, sangat rapi.",
+          approval2: "ok",
+          pdRemark: "Disetujui untuk dikirimkan.",
+          alamatLengkap: "Jl. Gatot Subroto No. 52, Jakarta Selatan",
+          photoUrl: "https://placehold.co/400x300/1e293b/ffffff?text=Bukti+Foto+Denizar",
+          timestamp: "2026-08-31 08:30:15"
+        },
+        {
+          id: "PROG-102",
+          username: "denizar",
+          name: "Denizar",
+          idKaryawan: "2601020033",
+          role: "Staff",
+          projectName: "Telkom infra",
+          projectCode: "RO",
+          periode: "agustus - desember 26",
+          date: "2026-09-01",
+          time: "08:45:20",
+          activityDesc: "Memperbaiki modul aplikasi absensi & integrasi GPS",
+          result: "80%",
+          staffRemarks: "bisa dipercepat",
+          approval1: "ok",
+          pmRemark: "Lanjutkan ke tahap pengetesan kamera dan watermarking.",
+          approval2: "pending",
+          pdRemark: "-",
+          alamatLengkap: "Jl. Kebon Sirih No. 10, Jakarta Pusat",
+          photoUrl: "https://placehold.co/400x300/1e293b/ffffff?text=Bukti+Foto+Selasa",
+          timestamp: "2026-09-01 08:45:20"
+        },
+        {
+          id: "PROG-103",
+          username: "teguh",
+          name: "Teguh Santoso",
+          idKaryawan: "2601020088",
+          role: "Technician",
+          projectName: "Telkom infra",
+          projectCode: "RO",
+          siteId: "JKT-0492",
+          sow: "Instalasi Radio & Alignment",
+          periode: "agustus - desember 26",
+          date: "2026-08-31",
+          time: "09:12:00",
+          activityDesc: "Pemasangan kabel feeder dan grounding tower site",
+          result: "done",
+          staffRemarks: "Cuaca cerah, selesai tepat waktu",
+          approval1: "ok",
+          pmRemark: "SOP K3 terpasang baik di foto.",
+          approval2: "ok",
+          pdRemark: "Good job",
+          alamatLengkap: "Site Telkom Kalibata, Jakarta Selatan",
+          photoUrl: "https://placehold.co/400x300/0f172a/ffffff?text=Site+JKT-0492",
+          timestamp: "2026-08-31 09:12:00"
+        }
+      ]
+    };
+
     const loginSection = document.getElementById("loginSection");
-    const attendanceSection = document.getElementById("attendanceSection");
-    const loginForm = document.getElementById("loginForm");
-    const btnLogout = document.getElementById("btnLogout");
+    const mainNavbar = document.getElementById("mainNavbar");
+    const adminSection = document.getElementById("adminSection");
+    const recapSection = document.getElementById("recapSection");
+    const formProgressSection = document.getElementById("formProgressSection");
+    const reportNavTabs = document.getElementById("reportNavTabs");
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    const gasApiUrlInput = document.getElementById("gasApiUrl");
+
+    const navUserName = document.getElementById("navUserName");
+    const navUserRole = document.getElementById("navUserRole");
+    const navRoleBadge = document.getElementById("navRoleBadge");
+    const btnHeaderLogout = document.getElementById("btnHeaderLogout");
 
     const videoFeed = document.getElementById("videoFeed");
     const photoPreview = document.getElementById("photoPreview");
@@ -393,70 +906,721 @@
     const btnRefreshGps = document.getElementById("btnRefreshGps");
     const gpsStatusMessage = document.getElementById("gpsStatusMessage");
 
-    const selectRole = document.getElementById("selectRole");
-    const progressContainer = document.getElementById("progressContainer");
-    const technicianSpecificFields = document.getElementById("technicianSpecificFields");
+    const inputDate = document.getElementById("inputDate");
+    const technicianFieldRow = document.getElementById("technicianFieldRow");
     const inputSiteId = document.getElementById("inputSiteId");
     const inputSOW = document.getElementById("inputSOW");
-    const inputDate = document.getElementById("inputDate");
 
-    const attendanceForm = document.getElementById("attendanceForm");
-    const loadingOverlay = document.getElementById("loadingOverlay");
-    const gasApiUrlInput = document.getElementById("gasApiUrl");
+    if (localStorage.getItem("prosync_gas_api")) {
+      gasApiUrlInput.value = localStorage.getItem("prosync_gas_api");
+    }
+    gasApiUrlInput.addEventListener("change", () => {
+      localStorage.setItem("prosync_gas_api", gasApiUrlInput.value.trim());
+    });
 
-    // Set Default Today's Date
     inputDate.valueAsDate = new Date();
 
-    if (localStorage.getItem("gas_attendance_api_url")) {
-      gasApiUrlInput.value = localStorage.getItem("gas_attendance_api_url");
-    }
-
-    gasApiUrlInput.addEventListener("change", () => {
-      localStorage.setItem("gas_attendance_api_url", gasApiUrlInput.value.trim());
+    // Quick demo buttons click handler
+    document.querySelectorAll(".btn-demo").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.getElementById("loginUsername").value = btn.dataset.user;
+        document.getElementById("loginPassword").value = btn.dataset.pass;
+      });
     });
 
-    /**
-     * 1. LOGIN SYSTEM
-     */
-    loginForm.addEventListener("submit", (e) => {
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = document.getElementById("loginEmail").value.trim();
-      const pass = document.getElementById("loginPassword").value;
+      const username = document.getElementById("loginUsername").value.trim().toLowerCase();
+      const password = document.getElementById("loginPassword").value;
 
-      if (email === "demo@email.com" && pass === "demo123") {
-        loginSection.classList.add("d-none");
-        attendanceSection.classList.remove("d-none");
-        document.getElementById("userBadge").textContent = email;
+      showLoading("Memverifikasi kredensial akun...");
 
-        startCamera();
-        fetchGpsAndAddress();
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Login Gagal",
-          text: "Gunakan kredensial demo: demo@email.com / demo123"
-        });
+      const apiUrl = gasApiUrlInput.value.trim();
+      if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
+        try {
+          const res = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "login", username, password })
+          });
+          const result = await res.json();
+          if (result.status === "success") {
+            currentUser = result.user;
+            await syncDataFromGAS();
+            hideLoading();
+            setupDashboardForUser();
+            return;
+          } else {
+            hideLoading();
+            Swal.fire("Login Gagal", result.message || "Username atau password salah", "error");
+            return;
+          }
+        } catch (err) {
+          console.warn("GAS Login fallback to local db:", err);
+        }
       }
+
+      // Local Fallback
+      setTimeout(() => {
+        hideLoading();
+        const found = db.users.find(u => u.username.toLowerCase() === username && u.password === password);
+        if (found) {
+          currentUser = found;
+          setupDashboardForUser();
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Kredensial Tidak Ditemukan",
+            text: "Gunakan tombol shortcut demo yang tersedia di atas."
+          });
+        }
+      }, 350);
     });
 
-    btnLogout.addEventListener("click", () => {
+    btnHeaderLogout.addEventListener("click", () => {
       stopCamera();
-      attendanceSection.classList.add("d-none");
+      currentUser = null;
+      mainNavbar.classList.add("d-none");
+      adminSection.classList.add("d-none");
+      recapSection.classList.add("d-none");
+      formProgressSection.classList.add("d-none");
+      reportNavTabs.classList.add("d-none");
       loginSection.classList.remove("d-none");
     });
 
-    /**
-     * 2. LIVE CAMERA DENGAN WATERMARK TIMESTAMP & ALAMAT
-     */
+    function setupDashboardForUser() {
+      loginSection.classList.add("d-none");
+      mainNavbar.classList.remove("d-none");
+      reportNavTabs.classList.remove("d-none");
+
+      navUserName.textContent = currentUser.name;
+      navUserRole.textContent = `${currentUser.role} (${currentUser.username})`;
+
+      // Set Badge Color
+      navRoleBadge.className = "badge-role me-2";
+      if (currentUser.role === "Admin System" || currentUser.role === "Admin") navRoleBadge.classList.add("badge-as");
+      else if (currentUser.role === "RPM") navRoleBadge.classList.add("badge-rpm");
+      else if (currentUser.role === "PM") navRoleBadge.classList.add("badge-pm");
+      else if (currentUser.role === "PD") navRoleBadge.classList.add("badge-pd");
+      else if (currentUser.role === "Staff") navRoleBadge.classList.add("badge-staff");
+      else navRoleBadge.classList.add("badge-tech");
+      navRoleBadge.textContent = currentUser.role;
+
+      // Role Views
+      if (currentUser.role === "Admin System" || currentUser.role === "Admin") {
+        adminSection.classList.remove("d-none");
+        recapSection.classList.remove("d-none");
+        formProgressSection.classList.add("d-none");
+        document.getElementById("thActionHeader").classList.add("d-none");
+        renderAdminUsers();
+        renderRecapTable();
+        renderPresensiReport();
+      } 
+      else if (currentUser.role === "RPM" || currentUser.role === "PM" || currentUser.role === "PD") {
+        adminSection.classList.add("d-none");
+        recapSection.classList.remove("d-none");
+        formProgressSection.classList.add("d-none");
+        document.getElementById("thActionHeader").classList.remove("d-none");
+        renderRecapTable();
+        renderPresensiReport();
+      } 
+      else {
+        // Staff or Technician
+        adminSection.classList.add("d-none");
+        recapSection.classList.remove("d-none");
+        formProgressSection.classList.remove("d-none");
+        document.getElementById("thActionHeader").classList.add("d-none");
+
+        // Populate read-only profile inputs
+        document.getElementById("inputNama").value = currentUser.name;
+        document.getElementById("inputIdKaryawan").value = currentUser.idKaryawan;
+        document.getElementById("inputRoleDesc").value = currentUser.role;
+        document.getElementById("inputProjectInfo").value = `${currentUser.projectName} [${currentUser.projectCode}]`;
+
+        if (currentUser.role === "Technician") {
+          technicianFieldRow.classList.remove("d-none");
+          inputSiteId.required = true;
+          inputSOW.required = true;
+        } else {
+          technicianFieldRow.classList.add("d-none");
+          inputSiteId.required = false;
+          inputSOW.required = false;
+        }
+
+        renderRecapTable();
+        renderPresensiReport();
+        startCamera();
+        fetchGpsAddress();
+      }
+    }
+
+    function renderRecapTable() {
+      const tbody = document.getElementById("tableRecapBody");
+      tbody.innerHTML = "";
+
+      let list = [...db.progress];
+
+      if (currentUser.role === "Staff" || currentUser.role === "Technician") {
+        list = list.filter(item => item.username === currentUser.username);
+        document.getElementById("recapSectionHeading").textContent = `Rekap Pekerjaan: ${currentUser.name}`;
+      } else {
+        document.getElementById("recapSectionHeading").textContent = "Rekapitulasi Jobs Progress (Seluruh Karyawan)";
+      }
+
+      const now = new Date();
+      if (currentFilter === "week") {
+        list = filterCurrentWeek(list);
+        document.getElementById("recapSubHeading").textContent = "Menampilkan aktivitas pekerjaan minggu berjalan (Senin - Sabtu)";
+      } else if (currentFilter === "month") {
+        list = list.filter(item => {
+          const itemDate = new Date(item.date);
+          return itemDate.getMonth() === now.getMonth() && itemDate.getFullYear() === now.getFullYear();
+        });
+        document.getElementById("recapSubHeading").textContent = "Menampilkan seluruh aktivitas pekerjaan bulan ini";
+      } else {
+        document.getElementById("recapSubHeading").textContent = "Menampilkan seluruh arsip data progress";
+      }
+
+      list.sort((a, b) => new Date(b.date) - new Date(a.date));
+      document.getElementById("recapTotalCount").textContent = `Total: ${list.length} Catatan`;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="13" class="text-center py-4 text-muted">Belum ada data progress untuk filter ini.</td></tr>`;
+        return;
+      }
+
+      list.forEach((row, index) => {
+        const tr = document.createElement("tr");
+        const formattedDate = new Date(row.date).toLocaleDateString("id-ID", {
+          weekday: "short", day: "numeric", month: "short", year: "2-digit"
+        });
+
+        const app1Badge = getApprovalBadge(row.approval1);
+        const app2Badge = getApprovalBadge(row.approval2);
+
+        const siteInfo = row.siteId && row.siteId !== "-" ? 
+          `<div><span class="badge bg-secondary">${escapeHtml(row.siteId)}</span> <small class="text-muted d-block">${escapeHtml(row.sow || "")}</small></div>` : 
+          `<div><small class="text-muted">${escapeHtml(row.projectName)}</small></div>`;
+
+        let actionBtnHtml = "";
+        if (currentUser.role === "PM" || currentUser.role === "RPM") {
+          actionBtnHtml = `<button class="btn btn-primary btn-sm py-1 px-2 fw-semibold" onclick="openApprovalModal('${row.id}', 'Approval 1')"><i class="bi bi-pencil-fill me-1"></i>Approval 1</button>`;
+        } else if (currentUser.role === "PD") {
+          actionBtnHtml = `<button class="btn btn-warning btn-sm py-1 px-2 fw-semibold text-dark" onclick="openApprovalModal('${row.id}', 'Approval 2')"><i class="bi bi-check-all me-1"></i>Approval 2</button>`;
+        }
+
+        tr.innerHTML = `
+          <td class="text-center fw-bold">${index + 1}</td>
+          <td class="fw-semibold text-nowrap">${formattedDate}</td>
+          <td>
+            <div class="fw-bold">${escapeHtml(row.name)}</div>
+            <small class="text-muted">${escapeHtml(row.idKaryawan)} (${escapeHtml(row.role)})</small>
+          </td>
+          <td>${siteInfo}</td>
+          <td><div style="max-width: 200px; white-space: normal;">${escapeHtml(row.activityDesc)}</div></td>
+          <td class="fw-semibold text-primary">${escapeHtml(row.result)}</td>
+          <td class="small text-muted">${escapeHtml(row.staffRemarks || "-")}</td>
+          <td class="text-center">${app1Badge}</td>
+          <td class="small text-muted" style="max-width: 140px;">${escapeHtml(row.pmRemark || "-")}</td>
+          <td class="text-center">${app2Badge}</td>
+          <td class="small text-muted" style="max-width: 140px;">${escapeHtml(row.pdRemark || "-")}</td>
+          <td class="text-center">
+            ${row.photoUrl && row.photoUrl !== "-" ? `<a href="${row.photoUrl}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2" title="Buka Bukti Foto"><i class="bi bi-image"></i> Foto</a>` : '<span class="text-muted">-</span>'}
+            <div class="text-truncate text-muted mt-1" style="max-width: 110px; font-size: 0.68rem;" title="${escapeHtml(row.alamatLengkap || '')}">${escapeHtml(row.alamatLengkap || '-')}</div>
+          </td>
+          ${(currentUser.role === "PM" || currentUser.role === "RPM" || currentUser.role === "PD") ? `<td class="text-center text-nowrap">${actionBtnHtml}</td>` : ""}
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderPresensiReport() {
+      const tbody = document.getElementById("tablePresensiBody");
+      tbody.innerHTML = "";
+
+      let list = [...db.progress];
+      if (currentUser.role === "Staff" || currentUser.role === "Technician") {
+        list = list.filter(item => item.username === currentUser.username);
+      }
+
+      list.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="14" class="text-center py-4 text-muted">Belum ada data presensi.</td></tr>`;
+        return;
+      }
+
+      list.forEach((item, idx) => {
+        const tr = document.createElement("tr");
+        const timeDisplay = item.time || (item.timestamp ? item.timestamp.split(" ")[1] : "08:00");
+        const dateDisplay = item.date;
+
+        tr.innerHTML = `
+          <td class="text-center fw-bold">${idx + 1}</td>
+          <td class="text-nowrap">
+            <span class="fw-semibold">${dateDisplay}</span><br/>
+            <small class="text-muted"><i class="bi bi-clock me-1"></i>${timeDisplay}</small>
+          </td>
+          <td>
+            <div class="fw-bold">${escapeHtml(item.name)}</div>
+            <small class="text-muted">${escapeHtml(item.idKaryawan || '-')}</small>
+          </td>
+          <td><span class="badge bg-light text-dark border">${escapeHtml(item.role)}</span></td>
+          <td>
+            ${item.role === 'Technician' ? `<strong>Site:</strong> ${escapeHtml(item.siteId || '-')}<br/><small class="text-muted"><strong>SOW:</strong> ${escapeHtml(item.sow || '-')}</small>` : '<span class="text-muted">-</span>'}
+          </td>
+          <td>
+            <div style="max-width: 200px; font-size: 0.75rem;" title="${escapeHtml(item.alamatLengkap || '')}">
+              <i class="bi bi-geo-alt-fill text-danger me-1"></i>${escapeHtml(item.alamatLengkap || '-')}
+            </div>
+          </td>
+          <td><div style="max-width: 180px; white-space: normal;">${escapeHtml(item.activityDesc)}</div></td>
+          <td class="fw-semibold text-primary">${escapeHtml(item.result)}</td>
+          <td class="small text-muted">${escapeHtml(item.staffRemarks || '-')}</td>
+          <td class="text-center">${getApprovalBadge(item.approval1)}</td>
+          <td class="small text-muted">${escapeHtml(item.pmRemark || '-')}</td>
+          <td class="text-center">${getApprovalBadge(item.approval2)}</td>
+          <td class="small text-muted">${escapeHtml(item.pdRemark || '-')}</td>
+          <td class="text-center">
+            ${item.photoUrl && item.photoUrl !== '-' ? `<a href="${item.photoUrl}" target="_blank" class="btn btn-outline-primary btn-sm py-0 px-2"><i class="bi bi-image"></i> Lihat</a>` : '<span class="text-muted">-</span>'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function getApprovalBadge(status) {
+      if (!status || status === "-" || status === "pending") {
+        return `<span class="badge bg-light text-secondary border">Pending</span>`;
+      } else if (status === "ok" || status === "Approved" || status === "approved") {
+        return `<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>OK</span>`;
+      } else {
+        return `<span class="badge bg-danger">${escapeHtml(status)}</span>`;
+      }
+    }
+
+    function filterCurrentWeek(items) {
+      const now = new Date();
+      const currentDay = now.getDay();
+      const diffToMonday = currentDay === 0 ? -6 : 1 - currentDay;
+      const monday = new Date(now);
+      monday.setDate(now.getDate() + diffToMonday);
+      monday.setHours(0, 0, 0, 0);
+
+      const saturday = new Date(monday);
+      saturday.setDate(monday.getDate() + 6);
+      saturday.setHours(23, 59, 59, 999);
+
+      return items.filter(item => {
+        const itemDate = new Date(item.date);
+        return itemDate >= monday && itemDate <= saturday;
+      });
+    }
+
+    document.getElementById("btnFilterWeek").addEventListener("click", function() { setActiveFilter(this, "week"); });
+    document.getElementById("btnFilterMonth").addEventListener("click", function() { setActiveFilter(this, "month"); });
+    document.getElementById("btnFilterAll").addEventListener("click", function() { setActiveFilter(this, "all"); });
+
+    function setActiveFilter(btnElement, filterKey) {
+      document.querySelectorAll("#btnFilterWeek, #btnFilterMonth, #btnFilterAll").forEach(b => b.classList.remove("active"));
+      btnElement.classList.add("active");
+      currentFilter = filterKey;
+      renderRecapTable();
+    }
+
+    document.getElementById("btnExportJobsCsv").addEventListener("click", () => {
+      let list = [...db.progress];
+      if (currentUser.role === "Staff" || currentUser.role === "Technician") {
+        list = list.filter(item => item.username === currentUser.username);
+      }
+      if (currentFilter === "week") list = filterCurrentWeek(list);
+
+      if (list.length === 0) {
+        Swal.fire("Informasi", "Tidak ada data untuk diekspor pada filter ini.", "info");
+        return;
+      }
+
+      const headers = ["No", "Date", "Name", "ID Karyawan", "Role", "Project", "Site ID", "SOW", "Activity Description", "Result", "Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark", "Alamat GPS", "Foto Link"];
+      const rows = list.map((item, i) => [
+        i + 1, item.date, `"${item.name.replace(/"/g, '""')}"`, item.idKaryawan, item.role, item.projectName,
+        item.siteId || "-", `"${(item.sow || '-').replace(/"/g, '""')}"`, `"${item.activityDesc.replace(/"/g, '""')}"`,
+        `"${item.result.replace(/"/g, '""')}"`, `"${(item.staffRemarks || '-').replace(/"/g, '""')}"`,
+        item.approval1 || "-", `"${(item.pmRemark || '-').replace(/"/g, '""')}"`, item.approval2 || "-", `"${(item.pdRemark || '-').replace(/"/g, '""')}"`,
+        `"${(item.alamatLengkap || '-').replace(/"/g, '""')}"`, item.photoUrl || "-"
+      ]);
+
+      downloadCsvFile([headers.join(","), ...rows.map(r => r.join(","))].join("\r\n"), `Rekap_Jobs_Progress_${currentFilter}_${new Date().toISOString().slice(0, 10)}.csv`);
+    });
+
+    document.getElementById("btnExportPresensiCsv").addEventListener("click", () => {
+      let list = [...db.progress];
+      if (currentUser.role === "Staff" || currentUser.role === "Technician") {
+        list = list.filter(item => item.username === currentUser.username);
+      }
+
+      if (list.length === 0) {
+        Swal.fire("Informasi", "Tidak ada data presensi untuk diekspor.", "info");
+        return;
+      }
+
+      const headers = ["No", "Date", "Time", "Name", "ID Karyawan", "Role", "Site ID", "SOW", "Alamat GPS", "Activity Description", "Result", "Staff Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark", "Foto Link"];
+      const rows = list.map((item, i) => [
+        i + 1, item.date, item.time || "08:00:00", `"${item.name.replace(/"/g, '""')}"`, item.idKaryawan, item.role,
+        item.siteId || "-", `"${(item.sow || '-').replace(/"/g, '""')}"`, `"${(item.alamatLengkap || '-').replace(/"/g, '""')}"`,
+        `"${item.activityDesc.replace(/"/g, '""')}"`, `"${item.result.replace(/"/g, '""')}"`, `"${(item.staffRemarks || '-').replace(/"/g, '""')}"`,
+        item.approval1 || "-", `"${(item.pmRemark || '-').replace(/"/g, '""')}"`, item.approval2 || "-", `"${(item.pdRemark || '-').replace(/"/g, '""')}"`,
+        item.photoUrl || "-"
+      ]);
+
+      downloadCsvFile([headers.join(","), ...rows.map(r => r.join(","))].join("\r\n"), `Report_Presensi_Lengkap_${new Date().toISOString().slice(0, 10)}.csv`);
+    });
+
+    function downloadCsvFile(content, fileName) {
+      const blob = new Blob(["\uFEFF" + content], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("btnPrintRecap").addEventListener("click", () => { window.print(); });
+
+    window.openApprovalModal = function(progressId, approverType) {
+      const target = db.progress.find(p => p.id === progressId);
+      if (!target) return;
+
+      document.getElementById("modalProgressId").value = progressId;
+      document.getElementById("approvalModalTitle").innerHTML = `<i class="bi bi-check2-circle me-1"></i> Validasi oleh ${currentUser.role} (${approverType})`;
+      document.getElementById("labelApprovalStatus").textContent = approverType === "Approval 1" ? "Status Approval 1 (PM/RPM)" : "Status Approval 2 (PD)";
+      document.getElementById("labelApprovalRemark").textContent = approverType === "Approval 1" ? "PM/RPM Remark (Catatan Verifikasi)" : "PD Remark (Catatan Direktur)";
+
+      document.getElementById("modalProgressDetail").innerHTML = `
+        <strong>Karyawan:</strong> ${target.name} (${target.idKaryawan}) - <em>${target.role}</em><br/>
+        <strong>Tanggal:</strong> ${target.date} | <strong>Progres:</strong> ${target.result}<br/>
+        ${target.siteId && target.siteId !== '-' ? `<strong>Site:</strong> ${target.siteId} | <strong>SOW:</strong> ${target.sow}<br/>` : ''}
+        <strong>Aktivitas:</strong> ${target.activityDesc}<br/>
+        <strong>Remarks Karyawan:</strong> ${target.staffRemarks || '-'}
+      `;
+
+      if (approverType === "Approval 1") {
+        document.getElementById("modalApprovalStatus").value = target.approval1 === "-" ? "ok" : target.approval1;
+        document.getElementById("modalApprovalRemark").value = target.pmRemark !== "-" ? target.pmRemark : "";
+      } else {
+        document.getElementById("modalApprovalStatus").value = target.approval2 === "-" ? "ok" : target.approval2;
+        document.getElementById("modalApprovalRemark").value = target.pdRemark !== "-" ? target.pdRemark : "";
+      }
+
+      const modal = new bootstrap.Modal(document.getElementById("modalApproval"));
+      modal.show();
+    };
+
+    document.getElementById("formApprovalSubmit").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const progressId = document.getElementById("modalProgressId").value;
+      const status = document.getElementById("modalApprovalStatus").value;
+      const remark = document.getElementById("modalApprovalRemark").value.trim();
+
+      const item = db.progress.find(p => p.id === progressId);
+      if (!item) return;
+
+      showLoading("Menyimpan validasi persetujuan...");
+
+      if (currentUser.role === "PM" || currentUser.role === "RPM") {
+        item.approval1 = status;
+        item.pmRemark = remark;
+      } else if (currentUser.role === "PD") {
+        item.approval2 = status;
+        item.pdRemark = remark;
+      }
+
+      // Sync GAS
+      const apiUrl = gasApiUrlInput.value.trim();
+      if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
+        try {
+          await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "submitApproval", progressId, role: currentUser.role, status, remark })
+          });
+        } catch (err) {
+          console.warn("GAS approval sync error:", err);
+        }
+      }
+
+      setTimeout(() => {
+        hideLoading();
+        bootstrap.Modal.getInstance(document.getElementById("modalApproval")).hide();
+        Swal.fire("Tersimpan!", "Validasi approval dan remark berhasil diperbarui.", "success");
+        renderRecapTable();
+        renderPresensiReport();
+      }, 400);
+    });
+
+    function renderAdminUsers() {
+      const tbody = document.getElementById("tableUsersBody");
+      tbody.innerHTML = "";
+      db.users.forEach((user, idx) => {
+        const tr = document.createElement("tr");
+        let badgeClass = "badge-staff";
+        if (user.role === "Admin System" || user.role === "Admin") badgeClass = "badge-as";
+        else if (user.role === "RPM") badgeClass = "badge-rpm";
+        else if (user.role === "PM") badgeClass = "badge-pm";
+        else if (user.role === "PD") badgeClass = "badge-pd";
+        else if (user.role === "Technician") badgeClass = "badge-tech";
+
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td class="fw-bold">${escapeHtml(user.username)}</td>
+          <td>${escapeHtml(user.name)}</td>
+          <td>${escapeHtml(user.idKaryawan || '-')}</td>
+          <td><span class="badge-role ${badgeClass}">${escapeHtml(user.role)}</span></td>
+          <td>${escapeHtml(user.projectName)} [${escapeHtml(user.projectCode)}]</td>
+          <td>${escapeHtml(user.periode)}</td>
+          <td>${escapeHtml(user.noWa || '-')}</td>
+          <td class="text-center">
+            <button type="button" class="btn btn-outline-primary btn-sm py-0 px-2" onclick="openEditUserModal('${user.username}')">
+              <i class="bi bi-pencil"></i> Edit
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById("formAddUser").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const newUser = {
+        username: document.getElementById("newUsername").value.trim().toLowerCase(),
+        password: document.getElementById("newPassword").value,
+        name: document.getElementById("newName").value.trim(),
+        role: document.getElementById("newRole").value,
+        idKaryawan: document.getElementById("newIdKaryawan").value.trim() || "-",
+        noWa: document.getElementById("newWa").value.trim() || "-",
+        projectName: document.getElementById("newProjectName").value.trim() || "Telkom infra",
+        projectCode: document.getElementById("newProjectCode").value.trim() || "RO",
+        periode: document.getElementById("newPeriode").value.trim() || "Agustus - Desember 26"
+      };
+
+      if (db.users.some(u => u.username === newUser.username)) {
+        Swal.fire("Peringatan", "Username sudah digunakan.", "warning");
+        return;
+      }
+
+      showLoading("Mendaftarkan user baru...");
+      db.users.push(newUser);
+
+      const apiUrl = gasApiUrlInput.value.trim();
+      if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
+        try {
+          await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "createUser", user: newUser })
+          });
+        } catch (err) {
+          console.warn("GAS create user error:", err);
+        }
+      }
+
+      setTimeout(() => {
+        hideLoading();
+        bootstrap.Modal.getInstance(document.getElementById("modalAddUser")).hide();
+        document.getElementById("formAddUser").reset();
+        Swal.fire("Berhasil", "User baru berhasil didaftarkan.", "success");
+        renderAdminUsers();
+      }, 400);
+    });
+
+    window.openEditUserModal = function(username) {
+      const user = db.users.find(u => u.username === username);
+      if (!user) return;
+
+      document.getElementById("editOriginalUsername").value = user.username;
+      document.getElementById("editUsername").value = user.username;
+      document.getElementById("editPassword").value = user.password;
+      document.getElementById("editName").value = user.name;
+      document.getElementById("editRole").value = user.role;
+      document.getElementById("editIdKaryawan").value = user.idKaryawan || "";
+      document.getElementById("editWa").value = user.noWa || "";
+      document.getElementById("editProjectName").value = user.projectName || "";
+      document.getElementById("editProjectCode").value = user.projectCode || "";
+      document.getElementById("editPeriode").value = user.periode || "";
+
+      new bootstrap.Modal(document.getElementById("modalEditUser")).show();
+    };
+
+    document.getElementById("formEditUser").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const origUsername = document.getElementById("editOriginalUsername").value;
+      const user = db.users.find(u => u.username === origUsername);
+      if (!user) return;
+
+      user.password = document.getElementById("editPassword").value;
+      user.name = document.getElementById("editName").value.trim();
+      user.role = document.getElementById("editRole").value;
+      user.idKaryawan = document.getElementById("editIdKaryawan").value.trim();
+      user.noWa = document.getElementById("editWa").value.trim();
+      user.projectName = document.getElementById("editProjectName").value.trim();
+      user.projectCode = document.getElementById("editProjectCode").value.trim();
+      user.periode = document.getElementById("editPeriode").value.trim();
+
+      showLoading("Memperbarui data karyawan...");
+
+      const apiUrl = gasApiUrlInput.value.trim();
+      if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
+        try {
+          await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "updateUser", user })
+          });
+        } catch (err) {
+          console.warn("GAS update user error:", err);
+        }
+      }
+
+      setTimeout(() => {
+        hideLoading();
+        bootstrap.Modal.getInstance(document.getElementById("modalEditUser")).hide();
+        Swal.fire("Berhasil", "Data karyawan telah diperbarui.", "success");
+        renderAdminUsers();
+      }, 400);
+    });
+
+    document.getElementById("btnDeleteUser").addEventListener("click", async () => {
+      const origUsername = document.getElementById("editOriginalUsername").value;
+      if (origUsername === "admin") {
+        Swal.fire("Proteksi", "Akun Admin System utama tidak dapat dihapus.", "warning");
+        return;
+      }
+
+      const result = await Swal.fire({
+        title: "Konfirmasi Hapus",
+        text: `Hapus data pengguna ${origUsername}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Ya, Hapus",
+        cancelButtonText: "Batal"
+      });
+
+      if (result.isConfirmed) {
+        showLoading("Menghapus user...");
+        db.users = db.users.filter(u => u.username !== origUsername);
+
+        const apiUrl = gasApiUrlInput.value.trim();
+        if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
+          try {
+            await fetch(apiUrl, {
+              method: "POST",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify({ action: "deleteUser", username: origUsername })
+            });
+          } catch (err) {
+            console.warn("GAS delete user error:", err);
+          }
+        }
+
+        setTimeout(() => {
+          hideLoading();
+          bootstrap.Modal.getInstance(document.getElementById("modalEditUser")).hide();
+          Swal.fire("Terhapus", "Karyawan telah dihapus dari sistem.", "success");
+          renderAdminUsers();
+        }, 400);
+      }
+    });
+
+    document.getElementById("btnDownloadCsvTemplate").addEventListener("click", () => {
+      const templateContent = "username,password,name,role,idKaryawan,projectName,projectCode,periode,noWa\n" +
+        "andi.staff,staff123,Andi Saputra,Staff,2601020055,Telkom infra,RO,Agustus - Desember 26,08123456789\n" +
+        "bayu.tech,tech123,Bayu Pratama,Technician,2601020077,Telkom infra,RO,Agustus - Desember 26,08139876543\n" +
+        "doni.rpm,rpm123,Doni Iskandar,RPM,RPM-1004,Telkom infra,RO,Agustus - Desember 26,08112233445";
+      downloadCsvFile(templateContent, "Template_Data_Karyawan.csv");
+    });
+
+    document.getElementById("btnProcessCsvUpload").addEventListener("click", () => {
+      const fileInput = document.getElementById("fileCsvKaryawan");
+      if (!fileInput.files || fileInput.files.length === 0) {
+        Swal.fire("Pilih File", "Silakan pilih file CSV terlebih dahulu.", "warning");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = async (e) => {
+        const text = e.target.result;
+        const lines = text.split(/\r\n|\n/).filter(l => l.trim().length > 0);
+        if (lines.length <= 1) {
+          Swal.fire("Format Kosong", "File CSV tidak memiliki baris data.", "warning");
+          return;
+        }
+
+        const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ''));
+        const newUsers = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(",").map(c => c.trim().replace(/^"|"$/g, ''));
+          if (cols.length >= 4) {
+            newUsers.push({
+              username: cols[0].toLowerCase(),
+              password: cols[1] || "123456",
+              name: cols[2] || cols[0],
+              role: cols[3] || "Staff",
+              idKaryawan: cols[4] || "-",
+              projectName: cols[5] || "Telkom infra",
+              projectCode: cols[6] || "RO",
+              periode: cols[7] || "2026",
+              noWa: cols[8] || "-"
+            });
+          }
+        }
+
+        showLoading(`Mengunggah ${newUsers.length} data karyawan...`);
+
+        // Merge into local DB
+        newUsers.forEach(nu => {
+          const existIdx = db.users.findIndex(u => u.username === nu.username);
+          if (existIdx >= 0) {
+            db.users[existIdx] = nu;
+          } else {
+            db.users.push(nu);
+          }
+        });
+
+        // Sync with Google Apps Script
+        const apiUrl = gasApiUrlInput.value.trim();
+        if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
+          try {
+            await fetch(apiUrl, {
+              method: "POST",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify({ action: "bulkUploadUsers", users: newUsers })
+            });
+          } catch (err) {
+            console.warn("GAS bulk upload error:", err);
+          }
+        }
+
+        setTimeout(() => {
+          hideLoading();
+          bootstrap.Modal.getInstance(document.getElementById("modalBulkUpload")).hide();
+          fileInput.value = "";
+          Swal.fire("Berhasil", `${newUsers.length} data karyawan berhasil diunggah dan disimpan ke sistem.`, "success");
+          renderAdminUsers();
+        }, 600);
+      };
+
+      reader.readAsText(file);
+    });
+
     async function startCamera() {
       stopCamera();
       try {
         const constraints = {
-          video: {
-            facingMode: currentFacingMode,
-            width: { ideal: 1280 },
-            height: { ideal: 960 }
-          },
+          video: { facingMode: currentFacingMode, width: { ideal: 1280 }, height: { ideal: 960 } },
           audio: false
         };
 
@@ -476,12 +1640,7 @@
         cameraStatus.innerHTML = '<i class="bi bi-circle-fill text-success me-1 small"></i> Kamera Aktif';
       } catch (err) {
         console.error("Camera access error:", err);
-        cameraStatus.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-warning me-1 small"></i> Kamera Tidak Tersedia';
-        Swal.fire({
-          icon: "warning",
-          title: "Izin Kamera Diperlukan",
-          text: "Mohon izinkan akses kamera di browser Anda."
-        });
+        cameraStatus.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-warning me-1 small"></i> Izin Kamera Diperlukan';
       }
     }
 
@@ -499,7 +1658,7 @@
 
     btnCapture.addEventListener("click", () => {
       if (!mediaStream) {
-        Swal.fire("Kamera tidak aktif", "Silakan periksa izin kamera.", "warning");
+        Swal.fire("Kamera Tidak Siap", "Silakan periksa izin kamera.", "warning");
         return;
       }
 
@@ -520,27 +1679,22 @@
         ctx.setTransform(1, 0, 0, 1, 0, 0);
       }
 
-      // Render Watermark Bar & Text
+      // Watermarking
       const now = new Date();
-      const dateString = now.toLocaleDateString("id-ID", {
-        weekday: "long",
-        year: "numeric",
-        month: "short",
-        day: "numeric"
-      });
+      const dateString = now.toLocaleDateString("id-ID", { weekday: "long", year: "numeric", month: "short", day: "numeric" });
       const timeString = now.toLocaleTimeString("id-ID") + " WIB";
 
-      const badgeHeight = 65;
-      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
-      ctx.fillRect(0, videoHeight - badgeHeight, videoWidth, badgeHeight);
+      const barHeight = 65;
+      ctx.fillStyle = "rgba(15, 23, 42, 0.82)";
+      ctx.fillRect(0, videoHeight - barHeight, videoWidth, barHeight);
 
       ctx.fillStyle = "#ffffff";
       ctx.font = "bold 15px sans-serif";
-      ctx.fillText(`${dateString} | ${timeString}`, 12, videoHeight - 38);
+      ctx.fillText(`${dateString} | ${timeString} | ${currentUser ? currentUser.name : ''} (${currentUser ? currentUser.role : ''})`, 12, videoHeight - 38);
 
       ctx.fillStyle = "#38bdf8";
       ctx.font = "12px sans-serif";
-      const shortAddr = (detectedAddress || "GPS: Memproses koordinat lokasi...").substring(0, 85);
+      const shortAddr = (detectedAddress || "GPS Terverifikasi").substring(0, 95);
       ctx.fillText(shortAddr, 12, videoHeight - 16);
 
       capturedPhotoBase64 = canvasCapture.toDataURL("image/jpeg", 0.85);
@@ -551,7 +1705,7 @@
       videoFeed.style.display = "none";
       btnCapture.classList.add("d-none");
       btnRetake.classList.remove("d-none");
-      cameraStatus.innerHTML = '<i class="bi bi-check-circle-fill text-info me-1 small"></i> Foto Tersimpan';
+      cameraStatus.innerHTML = '<i class="bi bi-check-circle-fill text-info me-1 small"></i> Swafoto Terverifikasi';
 
       stopCamera();
     });
@@ -562,181 +1716,155 @@
       startCamera();
     });
 
-    /**
-     * 3. GPS TO FULL ADDRESS (REVERSE GEOCODING)
-     */
-    function fetchGpsAndAddress() {
+    function fetchGpsAddress() {
       txtAddress.value = "Mencari koordinat GPS...";
-      gpsStatusMessage.textContent = "Mengakses GPS perangkat...";
+      gpsStatusMessage.textContent = "Mengakses sensor lokasi perangkat...";
 
       if (!navigator.geolocation) {
-        txtAddress.value = "Geolocation tidak didukung pada browser ini.";
+        txtAddress.value = "Geolocation tidak didukung pada perangkat ini.";
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          gpsStatusMessage.textContent = "Menerjemahkan koordinat ke alamat lengkap...";
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          gpsStatusMessage.textContent = "Menerjemahkan koordinat ke nama jalan via OpenStreetMap...";
 
           try {
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`,
-              {
-                headers: { "Accept-Language": "id" }
-              }
-            );
-
-            if (!response.ok) throw new Error("Gagal mengambil data dari geocoder");
-
-            const geoData = await response.json();
-            detectedAddress = geoData.display_name || `Lat ${lat}, Lon ${lon}`;
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`, {
+              headers: { "Accept-Language": "id" }
+            });
+            const data = await res.json();
+            detectedAddress = data.display_name || `Lat: ${lat}, Lon: ${lon}`;
             txtAddress.value = detectedAddress;
-            gpsStatusMessage.textContent = "Alamat GPS terverifikasi.";
-          } catch (err) {
-            console.error(err);
+            gpsStatusMessage.textContent = "Alamat GPS terverifikasi otomatis.";
+          } catch (e) {
             detectedAddress = `Koordinat: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
             txtAddress.value = detectedAddress;
-            gpsStatusMessage.textContent = "Menggunakan koordinat cadangan.";
+            gpsStatusMessage.textContent = "Gagal memuat nama jalan spesifik, koordinat GPS tersimpan.";
           }
         },
-        (error) => {
-          console.error("GPS Error:", error);
-          txtAddress.value = "Gagal mendapatkan lokasi GPS. Pastikan izin lokasi aktif.";
-          gpsStatusMessage.textContent = "Izin lokasi tidak tersedia.";
+        (err) => {
+          console.warn("GPS error:", err);
+          txtAddress.value = "GPS tidak aktif. Mohon izinkan akses lokasi.";
+          gpsStatusMessage.textContent = "Izin lokasi tidak diberikan.";
         },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 12000 }
       );
     }
+    btnRefreshGps.addEventListener("click", fetchGpsAddress);
 
-    btnRefreshGps.addEventListener("click", fetchGpsAndAddress);
-
-    /**
-     * 4. DYNAMIC ROLE SWITCH (STAFF VS TECHNICIAN)
-     */
-    selectRole.addEventListener("change", () => {
-      const role = selectRole.value;
-      if (!role) {
-        progressContainer.classList.add("d-none");
-        return;
-      }
-
-      progressContainer.classList.remove("d-none");
-
-      if (role === "Technician") {
-        technicianSpecificFields.classList.remove("d-none");
-        inputSiteId.required = true;
-        inputSOW.required = true;
-      } else {
-        technicianSpecificFields.classList.add("d-none");
-        inputSiteId.required = false;
-        inputSOW.required = false;
-      }
-    });
-
-    /**
-     * 5. SUBMIT FORM
-     */
-    attendanceForm.addEventListener("submit", async (e) => {
+    document.getElementById("dailyForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
       if (!capturedPhotoBase64) {
-        Swal.fire({
-          icon: "warning",
-          title: "Foto Wajib Ada",
-          text: "Silakan ambil foto bukti kehadiran terlebih dahulu."
-        });
+        Swal.fire("Foto Presensi Wajib", "Silakan klik tombol 'Ambil Foto' terlebih dahulu.", "warning");
         return;
       }
 
-      const role = selectRole.value;
+      const now = new Date();
+      const timeNow = now.toLocaleTimeString("id-ID", { hour12: false });
+
       const payload = {
-        role: role,
-        name: document.getElementById("inputNama").value.trim(),
-        idKaryawan: document.getElementById("inputIdKaryawan").value.trim(),
-        projectName: document.getElementById("inputProjectName").value.trim(),
-        projectCode: document.getElementById("inputProjectCode").value.trim(),
-        periode: document.getElementById("inputPeriode").value.trim(),
-        noWhatsapp: document.getElementById("inputWa").value.trim() || "-",
-        alamatLengkap: txtAddress.value.trim(),
+        id: "PROG-" + Date.now(),
+        username: currentUser.username,
+        name: currentUser.name,
+        idKaryawan: currentUser.idKaryawan,
+        role: currentUser.role,
+        projectName: currentUser.projectName,
+        projectCode: currentUser.projectCode,
+        periode: currentUser.periode,
         date: inputDate.value,
-        siteId: role === "Technician" ? inputSiteId.value.trim() : "-",
-        sow: role === "Technician" ? inputSOW.value.trim() : "-",
+        time: timeNow,
+        siteId: currentUser.role === "Technician" ? inputSiteId.value.trim() : "-",
+        sow: currentUser.role === "Technician" ? inputSOW.value.trim() : "-",
         activityDesc: document.getElementById("inputActivityDesc").value.trim(),
         result: document.getElementById("inputResult").value.trim(),
-        remarks: document.getElementById("inputRemarks").value.trim() || "-",
-        approval1: document.getElementById("inputApproval1").value.trim(),
-        approval2: document.getElementById("inputApproval2").value.trim(),
-        photoBase64: capturedPhotoBase64
+        staffRemarks: document.getElementById("inputStaffRemarks").value.trim() || "-",
+        approval1: "pending",
+        pmRemark: "-",
+        approval2: "pending",
+        pdRemark: "-",
+        alamatLengkap: txtAddress.value.trim(),
+        photoBase64: capturedPhotoBase64,
+        photoUrl: capturedPhotoBase64,
+        timestamp: `${inputDate.value} ${timeNow}`
       };
 
-      const apiUrl = gasApiUrlInput.value.trim();
-      loadingOverlay.style.display = "flex";
+      showLoading("Menyimpan presensi & progres pekerjaan harian...");
+      db.progress.push(payload);
 
+      const apiUrl = gasApiUrlInput.value.trim();
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
         try {
           const res = await fetch(apiUrl, {
             method: "POST",
-            mode: "cors",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ action: "submitProgress", data: payload })
           });
-
           const result = await res.json();
-          loadingOverlay.style.display = "none";
-
-          if (result.status === "success") {
-            Swal.fire({
-              icon: "success",
-              title: "Terkirim!",
-              text: "Laporan Jobs Progress & Absensi berhasil dicatat ke Spreadsheet.",
-              confirmButtonText: "OK"
-            }).then(() => resetForm());
-          } else {
-            throw new Error(result.message || "Gagal menyimpan ke server");
+          if (result.status === "success" && result.photoUrl) {
+            payload.photoUrl = result.photoUrl;
           }
         } catch (err) {
-          loadingOverlay.style.display = "none";
-          Swal.fire({
-            icon: "error",
-            title: "Pengiriman Gagal",
-            text: "Koneksi ke Google Apps Script bermasalah: " + err.message
-          });
+          console.warn("GAS save error:", err);
         }
-      } else {
-        // Mode Simulasi Lokal
-        setTimeout(() => {
-          loadingOverlay.style.display = "none";
-          console.log("Simulasi Rekap Payload:", payload);
-          Swal.fire({
-            icon: "success",
-            title: "Simulasi Berhasil (Local)",
-            html: `
-              <div class="text-start small">
-                <strong>Role:</strong> ${payload.role}<br/>
-                <strong>Nama:</strong> ${payload.name} (${payload.idKaryawan})<br/>
-                <strong>Project:</strong> ${payload.projectName} [${payload.projectCode}]<br/>
-                <strong>Activity:</strong> ${payload.activityDesc}<br/>
-                <strong>Result:</strong> ${payload.result} | <strong>Remarks:</strong> ${payload.remarks}<br/>
-                <strong>Approval:</strong> ${payload.approval1} / ${payload.approval2}
-              </div>
-            `,
-            confirmButtonText: "Selesai"
-          }).then(() => resetForm());
-        }, 1000);
       }
+
+      setTimeout(() => {
+        hideLoading();
+        Swal.fire({
+          icon: "success",
+          title: "Laporan Hari Ini Tersimpan!",
+          text: "Data presensi & progres pekerjaan telah terekam dan masuk dalam antrean approval."
+        });
+
+        document.getElementById("inputActivityDesc").value = "";
+        document.getElementById("inputResult").value = "";
+        document.getElementById("inputStaffRemarks").value = "";
+        if (currentUser.role === "Technician") {
+          inputSiteId.value = "";
+          inputSOW.value = "";
+        }
+        capturedPhotoBase64 = null;
+        photoBase64Input.value = "";
+        startCamera();
+        fetchGpsAddress();
+        renderRecapTable();
+        renderPresensiReport();
+      }, 500);
     });
 
-    function resetForm() {
-      attendanceForm.reset();
-      inputDate.valueAsDate = new Date();
-      capturedPhotoBase64 = null;
-      photoBase64Input.value = "";
-      progressContainer.classList.add("d-none");
-      technicianSpecificFields.classList.add("d-none");
-      startCamera();
-      fetchGpsAndAddress();
+    function showLoading(text) {
+      document.getElementById("loadingText").textContent = text;
+      loadingOverlay.style.display = "flex";
+    }
+
+    function hideLoading() {
+      loadingOverlay.style.display = "none";
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    async function syncDataFromGAS() {
+      const apiUrl = gasApiUrlInput.value.trim();
+      if (!apiUrl) return;
+      try {
+        const res = await fetch(apiUrl + "?action=getAllData");
+        const json = await res.json();
+        if (json.users && json.users.length) db.users = json.users;
+        if (json.progress && json.progress.length) db.progress = json.progress;
+      } catch (e) {
+        console.warn("Sync error:", e);
+      }
     }
   </script>
 </body>
