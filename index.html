@@ -212,25 +212,12 @@
       </div>
 
       <div class="p-4">
-        <!-- Role Switcher Shortcuts -->
-        <div class="mb-3">
-          <label class="form-label text-muted fw-bold" style="font-size: 0.7rem; text-transform: uppercase;">Akses Cepat Mode Akun Demo:</label>
-          <div class="d-flex flex-wrap gap-1">
-            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2 small btn-demo" data-user="denizar" data-pass="staff123">Staff</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2 small btn-demo" data-user="teguh" data-pass="tech123">Technician</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2 small btn-demo" data-user="rpm.irwan" data-pass="rpm123">RPM</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2 small btn-demo" data-user="pm.hendra" data-pass="pm123">PM</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-2 small btn-demo" data-user="pd.bambang" data-pass="pd123">PD</button>
-            <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2 small btn-demo" data-user="admin" data-pass="admin123">Admin System (AS)</button>
-          </div>
-        </div>
-
-        <form id="loginForm">
+        <form id="loginForm" autocomplete="off">
           <div class="mb-3">
             <label class="form-label small fw-semibold">Username / Email</label>
             <div class="input-group">
               <span class="input-group-text bg-light text-muted"><i class="bi bi-person"></i></span>
-              <input type="text" id="loginUsername" class="form-control" value="admin" required placeholder="Masukkan username" />
+              <input type="text" id="loginUsername" class="form-control" required placeholder="Masukkan username" autocomplete="off" spellcheck="false" />
             </div>
           </div>
 
@@ -238,7 +225,10 @@
             <label class="form-label small fw-semibold">Password</label>
             <div class="input-group">
               <span class="input-group-text bg-light text-muted"><i class="bi bi-key"></i></span>
-              <input type="password" id="loginPassword" class="form-control" value="admin123" required placeholder="Masukkan password" />
+              <input type="password" id="loginPassword" class="form-control" required placeholder="Masukkan password" autocomplete="new-password" spellcheck="false" />
+              <button class="btn btn-outline-secondary" type="button" id="btnToggleLoginPassword" title="Lihat/Sembunyikan Password">
+                <i class="bi bi-eye" id="iconToggleLoginPassword"></i>
+              </button>
             </div>
           </div>
 
@@ -696,16 +686,21 @@
           <h6 class="modal-title fw-bold"><i class="bi bi-person-plus me-1"></i> Daftarkan Pengguna Baru</h6>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <form id="formAddUser">
+        <form id="formAddUser" autocomplete="off">
           <div class="modal-body p-3">
             <div class="row g-2 mb-2">
               <div class="col-6">
                 <label class="form-label small fw-semibold">Username <span class="text-danger">*</span></label>
-                <input type="text" id="newUsername" class="form-control form-control-sm" required placeholder="misal: ahmad" />
+                <input type="text" id="newUsername" class="form-control form-control-sm" required placeholder="misal: ahmad" autocomplete="off" />
               </div>
               <div class="col-6">
                 <label class="form-label small fw-semibold">Password <span class="text-danger">*</span></label>
-                <input type="password" id="newPassword" class="form-control form-control-sm" required placeholder="Password" />
+                <div class="input-group input-group-sm">
+                  <input type="password" id="newPassword" class="form-control form-control-sm" required placeholder="Password" autocomplete="new-password" />
+                  <button class="btn btn-outline-secondary" type="button" id="btnToggleNewPassword" title="Lihat Password">
+                    <i class="bi bi-eye" id="iconToggleNewPassword"></i>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -768,20 +763,25 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-0 shadow">
         <div class="modal-header bg-primary text-white">
-          <h6 class="modal-title fw-bold"><i class="bi bi-pencil-square me-1"></i> Edit Data Karyawan</h6>
+          <h6 class="modal-title fw-bold"><i class="bi bi-pencil-square me-1"></i> Edit Data & Kredensial Karyawan</h6>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <form id="formEditUser">
+        <form id="formEditUser" autocomplete="off">
           <div class="modal-body p-3">
             <input type="hidden" id="editOriginalUsername" />
             <div class="row g-2 mb-2">
               <div class="col-6">
-                <label class="form-label small fw-semibold">Username</label>
-                <input type="text" id="editUsername" class="form-control form-control-sm bg-light" readonly />
+                <label class="form-label small fw-semibold">Username <span class="text-danger">*</span></label>
+                <input type="text" id="editUsername" class="form-control form-control-sm" required placeholder="Ubah username" autocomplete="off" />
               </div>
               <div class="col-6">
-                <label class="form-label small fw-semibold">Password Baru</label>
-                <input type="text" id="editPassword" class="form-control form-control-sm" placeholder="Ubah password" />
+                <label class="form-label small fw-semibold">Password <span class="text-danger">*</span></label>
+                <div class="input-group input-group-sm">
+                  <input type="password" id="editPassword" class="form-control form-control-sm" required placeholder="Ubah password" autocomplete="new-password" />
+                  <button class="btn btn-outline-secondary" type="button" id="btnToggleEditPassword" title="Lihat Password">
+                    <i class="bi bi-eye" id="iconToggleEditPassword"></i>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1110,13 +1110,24 @@
     inputDate.value = todayStr;
     document.getElementById("labelTodayDate").textContent = new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
-    // Quick demo shortcuts
-    document.querySelectorAll(".btn-demo").forEach(btn => {
+    function setupPasswordToggle(btnId, inputId, iconId) {
+      const btn = document.getElementById(btnId);
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (!btn || !input || !icon) return;
       btn.addEventListener("click", () => {
-        document.getElementById("loginUsername").value = btn.dataset.user;
-        document.getElementById("loginPassword").value = btn.dataset.pass;
+        if (input.type === "password") {
+          input.type = "text";
+          icon.className = "bi bi-eye-slash";
+        } else {
+          input.type = "password";
+          icon.className = "bi bi-eye";
+        }
       });
-    });
+    }
+    setupPasswordToggle("btnToggleLoginPassword", "loginPassword", "iconToggleLoginPassword");
+    setupPasswordToggle("btnToggleEditPassword", "editPassword", "iconToggleEditPassword");
+    setupPasswordToggle("btnToggleNewPassword", "newPassword", "iconToggleNewPassword");
 
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -2150,6 +2161,8 @@
       document.getElementById("editOriginalUsername").value = user.username;
       document.getElementById("editUsername").value = user.username;
       document.getElementById("editPassword").value = user.password;
+      document.getElementById("editPassword").type = "password";
+      document.getElementById("iconToggleEditPassword").className = "bi bi-eye";
       document.getElementById("editName").value = user.name;
       document.getElementById("editRole").value = user.role;
       document.getElementById("editIdKaryawan").value = user.idKaryawan || "";
@@ -2163,11 +2176,20 @@
 
     document.getElementById("formEditUser").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const origUsername = document.getElementById("editOriginalUsername").value;
-      const user = db.users.find(u => u.username === origUsername);
+      const origUsername = document.getElementById("editOriginalUsername").value.trim().toLowerCase();
+      const newUsername = document.getElementById("editUsername").value.trim().toLowerCase();
+      const newPassword = document.getElementById("editPassword").value;
+
+      if (newUsername !== origUsername && db.users.some(u => u.username.toLowerCase() === newUsername)) {
+        Swal.fire("Peringatan", `Username "${newUsername}" sudah digunakan oleh user lain.`, "warning");
+        return;
+      }
+
+      const user = db.users.find(u => u.username.toLowerCase() === origUsername);
       if (!user) return;
 
-      user.password = document.getElementById("editPassword").value;
+      user.username = newUsername;
+      user.password = newPassword;
       user.name = document.getElementById("editName").value.trim();
       user.role = document.getElementById("editRole").value;
       user.idKaryawan = document.getElementById("editIdKaryawan").value.trim();
@@ -2176,7 +2198,16 @@
       user.projectCode = document.getElementById("editProjectCode").value.trim();
       user.periode = document.getElementById("editPeriode").value.trim();
 
-      showLoading("Memperbarui data karyawan...");
+      // Sinkronkan riwayat progress jika username berganti
+      if (newUsername !== origUsername) {
+        db.progress.forEach(p => {
+          if (p.username.toLowerCase() === origUsername) {
+            p.username = newUsername;
+          }
+        });
+      }
+
+      showLoading("Memperbarui kredensial & data karyawan...");
 
       const apiUrl = gasApiUrlInput.value.trim();
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
@@ -2184,7 +2215,7 @@
           await fetch(apiUrl, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ action: "updateUser", user })
+            body: JSON.stringify({ action: "updateUser", user, originalUsername: origUsername })
           });
         } catch (err) {
           console.warn("GAS update user error:", err);
@@ -2194,7 +2225,7 @@
       setTimeout(() => {
         hideLoading();
         bootstrap.Modal.getInstance(document.getElementById("modalEditUser")).hide();
-        Swal.fire("Berhasil", "Data karyawan telah diperbarui.", "success");
+        Swal.fire("Berhasil", "Username, password, dan profil karyawan telah diperbarui.", "success");
         renderAdminUsers();
       }, 400);
     });
