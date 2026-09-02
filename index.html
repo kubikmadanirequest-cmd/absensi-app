@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Sistem Absensi Online</title>
+  <title>Sistem Absensi & Daily Jobs Progress</title>
   
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -15,7 +15,6 @@
       --primary-color: #1e3a8a;
       --secondary-color: #0284c7;
       --accent-color: #10b981;
-      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     }
 
     body {
@@ -39,7 +38,7 @@
       padding: 1.25rem 1.5rem;
     }
 
-    /* Video & Camera styling */
+    /* Live Camera Container */
     .camera-container {
       position: relative;
       width: 100%;
@@ -91,9 +90,9 @@
       z-index: 10;
     }
 
-    /* Form Section Dividers */
+    /* Section Header */
     .section-title {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -125,14 +124,6 @@
       z-index: 9999;
       color: white;
     }
-
-    .badge-demo {
-      background: rgba(255, 255, 255, 0.2);
-      border: 1px dashed rgba(255, 255, 255, 0.4);
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 0.8rem;
-    }
   </style>
 </head>
 <body>
@@ -140,20 +131,20 @@
   <!-- LOADING OVERLAY -->
   <div id="loadingOverlay">
     <div class="spinner-border text-light mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
-    <h6 class="fw-semibold" id="loadingText">Mengirim data absensi...</h6>
-    <small class="text-white-50">Mohon tidak menutup halaman</small>
+    <h6 class="fw-semibold" id="loadingText">Mengirim laporan & absensi...</h6>
+    <small class="text-white-50">Menyimpan data dan bukti foto...</small>
   </div>
 
-  <div class="container py-4" style="max-width: 640px;">
+  <div class="container py-4" style="max-width: 680px;">
 
-    <!-- ==================== SECTION 1: LOGIN SCREEN ==================== -->
+    <!-- ==================== SECTION 1: LOGIN ==================== -->
     <div id="loginSection" class="app-card">
       <div class="card-header-gradient text-center py-4">
         <div class="d-inline-flex p-3 bg-white bg-opacity-25 rounded-circle mb-2">
-          <i class="bi bi-person-bounding-box fs-1 text-white"></i>
+          <i class="bi bi-clock-history fs-1 text-white"></i>
         </div>
-        <h4 class="fw-bold mb-1">Presensi Lapangan & Kantor</h4>
-        <p class="mb-0 text-white-50 small">Sistem Absensi Terintegrasi GPS & Kamera</p>
+        <h4 class="fw-bold mb-1">Presensi & Daily Jobs Progress</h4>
+        <p class="mb-0 text-white-50 small">Sistem Rekap Harian & Mingguan Terintegrasi GPS</p>
       </div>
 
       <div class="p-4">
@@ -167,7 +158,7 @@
 
         <form id="loginForm">
           <div class="mb-3">
-            <label class="form-label small fw-semibold">Email / Akun</label>
+            <label class="form-label small fw-semibold">Email Pengguna</label>
             <div class="input-group">
               <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
               <input type="email" id="loginEmail" class="form-control" value="demo@email.com" required />
@@ -183,17 +174,17 @@
           </div>
 
           <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-            <i class="bi bi-box-arrow-in-right me-1"></i> Masuk ke Form Absensi
+            <i class="bi bi-box-arrow-in-right me-1"></i> Masuk ke Formulir
           </button>
         </form>
       </div>
     </div>
 
-    <!-- ==================== SECTION 2: ATTENDANCE FORM ==================== -->
+    <!-- ==================== SECTION 2: FORM ATTENDANCE & PROGRESS ==================== -->
     <div id="attendanceSection" class="app-card d-none">
       <div class="card-header-gradient d-flex justify-content-between align-items-center">
         <div>
-          <h5 class="fw-bold mb-0"><i class="bi bi-geo-alt-fill me-2"></i>Formulir Absensi</h5>
+          <h5 class="fw-bold mb-0"><i class="bi bi-journal-check me-2"></i>Daily Jobs Progress Form</h5>
           <small class="text-white-50" id="userBadge">demo@email.com</small>
         </div>
         <button id="btnLogout" class="btn btn-sm btn-outline-light" title="Keluar">
@@ -207,16 +198,16 @@
           <div class="accordion-item border">
             <h2 class="accordion-header">
               <button class="accordion-button collapsed py-2 small text-muted bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfig">
-                <i class="bi bi-gear-fill me-2"></i> Konfigurasi URL Google Apps Script Web App
+                <i class="bi bi-gear-fill me-2"></i> Konfigurasi Google Apps Script Web App URL
               </button>
             </h2>
             <div id="collapseConfig" class="accordion-collapse collapse" data-bs-parent="#apiConfigAccordion">
               <div class="accordion-body p-3 bg-light">
-                <label class="form-label small fw-bold">Apps Script Deployment URL:</label>
+                <label class="form-label small fw-bold">Deployment URL Web App:</label>
                 <input type="url" id="gasApiUrl" class="form-control form-control-sm" 
                        placeholder="https://script.google.com/macros/s/.../exec" />
                 <small class="text-muted d-block mt-1">
-                  Tempel URL Web App dari Google Apps Script (Access: Anyone). Jika dibiarkan kosong, data berjalan dalam <strong>Demo Simulation Mode</strong>.
+                  Tempel URL Web App dari Google Apps Script. Jika kosong, form berjalan dalam <strong>Demo Simulation Mode</strong>.
                 </small>
               </div>
             </div>
@@ -247,101 +238,123 @@
               </button>
             </div>
           </div>
-          <!-- Hidden canvas for rendering image & timestamp -->
           <canvas id="canvasCapture" class="d-none"></canvas>
           <input type="hidden" id="photoBase64Input" required />
 
           <!-- 2. LOKASI REVERSE GEOCODING -->
-          <div class="section-title"><i class="bi bi-pin-map"></i> Lokasi Saat Ini</div>
+          <div class="section-title"><i class="bi bi-pin-map"></i> Lokasi GPS Saat Ini</div>
           <div class="mb-3">
-            <label class="form-label small fw-semibold">Alamat Lengkap Terdeteksi (GPS)</label>
+            <label class="form-label small fw-semibold">Alamat Terdeteksi Otomatis</label>
             <div class="input-group">
               <span class="input-group-text bg-light"><i class="bi bi-geo-alt"></i></span>
-              <textarea id="txtAddress" class="form-control" rows="2" readonly placeholder="Mencari lokasi otomatis..."></textarea>
+              <textarea id="txtAddress" class="form-control" rows="2" readonly placeholder="Mencari titik lokasi otomatis..."></textarea>
               <button type="button" id="btnRefreshGps" class="btn btn-outline-secondary" title="Perbarui Lokasi">
                 <i class="bi bi-arrow-clockwise"></i>
               </button>
             </div>
-            <small class="text-muted" id="gpsStatusMessage">Mengambil data GPS dan reverse geocoding via OpenStreetMap...</small>
+            <small class="text-muted" id="gpsStatusMessage">Membaca GPS dan reverse geocoding via OpenStreetMap...</small>
           </div>
 
-          <!-- 3. DATA DIRI -->
-          <div class="section-title"><i class="bi bi-person-lines-fill"></i> Data Diri</div>
-          <div class="row g-2">
-            <div class="col-md-6 mb-2">
-              <label class="form-label small fw-semibold">Nama Lengkap <span class="text-danger">*</span></label>
-              <input type="text" id="inputNama" class="form-control" placeholder="Contoh: Budi Santoso" required />
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label small fw-semibold">No. WhatsApp <span class="text-danger">*</span></label>
-              <input type="tel" id="inputWa" class="form-control" placeholder="081234567890" required />
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label small fw-semibold">Project <span class="text-danger">*</span></label>
-              <input type="text" id="inputProject" class="form-control" placeholder="Nama Project" required />
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label small fw-semibold">Region <span class="text-danger">*</span></label>
-              <input type="text" id="inputRegion" class="form-control" placeholder="Contoh: Jabodetabek / Jabar" required />
-            </div>
-          </div>
-
-          <!-- 4. JENIS PEKERJAAN & DYNAMIC FIELDS -->
-          <div class="section-title"><i class="bi bi-briefcase"></i> Data Pekerjaan</div>
+          <!-- 3. ROLE SELECTION (STAFF ATAU TECHNICIAN) -->
+          <div class="section-title"><i class="bi bi-person-badge"></i> Role Pekerjaan</div>
           <div class="mb-3">
-            <label class="form-label small fw-semibold">Jenis Pekerjaan <span class="text-danger">*</span></label>
-            <select id="selectJenisPekerjaan" class="form-select" required>
-              <option value="" disabled selected>-- Pilih Jenis Pekerjaan --</option>
-              <option value="Field">Field (Lapangan)</option>
-              <option value="Office">Office (Kantor)</option>
+            <label class="form-label small fw-semibold">Kategori Pekerja <span class="text-danger">*</span></label>
+            <select id="selectRole" class="form-select" required>
+              <option value="" disabled selected>-- Pilih Kategori Pekerja --</option>
+              <option value="Staff">Staff (Kantor / Jobs Progress)</option>
+              <option value="Technician">Technician (Lapangan / Field)</option>
             </select>
           </div>
 
-          <!-- Dynamic Container: Field & Office -->
-          <div id="dynamicFieldsContainer" class="d-none">
-            <!-- Activity: Selalu ada baik Field maupun Office -->
-            <div class="mb-3">
-              <label class="form-label small fw-semibold">Activity <span class="text-danger">*</span></label>
-              <textarea id="inputActivity" class="form-control" rows="2" placeholder="Tuliskan aktivitas utama hari ini..." required></textarea>
+          <!-- 4. PROFILE & PROJECT HEADER INFO -->
+          <div class="section-title"><i class="bi bi-card-text"></i> Informasi Karyawan & Project</div>
+          <div class="row g-2">
+            <div class="col-md-6 mb-2">
+              <label class="form-label small fw-semibold">Nama Lengkap (Name) <span class="text-danger">*</span></label>
+              <input type="text" id="inputNama" class="form-control" placeholder="Contoh: Denizar" required />
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label small fw-semibold">No ID Karyawan <span class="text-danger">*</span></label>
+              <input type="text" id="inputIdKaryawan" class="form-control" placeholder="Contoh: 2601020033" required />
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label small fw-semibold">Project Name <span class="text-danger">*</span></label>
+              <input type="text" id="inputProjectName" class="form-control" placeholder="Contoh: Telkom infra" required />
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label small fw-semibold">Project Code <span class="text-danger">*</span></label>
+              <input type="text" id="inputProjectCode" class="form-control" placeholder="Contoh: RO" required />
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label small fw-semibold">Periode <span class="text-danger">*</span></label>
+              <input type="text" id="inputPeriode" class="form-control" placeholder="Contoh: Agustus - Desember 26" required />
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label small fw-semibold">No. WhatsApp</label>
+              <input type="tel" id="inputWa" class="form-control" placeholder="081234567890" />
+            </div>
+          </div>
+
+          <!-- 5. PROGRESS HARIAN (SESUAI GAMBAR) -->
+          <div class="section-title"><i class="bi bi-list-task"></i> Laporan Progress Harian (Daily)</div>
+          
+          <div id="progressContainer" class="d-none">
+            <div class="row g-2 mb-2">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Tanggal (Date) <span class="text-danger">*</span></label>
+                <input type="date" id="inputDate" class="form-control" required />
+              </div>
             </div>
 
-            <!-- Field-Specific Inputs -->
-            <div id="fieldOnlyInputs" class="d-none">
-              <div class="row g-2">
-                <div class="col-md-6 mb-2">
+            <!-- Khusus Lapangan / Technician -->
+            <div id="technicianSpecificFields" class="d-none">
+              <div class="row g-2 mb-2">
+                <div class="col-md-6">
                   <label class="form-label small fw-semibold">Site ID <span class="text-danger">*</span></label>
-                  <input type="text" id="inputSiteId" class="form-control" placeholder="Kode Site ID" />
+                  <input type="text" id="inputSiteId" class="form-control" placeholder="Contoh: JKT-0492" />
                 </div>
-                <div class="col-md-6 mb-2">
+                <div class="col-md-6">
                   <label class="form-label small fw-semibold">SOW (Scope of Work) <span class="text-danger">*</span></label>
-                  <input type="text" id="inputSOW" class="form-control" placeholder="Contoh: Dismantle / Instalasi" />
+                  <input type="text" id="inputSOW" class="form-control" placeholder="Contoh: Dismantle / Instalasi Radio" />
                 </div>
               </div>
             </div>
 
-            <!-- Keterangan: Ada di keduanya -->
-            <div class="mb-3">
-              <label class="form-label small fw-semibold">Keterangan Tambahan</label>
-              <textarea id="inputKeterangan" class="form-control" rows="2" placeholder="Catatan progress atau kendala..."></textarea>
+            <!-- Activity Description -->
+            <div class="mb-2">
+              <label class="form-label small fw-semibold">Activity Description <span class="text-danger">*</span></label>
+              <textarea id="inputActivityDesc" class="form-control" rows="2" placeholder="Tuliskan detail pekerjaan (Contoh: Membuat proposal ke Telkominfra / Penarikan kabel)" required></textarea>
             </div>
 
-            <!-- Review Atasan: Ada di keduanya -->
-            <div class="mb-3">
-              <label class="form-label small fw-semibold">Review Atasan <span class="text-danger">*</span></label>
-              <input type="text" id="inputReviewAtasan" class="form-control" placeholder="Nama / Catatan Atasan Langsung" required />
+            <!-- Result & Remarks -->
+            <div class="row g-2 mb-2">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Result <span class="text-danger">*</span></label>
+                <input type="text" id="inputResult" class="form-control" placeholder="Contoh: done / 80% / in progress" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Remarks</label>
+                <input type="text" id="inputRemarks" class="form-control" placeholder="Catatan (Contoh: sip / bisa dipercepat)" />
+              </div>
             </div>
 
-            <!-- Review PM/PD: Hanya untuk Field -->
-            <div id="pmPdInputWrapper" class="mb-3 d-none">
-              <label class="form-label small fw-semibold">Review PM / PD <span class="text-danger">*</span></label>
-              <input type="text" id="inputReviewPMPD" class="form-control" placeholder="Nama / Catatan Project Manager" />
+            <!-- Approval Columns -->
+            <div class="row g-2 mb-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Approval 1 (Atasan Langsung) <span class="text-danger">*</span></label>
+                <input type="text" id="inputApproval1" class="form-control" placeholder="Nama / Status (Contoh: ok)" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Approval 2 (Manager / PM) <span class="text-danger">*</span></label>
+                <input type="text" id="inputApproval2" class="form-control" placeholder="Nama / Status (Contoh: ok)" required />
+              </div>
             </div>
           </div>
 
           <!-- SUBMIT BUTTON -->
           <div class="mt-4 pt-2">
             <button type="submit" id="btnSubmit" class="btn btn-success w-100 py-2 fw-semibold">
-              <i class="bi bi-cloud-arrow-up-fill me-1"></i> Kirim Data Absensi
+              <i class="bi bi-cloud-arrow-up-fill me-1"></i> Simpan Laporan & Absensi
             </button>
           </div>
 
@@ -356,11 +369,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    /**
-     * STATE MANAGEMENT & VARIABEL GLOBAL
-     */
     let mediaStream = null;
-    let currentFacingMode = "user"; // 'user' (front) or 'environment' (back)
+    let currentFacingMode = "user";
     let capturedPhotoBase64 = null;
     let detectedAddress = "";
 
@@ -383,16 +393,20 @@
     const btnRefreshGps = document.getElementById("btnRefreshGps");
     const gpsStatusMessage = document.getElementById("gpsStatusMessage");
 
-    const selectJenisPekerjaan = document.getElementById("selectJenisPekerjaan");
-    const dynamicFieldsContainer = document.getElementById("dynamicFieldsContainer");
-    const fieldOnlyInputs = document.getElementById("fieldOnlyInputs");
-    const pmPdInputWrapper = document.getElementById("pmPdInputWrapper");
-    const attendanceForm = document.getElementById("attendanceForm");
+    const selectRole = document.getElementById("selectRole");
+    const progressContainer = document.getElementById("progressContainer");
+    const technicianSpecificFields = document.getElementById("technicianSpecificFields");
+    const inputSiteId = document.getElementById("inputSiteId");
+    const inputSOW = document.getElementById("inputSOW");
+    const inputDate = document.getElementById("inputDate");
 
+    const attendanceForm = document.getElementById("attendanceForm");
     const loadingOverlay = document.getElementById("loadingOverlay");
     const gasApiUrlInput = document.getElementById("gasApiUrl");
 
-    // Load saved API URL from localStorage if exists
+    // Set Default Today's Date
+    inputDate.valueAsDate = new Date();
+
     if (localStorage.getItem("gas_attendance_api_url")) {
       gasApiUrlInput.value = localStorage.getItem("gas_attendance_api_url");
     }
@@ -402,7 +416,7 @@
     });
 
     /**
-     * 1. AUTHENTICATION (DEMO MODE)
+     * 1. LOGIN SYSTEM
      */
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -414,14 +428,13 @@
         attendanceSection.classList.remove("d-none");
         document.getElementById("userBadge").textContent = email;
 
-        // Inisialisasi Fitur Perangkat
         startCamera();
         fetchGpsAndAddress();
       } else {
         Swal.fire({
           icon: "error",
           title: "Login Gagal",
-          text: "Email atau password demo salah. Gunakan demo@email.com / demo123"
+          text: "Gunakan kredensial demo: demo@email.com / demo123"
         });
       }
     });
@@ -433,7 +446,7 @@
     });
 
     /**
-     * 2. KAMERA LIVE & WATERMARK TIMESTAMP
+     * 2. LIVE CAMERA DENGAN WATERMARK TIMESTAMP & ALAMAT
      */
     async function startCamera() {
       stopCamera();
@@ -450,7 +463,6 @@
         mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
         videoFeed.srcObject = mediaStream;
 
-        // Beri efek cermin jika menggunakan kamera depan
         if (currentFacingMode === "user") {
           videoFeed.classList.add("camera-mirrored");
         } else {
@@ -467,8 +479,8 @@
         cameraStatus.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-warning me-1 small"></i> Kamera Tidak Tersedia';
         Swal.fire({
           icon: "warning",
-          title: "Izin Kamera Dibutuhkan",
-          text: "Pastikan Anda mengizinkan akses kamera di browser Anda."
+          title: "Izin Kamera Diperlukan",
+          text: "Mohon izinkan akses kamera di browser Anda."
         });
       }
     }
@@ -485,10 +497,9 @@
       startCamera();
     });
 
-    // Tangkap gambar dari video feed dan cetak timestamp di atas canvas
     btnCapture.addEventListener("click", () => {
       if (!mediaStream) {
-        Swal.fire("Kamera tidak aktif", "Silakan refresh atau periksa izin kamera.", "warning");
+        Swal.fire("Kamera tidak aktif", "Silakan periksa izin kamera.", "warning");
         return;
       }
 
@@ -499,57 +510,48 @@
       canvasCapture.height = videoHeight;
       const ctx = canvasCapture.getContext("2d");
 
-      // Cerminkan jika kamera depan
       if (currentFacingMode === "user") {
         ctx.translate(videoWidth, 0);
         ctx.scale(-1, 1);
       }
       ctx.drawImage(videoFeed, 0, 0, videoWidth, videoHeight);
 
-      // Reset transform untuk render teks watermark
       if (currentFacingMode === "user") {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
       }
 
-      // Render Timestamp & Info Badge Watermark
+      // Render Watermark Bar & Text
       const now = new Date();
       const dateString = now.toLocaleDateString("id-ID", {
         weekday: "long",
         year: "numeric",
-        month: "long",
+        month: "short",
         day: "numeric"
       });
       const timeString = now.toLocaleTimeString("id-ID") + " WIB";
 
-      const badgePadding = 12;
       const badgeHeight = 65;
-      const badgeWidth = videoWidth;
-
-      // Dark translucent bar at the bottom
       ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
-      ctx.fillRect(0, videoHeight - badgeHeight, badgeWidth, badgeHeight);
+      ctx.fillRect(0, videoHeight - badgeHeight, videoWidth, badgeHeight);
 
-      // Watermark Text
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 16px sans-serif";
-      ctx.fillText(`${dateString} | ${timeString}`, badgePadding, videoHeight - 38);
+      ctx.font = "bold 15px sans-serif";
+      ctx.fillText(`${dateString} | ${timeString}`, 12, videoHeight - 38);
 
       ctx.fillStyle = "#38bdf8";
       ctx.font = "12px sans-serif";
-      const shortAddr = (detectedAddress || "Lokasi: Memproses koordinat...").substring(0, 80);
-      ctx.fillText(shortAddr, badgePadding, videoHeight - 16);
+      const shortAddr = (detectedAddress || "GPS: Memproses koordinat lokasi...").substring(0, 85);
+      ctx.fillText(shortAddr, 12, videoHeight - 16);
 
-      // Export to Base64 (JPEG, quality 0.85 untuk optimalisasi bandwidth)
       capturedPhotoBase64 = canvasCapture.toDataURL("image/jpeg", 0.85);
       photoBase64Input.value = capturedPhotoBase64;
 
-      // Display Preview
       photoPreview.src = capturedPhotoBase64;
       photoPreview.style.display = "block";
       videoFeed.style.display = "none";
       btnCapture.classList.add("d-none");
       btnRetake.classList.remove("d-none");
-      cameraStatus.innerHTML = '<i class="bi bi-check-circle-fill text-info me-1 small"></i> Foto Diambil';
+      cameraStatus.innerHTML = '<i class="bi bi-check-circle-fill text-info me-1 small"></i> Foto Tersimpan';
 
       stopCamera();
     });
@@ -564,12 +566,11 @@
      * 3. GPS TO FULL ADDRESS (REVERSE GEOCODING)
      */
     function fetchGpsAndAddress() {
-      txtAddress.value = "Mendeteksi koordinat GPS...";
+      txtAddress.value = "Mencari koordinat GPS...";
       gpsStatusMessage.textContent = "Mengakses GPS perangkat...";
 
       if (!navigator.geolocation) {
         txtAddress.value = "Geolocation tidak didukung pada browser ini.";
-        gpsStatusMessage.textContent = "Error: Geolocation tidak didukung.";
         return;
       }
 
@@ -580,202 +581,160 @@
           gpsStatusMessage.textContent = "Menerjemahkan koordinat ke alamat lengkap...";
 
           try {
-            // Reverse geocoding via OpenStreetMap Nominatim
             const response = await fetch(
               `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`,
               {
-                headers: {
-                  "Accept-Language": "id"
-                }
+                headers: { "Accept-Language": "id" }
               }
             );
 
-            if (!response.ok) throw new Error("Gagal mengambil data dari reverse geocoding");
+            if (!response.ok) throw new Error("Gagal mengambil data dari geocoder");
 
             const geoData = await response.json();
-            detectedAddress = geoData.display_name || `Area sekitar Lat ${lat}, Lon ${lon}`;
+            detectedAddress = geoData.display_name || `Lat ${lat}, Lon ${lon}`;
             txtAddress.value = detectedAddress;
-            gpsStatusMessage.textContent = "Alamat terverifikasi secara otomatis.";
+            gpsStatusMessage.textContent = "Alamat GPS terverifikasi.";
           } catch (err) {
             console.error(err);
-            detectedAddress = "Alamat tidak dapat diambil otomatis (Masalah koneksi geocoder)";
+            detectedAddress = `Koordinat: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
             txtAddress.value = detectedAddress;
-            gpsStatusMessage.textContent = "Gagal reverse geocoding. Coba tekan tombol perbarui.";
+            gpsStatusMessage.textContent = "Menggunakan koordinat cadangan.";
           }
         },
         (error) => {
           console.error("GPS Error:", error);
-          let msg = "Gagal mengambil koordinat GPS.";
-          if (error.code === error.PERMISSION_DENIED) msg = "Izin akses lokasi ditolak oleh pengguna.";
-          else if (error.code === error.POSITION_UNAVAILABLE) msg = "Sinyal GPS lokasi tidak tersedia.";
-          else if (error.code === error.TIMEOUT) msg = "Waktu permintaan GPS habis (Timeout).";
-          
-          txtAddress.value = msg;
-          gpsStatusMessage.textContent = msg;
+          txtAddress.value = "Gagal mendapatkan lokasi GPS. Pastikan izin lokasi aktif.";
+          gpsStatusMessage.textContent = "Izin lokasi tidak tersedia.";
         },
-        {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 0
-        }
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );
     }
 
     btnRefreshGps.addEventListener("click", fetchGpsAndAddress);
 
     /**
-     * 4. DYNAMIC FORM BERDASARKAN JENIS PEKERJAAN
+     * 4. DYNAMIC ROLE SWITCH (STAFF VS TECHNICIAN)
      */
-    selectJenisPekerjaan.addEventListener("change", () => {
-      const type = selectJenisPekerjaan.value;
-      if (!type) {
-        dynamicFieldsContainer.classList.add("d-none");
+    selectRole.addEventListener("change", () => {
+      const role = selectRole.value;
+      if (!role) {
+        progressContainer.classList.add("d-none");
         return;
       }
 
-      dynamicFieldsContainer.classList.remove("d-none");
+      progressContainer.classList.remove("d-none");
 
-      const inputSiteId = document.getElementById("inputSiteId");
-      const inputSOW = document.getElementById("inputSOW");
-      const inputReviewPMPD = document.getElementById("inputReviewPMPD");
-
-      if (type === "Field") {
-        // Tampilkan field khusus lapangan
-        fieldOnlyInputs.classList.remove("d-none");
-        pmPdInputWrapper.classList.remove("d-none");
-
-        // Jadikan wajib diisi
+      if (role === "Technician") {
+        technicianSpecificFields.classList.remove("d-none");
         inputSiteId.required = true;
         inputSOW.required = true;
-        inputReviewPMPD.required = true;
-      } else if (type === "Office") {
-        // Sembunyikan field lapangan
-        fieldOnlyInputs.classList.add("d-none");
-        pmPdInputWrapper.classList.add("d-none");
-
-        // Matikan kewajiban diisi
+      } else {
+        technicianSpecificFields.classList.add("d-none");
         inputSiteId.required = false;
         inputSOW.required = false;
-        inputReviewPMPD.required = false;
       }
     });
 
     /**
-     * 5. SUBMIT DATA KE GOOGLE APPS SCRIPT
+     * 5. SUBMIT FORM
      */
     attendanceForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // Validasi Foto
       if (!capturedPhotoBase64) {
         Swal.fire({
           icon: "warning",
           title: "Foto Wajib Ada",
-          text: "Silakan tekan tombol 'Ambil Foto' terlebih dahulu untuk melampirkan bukti kehadiran."
+          text: "Silakan ambil foto bukti kehadiran terlebih dahulu."
         });
         return;
       }
 
-      const jenisPekerjaan = selectJenisPekerjaan.value;
-
-      // Susun Payload Data
+      const role = selectRole.value;
       const payload = {
-        namaLengkap: document.getElementById("inputNama").value.trim(),
-        noWhatsapp: document.getElementById("inputWa").value.trim(),
-        project: document.getElementById("inputProject").value.trim(),
-        region: document.getElementById("inputRegion").value.trim(),
+        role: role,
+        name: document.getElementById("inputNama").value.trim(),
+        idKaryawan: document.getElementById("inputIdKaryawan").value.trim(),
+        projectName: document.getElementById("inputProjectName").value.trim(),
+        projectCode: document.getElementById("inputProjectCode").value.trim(),
+        periode: document.getElementById("inputPeriode").value.trim(),
+        noWhatsapp: document.getElementById("inputWa").value.trim() || "-",
         alamatLengkap: txtAddress.value.trim(),
-        jenisPekerjaan: jenisPekerjaan,
-        activity: document.getElementById("inputActivity").value.trim(),
-        keterangan: document.getElementById("inputKeterangan").value.trim() || "-",
-        reviewAtasan: document.getElementById("inputReviewAtasan").value.trim(),
-        siteId: jenisPekerjaan === "Field" ? document.getElementById("inputSiteId").value.trim() : "-",
-        sow: jenisPekerjaan === "Field" ? document.getElementById("inputSOW").value.trim() : "-",
-        reviewPMPD: jenisPekerjaan === "Field" ? document.getElementById("inputReviewPMPD").value.trim() : "-",
+        date: inputDate.value,
+        siteId: role === "Technician" ? inputSiteId.value.trim() : "-",
+        sow: role === "Technician" ? inputSOW.value.trim() : "-",
+        activityDesc: document.getElementById("inputActivityDesc").value.trim(),
+        result: document.getElementById("inputResult").value.trim(),
+        remarks: document.getElementById("inputRemarks").value.trim() || "-",
+        approval1: document.getElementById("inputApproval1").value.trim(),
+        approval2: document.getElementById("inputApproval2").value.trim(),
         photoBase64: capturedPhotoBase64
       };
 
       const apiUrl = gasApiUrlInput.value.trim();
-
-      // Tampilkan Loading
       loadingOverlay.style.display = "flex";
 
-      // MODE A: Real Backend POST jika Apps Script URL diisi
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
         try {
-          /**
-           * Catatan Teknis Fetch ke GAS:
-           * Mengirimkan data sebagai string text/plain mencegah preflight CORS OPTIONS yang kerap diblokir GAS.
-           */
           const res = await fetch(apiUrl, {
             method: "POST",
             mode: "cors",
-            headers: {
-              "Content-Type": "text/plain;charset=utf-8"
-            },
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(payload)
           });
 
           const result = await res.json();
-
           loadingOverlay.style.display = "none";
 
           if (result.status === "success") {
             Swal.fire({
               icon: "success",
-              title: "Absensi Berhasil!",
-              text: "Data dan foto kehadiran telah tercatat di Google Spreadsheet & Google Drive.",
-              confirmButtonText: "Selesai"
-            }).then(() => {
-              resetAttendanceForm();
-            });
+              title: "Terkirim!",
+              text: "Laporan Jobs Progress & Absensi berhasil dicatat ke Spreadsheet.",
+              confirmButtonText: "OK"
+            }).then(() => resetForm());
           } else {
             throw new Error(result.message || "Gagal menyimpan ke server");
           }
         } catch (err) {
           loadingOverlay.style.display = "none";
-          console.error("Fetch error:", err);
           Swal.fire({
             icon: "error",
             title: "Pengiriman Gagal",
-            text: "Terjadi kendala saat menghubungi Google Apps Script: " + err.message
+            text: "Koneksi ke Google Apps Script bermasalah: " + err.message
           });
         }
-      } 
-      // MODE B: Simulation Mode (Jika belum konfigurasi URL GAS)
-      else {
+      } else {
+        // Mode Simulasi Lokal
         setTimeout(() => {
           loadingOverlay.style.display = "none";
-          console.log("Simulated Payload Data:", payload);
-
+          console.log("Simulasi Rekap Payload:", payload);
           Swal.fire({
             icon: "success",
-            title: "Simulasi Berhasil (Demo Mode)",
+            title: "Simulasi Berhasil (Local)",
             html: `
-              <p class="small text-muted mb-2">Data berhasil diproses dalam memori lokal (URL Apps Script belum diisi).</p>
-              <div class="text-start bg-light p-2 rounded small" style="max-height: 180px; overflow-y: auto;">
-                <strong>Nama:</strong> ${payload.namaLengkap}<br/>
-                <strong>Jenis:</strong> ${payload.jenisPekerjaan}<br/>
-                <strong>Project:</strong> ${payload.project} (${payload.region})<br/>
-                <strong>Alamat:</strong> ${payload.alamatLengkap}<br/>
-                <strong>Status Foto:</strong> Terlampir (${Math.round(payload.photoBase64.length / 1024)} KB)
+              <div class="text-start small">
+                <strong>Role:</strong> ${payload.role}<br/>
+                <strong>Nama:</strong> ${payload.name} (${payload.idKaryawan})<br/>
+                <strong>Project:</strong> ${payload.projectName} [${payload.projectCode}]<br/>
+                <strong>Activity:</strong> ${payload.activityDesc}<br/>
+                <strong>Result:</strong> ${payload.result} | <strong>Remarks:</strong> ${payload.remarks}<br/>
+                <strong>Approval:</strong> ${payload.approval1} / ${payload.approval2}
               </div>
             `,
-            confirmButtonText: "OK"
-          }).then(() => {
-            resetAttendanceForm();
-          });
-        }, 1200);
+            confirmButtonText: "Selesai"
+          }).then(() => resetForm());
+        }, 1000);
       }
     });
 
-    function resetAttendanceForm() {
+    function resetForm() {
       attendanceForm.reset();
+      inputDate.valueAsDate = new Date();
       capturedPhotoBase64 = null;
       photoBase64Input.value = "";
-      dynamicFieldsContainer.classList.add("d-none");
-      fieldOnlyInputs.classList.add("d-none");
-      pmPdInputWrapper.classList.add("d-none");
+      progressContainer.classList.add("d-none");
+      technicianSpecificFields.classList.add("d-none");
       startCamera();
       fetchGpsAndAddress();
     }
