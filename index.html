@@ -184,7 +184,7 @@
         <span class="navbar-brand fw-bold d-flex align-items-center gap-2 mb-0">
           <i class="bi bi-layers-half text-primary fs-4"></i>
           <div>
-            <span class="fs-6 d-block lh-sm fw-bold">PT KUBIK MADANI</span>
+            <span class="fs-6 d-block lh-sm fw-bold">PRO-SYNC ENTERPRISE</span>
             <small class="text-muted d-block" style="font-size: 0.65rem;">ATTENDANCE & JOBS PROGRESS SYSTEM</small>
           </div>
         </span>
@@ -607,7 +607,10 @@
                     <th>No</th>
                     <th>Tanggal</th>
                     <th>Karyawan</th>
-                    <th>Project / Site ID</th>
+                    <th>Role</th>
+                    <th>Project</th>
+                    <th>Site ID</th>
+                    <th>SOW (Technician)</th>
                     <th>Activity Description</th>
                     <th>Result</th>
                     <th>Remark Karyawan</th>
@@ -659,9 +662,11 @@
                     <th>Tanggal</th>
                     <th>Nama & ID</th>
                     <th>Role</th>
+                    <th>Project</th>
+                    <th>Site ID</th>
+                    <th>SOW (Technician)</th>
                     <th>Presensi Masuk (Jam, GPS & Foto)</th>
                     <th>Daily Jobs Progress & Result</th>
-                    <th>Site ID & SOW</th>
                     <th>Presensi Pulang (Jam, GPS & Foto)</th>
                     <th>Approval 1 (PM)</th>
                     <th>Approval 2 (PD)</th>
@@ -972,9 +977,12 @@
         { username: "admin", password: "admin123", name: "System Administrator", idKaryawan: "AS-001", role: "Admin System", projectName: "Management", projectCode: "MGT", periode: "2026", noWa: "08120000000" },
         { username: "rpm.irwan", password: "rpm123", name: "Irwan Syahputra", idKaryawan: "RPM-1003", role: "RPM", projectName: "Telkom infra", projectCode: "RO", periode: "Agustus - Desember 26", noWa: "08129999000" },
         { username: "pm.hendra", password: "pm123", name: "Hendra Wijaya, ST", idKaryawan: "PM-1002", role: "PM", projectName: "Telkom infra", projectCode: "RO", periode: "Agustus - Desember 26", noWa: "08129999111" },
+        { username: "pm.zte", password: "pm123", name: "Rudi Hartono, MT", idKaryawan: "PM-2001", role: "PM", projectName: "ZTE", projectCode: "ZTE-RO", periode: "Agustus - Desember 26", noWa: "08129999333" },
         { username: "pd.bambang", password: "pd123", name: "Ir. Bambang Prakoso", idKaryawan: "PD-1001", role: "PD", projectName: "Telkom infra", projectCode: "RO", periode: "Agustus - Desember 26", noWa: "08128888222" },
+        { username: "pd.zte", password: "pd123", name: "Gunawan Santoso, MBA", idKaryawan: "PD-2001", role: "PD", projectName: "ZTE", projectCode: "ZTE-RO", periode: "Agustus - Desember 26", noWa: "08128888444" },
         { username: "denizar", password: "staff123", name: "Denizar", idKaryawan: "2601020033", role: "Staff", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08137777333" },
-        { username: "teguh", password: "tech123", name: "Teguh Santoso", idKaryawan: "2601020088", role: "Technician", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08136666444" }
+        { username: "teguh", password: "tech123", name: "Teguh Santoso", idKaryawan: "2601020088", role: "Technician", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08136666444" },
+        { username: "fajar.zte", password: "tech123", name: "Fajar Pratama", idKaryawan: "2601020099", role: "Technician", projectName: "ZTE", projectCode: "ZTE-RO", periode: "agustus - desember 26", noWa: "08135555777" }
       ],
       progress: [
         {
@@ -985,6 +993,8 @@
           role: "Staff",
           projectName: "Telkom infra",
           projectCode: "RO",
+          siteId: "-",
+          sow: "-",
           periode: "agustus - desember 26",
           date: "2026-08-31",
           timeMasuk: "08:10:15",
@@ -1010,6 +1020,8 @@
           role: "Staff",
           projectName: "Telkom infra",
           projectCode: "RO",
+          siteId: "-",
+          sow: "-",
           periode: "agustus - desember 26",
           date: "2026-09-01",
           timeMasuk: "08:25:30",
@@ -1053,6 +1065,33 @@
           pmRemark: "SOP K3 terpasang baik di foto.",
           approval2: "ok",
           pdRemark: "Good job"
+        },
+        {
+          id: "PROG-104",
+          username: "fajar.zte",
+          name: "Fajar Pratama",
+          idKaryawan: "2601020099",
+          role: "Technician",
+          projectName: "ZTE",
+          projectCode: "ZTE-RO",
+          siteId: "BDG-0118",
+          sow: "Swap Antena Sektoral & Commisioning",
+          periode: "agustus - desember 26",
+          date: "2026-09-02",
+          timeMasuk: "08:30:10",
+          alamatMasuk: "Jl. Soekarno Hatta No. 120, Bandung",
+          photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+ZTE+BDG-0118",
+          hasJobsProgress: true,
+          activityDesc: "Penggantian antena sektoral 3 sektor dan testing VSWR",
+          result: "done",
+          staffRemarks: "VSWR normal di bawah 1.3",
+          timePulang: "17:45:30",
+          alamatPulang: "Jl. Soekarno Hatta No. 120, Bandung",
+          photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+ZTE+BDG-0118",
+          approval1: "pending",
+          pmRemark: "-",
+          approval2: "pending",
+          pdRemark: "-"
         }
       ]
     };
@@ -1787,7 +1826,7 @@
         list = list.filter(item => item.username === currentUser.username);
         document.getElementById("recapSectionHeading").textContent = `Rekap Pekerjaan: ${currentUser.name}`;
       } else {
-        document.getElementById("recapSectionHeading").textContent = "Rekapitulasi Jobs Progress (Seluruh Karyawan)";
+        document.getElementById("recapSectionHeading").textContent = `Rekapitulasi Jobs Progress (${currentUser.role} - Project: ${currentUser.projectName || 'All'})`;
       }
 
       const now = new Date();
@@ -1808,7 +1847,7 @@
       document.getElementById("recapTotalCount").textContent = `Total: ${list.length} Catatan`;
 
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="13" class="text-center py-4 text-muted">Belum ada data progress untuk filter ini.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="16" class="text-center py-4 text-muted">Belum ada data progress untuk filter ini.</td></tr>`;
         return;
       }
 
@@ -1821,15 +1860,24 @@
         const app1Badge = getApprovalBadge(row.approval1);
         const app2Badge = getApprovalBadge(row.approval2);
 
-        const siteInfo = row.siteId && row.siteId !== "-" ? 
-          `<div><span class="badge bg-secondary">${escapeHtml(row.siteId)}</span> <small class="text-muted d-block">${escapeHtml(row.sow || "")}</small></div>` : 
-          `<div><small class="text-muted">${escapeHtml(row.projectName)}</small></div>`;
+        // Project authorization check: PM and PD can only approve their own project
+        const userProj = (currentUser.projectName || "").trim().toLowerCase();
+        const rowProj = (row.projectName || "").trim().toLowerCase();
+        const isProjectMatch = userProj === rowProj || currentUser.role === "Admin System" || currentUser.role === "Admin";
 
         let actionBtnHtml = "";
         if (currentUser.role === "PM" || currentUser.role === "RPM") {
-          actionBtnHtml = `<button class="btn btn-primary btn-sm py-1 px-2 fw-semibold" onclick="openApprovalModal('${row.id}', 'Approval 1')"><i class="bi bi-pencil-fill me-1"></i>Approval 1</button>`;
+          if (isProjectMatch) {
+            actionBtnHtml = `<button class="btn btn-primary btn-sm py-1 px-2 fw-semibold" onclick="openApprovalModal('${row.id}', 'Approval 1')"><i class="bi bi-pencil-fill me-1"></i>Approval 1</button>`;
+          } else {
+            actionBtnHtml = `<button class="btn btn-outline-secondary btn-sm py-1 px-2 opacity-50" disabled title="Khusus PM Project ${escapeHtml(row.projectName)}"><i class="bi bi-lock-fill me-1"></i>Bukan Project Anda</button>`;
+          }
         } else if (currentUser.role === "PD") {
-          actionBtnHtml = `<button class="btn btn-warning btn-sm py-1 px-2 fw-semibold text-dark" onclick="openApprovalModal('${row.id}', 'Approval 2')"><i class="bi bi-check-all me-1"></i>Approval 2</button>`;
+          if (isProjectMatch) {
+            actionBtnHtml = `<button class="btn btn-warning btn-sm py-1 px-2 fw-semibold text-dark" onclick="openApprovalModal('${row.id}', 'Approval 2')"><i class="bi bi-check-all me-1"></i>Approval 2</button>`;
+          } else {
+            actionBtnHtml = `<button class="btn btn-outline-secondary btn-sm py-1 px-2 opacity-50" disabled title="Khusus PD Project ${escapeHtml(row.projectName)}"><i class="bi bi-lock-fill me-1"></i>Bukan Project Anda</button>`;
+          }
         }
 
         const viewPhotoMasukBtn = (row.photoMasuk && row.photoMasuk !== "-") ? 
@@ -1837,14 +1885,20 @@
         const viewPhotoPulangBtn = (row.photoPulang && row.photoPulang !== "-") ? 
           `<button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 shadow-sm" onclick="previewItemPhoto('${row.id}', 'pulang')" title="Foto Pulang"><i class="bi bi-box-arrow-left"></i> Pulang</button>` : '';
 
+        const siteIdDisplay = row.siteId && row.siteId !== "-" ? `<span class="badge bg-secondary">${escapeHtml(row.siteId)}</span>` : '<span class="text-muted">-</span>';
+        const sowDisplay = row.sow && row.sow !== "-" ? `<div class="small fw-semibold text-dark" style="max-width: 140px; white-space: normal;">${escapeHtml(row.sow)}</div>` : '<span class="text-muted">-</span>';
+
         tr.innerHTML = `
           <td class="text-center fw-bold">${index + 1}</td>
           <td class="fw-semibold text-nowrap">${formattedDate}</td>
           <td>
             <div class="fw-bold">${escapeHtml(row.name)}</div>
-            <small class="text-muted">${escapeHtml(row.idKaryawan)} (${escapeHtml(row.role)})</small>
+            <small class="text-muted">${escapeHtml(row.idKaryawan)}</small>
           </td>
-          <td>${siteInfo}</td>
+          <td><span class="badge bg-light text-dark border">${escapeHtml(row.role)}</span></td>
+          <td><span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle">${escapeHtml(row.projectName || '-')}</span></td>
+          <td class="text-center">${siteIdDisplay}</td>
+          <td>${sowDisplay}</td>
           <td><div style="max-width: 200px; white-space: normal;">${escapeHtml(row.activityDesc)}</div></td>
           <td class="fw-semibold text-primary">${escapeHtml(row.result)}</td>
           <td class="small text-muted">${escapeHtml(row.staffRemarks || "-")}</td>
@@ -1875,7 +1929,7 @@
       list.sort((a, b) => new Date(b.date) - new Date(a.date));
 
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" class="text-center py-4 text-muted">Belum ada data presensi.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="12" class="text-center py-4 text-muted">Belum ada data presensi.</td></tr>`;
         return;
       }
 
@@ -1895,6 +1949,9 @@
           `<div><span class="badge bg-danger me-1"><i class="bi bi-clock me-1"></i>${item.timePulang}</span> ${btnPulang}</div>
            <div class="small text-muted mt-1" style="font-size: 0.72rem; max-width: 170px;" title="${escapeHtml(item.alamatPulang || '')}"><i class="bi bi-geo-alt-fill text-danger"></i> ${escapeHtml(item.alamatPulang || '-')}</div>` : '<span class="text-muted">Belum Pulang</span>';
 
+        const siteIdDisplay = item.siteId && item.siteId !== "-" ? `<span class="badge bg-secondary">${escapeHtml(item.siteId)}</span>` : '<span class="text-muted">-</span>';
+        const sowDisplay = item.sow && item.sow !== "-" ? `<div class="small text-muted fw-semibold" style="max-width: 140px;">${escapeHtml(item.sow)}</div>` : '<span class="text-muted">-</span>';
+
         tr.innerHTML = `
           <td class="text-center fw-bold">${idx + 1}</td>
           <td class="text-nowrap fw-semibold">${item.date}</td>
@@ -1903,13 +1960,13 @@
             <small class="text-muted">${escapeHtml(item.idKaryawan || '-')}</small>
           </td>
           <td><span class="badge bg-light text-dark border">${escapeHtml(item.role)}</span></td>
+          <td><span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle">${escapeHtml(item.projectName || '-')}</span></td>
+          <td class="text-center">${siteIdDisplay}</td>
+          <td>${sowDisplay}</td>
           <td>${masukHtml}</td>
           <td>
             <div class="fw-semibold text-primary">${escapeHtml(item.result || '-')}</div>
             <small class="text-muted" style="max-width: 180px; display: block;">${escapeHtml(item.activityDesc || '-')}</small>
-          </td>
-          <td>
-            ${item.role === 'Technician' ? `<strong>Site:</strong> ${escapeHtml(item.siteId || '-')}<br/><small class="text-muted"><strong>SOW:</strong> ${escapeHtml(item.sow || '-')}</small>` : '<span class="text-muted">-</span>'}
           </td>
           <td>${pulangHtml}</td>
           <td class="text-center">${getApprovalBadge(item.approval1)}</td>
@@ -1962,12 +2019,12 @@
         return;
       }
 
-      const headers = ["No", "Date", "Name", "ID Karyawan", "Role", "Jam Masuk", "Alamat GPS Masuk", "Foto Masuk", "Activity Description", "Result", "Remarks", "Site ID", "SOW", "Jam Pulang", "Alamat GPS Pulang", "Foto Pulang", "Approval 1", "PM Remark", "Approval 2", "PD Remark"];
+      const headers = ["No", "Date", "Name", "ID Karyawan", "Role", "Project", "Site ID", "SOW", "Jam Masuk", "Alamat GPS Masuk", "Foto Masuk", "Activity Description", "Result", "Remarks", "Jam Pulang", "Alamat GPS Pulang", "Foto Pulang", "Approval 1", "PM Remark", "Approval 2", "PD Remark"];
       const rows = list.map((item, i) => [
-        i + 1, item.date, `"${item.name.replace(/"/g, '""')}"`, item.idKaryawan, item.role,
+        i + 1, item.date, `"${item.name.replace(/"/g, '""')}"`, item.idKaryawan, item.role, `"${(item.projectName || '-').replace(/"/g, '""')}"`,
+        item.siteId || "-", `"${(item.sow || '-').replace(/"/g, '""')}"`,
         item.timeMasuk || "-", `"${(item.alamatMasuk || '-').replace(/"/g, '""')}"`, item.photoMasuk || "-",
         `"${(item.activityDesc || '-').replace(/"/g, '""')}"`, `"${(item.result || '-').replace(/"/g, '""')}"`, `"${(item.staffRemarks || '-').replace(/"/g, '""')}"`,
-        item.siteId || "-", `"${(item.sow || '-').replace(/"/g, '""')}"`,
         item.timePulang || "-", `"${(item.alamatPulang || '-').replace(/"/g, '""')}"`, item.photoPulang || "-",
         item.approval1 || "-", `"${(item.pmRemark || '-').replace(/"/g, '""')}"`, item.approval2 || "-", `"${(item.pdRemark || '-').replace(/"/g, '""')}"`
       ]);
@@ -2028,7 +2085,7 @@
 
       const headers = ["No", "Date", "Name", "ID Karyawan", "Role", "Project", "Site ID", "SOW", "Activity Description", "Result", "Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark", "Alamat GPS Masuk", "Alamat GPS Pulang"];
       const rows = list.map((item, i) => [
-        i + 1, item.date, `"${item.name.replace(/"/g, '""')}"`, item.idKaryawan, item.role, item.projectName,
+        i + 1, item.date, `"${item.name.replace(/"/g, '""')}"`, item.idKaryawan, item.role, `"${(item.projectName || '-').replace(/"/g, '""')}"`,
         item.siteId || "-", `"${(item.sow || '-').replace(/"/g, '""')}"`, `"${(item.activityDesc || '-').replace(/"/g, '""')}"`,
         `"${(item.result || '-').replace(/"/g, '""')}"`, `"${(item.staffRemarks || '-').replace(/"/g, '""')}"`,
         item.approval1 || "-", `"${(item.pmRemark || '-').replace(/"/g, '""')}"`, item.approval2 || "-", `"${(item.pdRemark || '-').replace(/"/g, '""')}"`,
@@ -2054,15 +2111,27 @@
       const target = db.progress.find(p => p.id === progressId);
       if (!target) return;
 
+      // Project authorization check: PM and PD can only approve their own project
+      const userProj = (currentUser.projectName || "").trim().toLowerCase();
+      const targetProj = (target.projectName || "").trim().toLowerCase();
+      if (userProj !== targetProj && currentUser.role !== "Admin System" && currentUser.role !== "Admin") {
+        Swal.fire({
+          icon: "error",
+          title: "Akses Project Ditolak!",
+          text: `Anda terdaftar sebagai ${currentUser.role} untuk project "${currentUser.projectName}". Anda hanya berhak memberikan remark/approval pada teknisi/staff project "${currentUser.projectName}", bukan project "${target.projectName}".`
+        });
+        return;
+      }
+
       document.getElementById("modalProgressId").value = progressId;
-      document.getElementById("approvalModalTitle").innerHTML = `<i class="bi bi-check2-circle me-1"></i> Validasi oleh ${currentUser.role} (${approverType})`;
+      document.getElementById("approvalModalTitle").innerHTML = `<i class="bi bi-check2-circle me-1"></i> Validasi oleh ${currentUser.role} (${approverType}) - Project: ${escapeHtml(target.projectName)}`;
       document.getElementById("labelApprovalStatus").textContent = approverType === "Approval 1" ? "Status Approval 1 (PM/RPM)" : "Status Approval 2 (PD)";
-      document.getElementById("labelApprovalRemark").textContent = approverType === "Approval 1" ? "PM/RPM Remark (Catatan Verifikasi)" : "PD Remark (Catatan Direktur)";
+      document.getElementById("labelApprovalRemark").textContent = approverType === "Approval 1" ? `PM/RPM Remark (${currentUser.projectName})` : `PD Remark (${currentUser.projectName})`;
 
       document.getElementById("modalProgressDetail").innerHTML = `
         <strong>Karyawan:</strong> ${escapeHtml(target.name)} (${escapeHtml(target.idKaryawan || '-')}) - <em>${escapeHtml(target.role)}</em><br/>
-        <strong>Tanggal:</strong> ${target.date} | <strong>Progres:</strong> ${escapeHtml(target.result || '-')}<br/>
-        ${target.siteId && target.siteId !== '-' ? `<strong>Site:</strong> ${escapeHtml(target.siteId)} | <strong>SOW:</strong> ${escapeHtml(target.sow || '-')}<br/>` : ''}
+        <strong>Project:</strong> <span class="badge bg-primary bg-opacity-10 text-primary border">${escapeHtml(target.projectName || '-')}</span> | <strong>Tanggal:</strong> ${target.date} | <strong>Progres:</strong> ${escapeHtml(target.result || '-')}<br/>
+        ${target.siteId && target.siteId !== '-' ? `<strong>Site ID:</strong> <span class="badge bg-secondary">${escapeHtml(target.siteId)}</span> | <strong>SOW:</strong> ${escapeHtml(target.sow || '-')}<br/>` : ''}
         <strong>Aktivitas:</strong> ${escapeHtml(target.activityDesc || '-')}<br/>
         <strong>Remarks Karyawan:</strong> ${escapeHtml(target.staffRemarks || '-')}
       `;
