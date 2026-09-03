@@ -1521,7 +1521,7 @@
     }
 
     function requestGpsAddress(targetElement, callback) {
-      targetElement.innerHTML = `<span class="spinner-border spinner-border-sm text-primary me-1"></span> Mendeteksi alamat GPS...`;
+      targetElement.innerHTML = `<span class="spinner-border spinner-border-sm text-primary me-1"></span> Mendeteksi koordinat & alamat GPS...`;
       if (!navigator.geolocation) {
         const fallback = "Perangkat tidak mendukung Geolocation.";
         targetElement.textContent = fallback;
@@ -1531,14 +1531,16 @@
 
       navigator.geolocation.getCurrentPosition(async (pos) => {
         const { latitude, longitude } = pos.coords;
+        const coordsStr = `[Lat: ${latitude.toFixed(6)}, Lon: ${longitude.toFixed(6)}]`;
         try {
           const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
           const data = await res.json();
-          const address = data.display_name || `Lokasi terdeteksi (${latitude.toFixed(5)}, ${longitude.toFixed(5)})`;
-          targetElement.textContent = address;
-          if (callback) callback(address);
+          // Pertahankan koordinat GPS presisi dan alamat lengkap sampai nomor rumah
+          const fullAddress = data.display_name ? `${coordsStr} ${data.display_name}` : `${coordsStr} Lokasi GPS terdeteksi`;
+          targetElement.textContent = fullAddress;
+          if (callback) callback(fullAddress);
         } catch (e) {
-          const fallback = `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)} (OpenStreetMap Offline)`;
+          const fallback = `${coordsStr} (OpenStreetMap Offline)`;
           targetElement.textContent = fallback;
           if (callback) callback(fallback);
         }
@@ -1559,18 +1561,30 @@
       const ctx = canvasEl.getContext("2d");
       ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
 
-      // Add elegant watermark bar
-      const barH = 50;
-      ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
+      // Watermark bar dengan tinggi disesuaikan agar font 150% muat sempurna
+      const barH = 95;
+      ctx.fillStyle = "rgba(15, 23, 42, 0.82)";
       ctx.fillRect(0, canvasEl.height - barH, canvasEl.width, barH);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 15px 'Inter', sans-serif";
 
       const timeStr = new Date().toLocaleString("id-ID");
-      ctx.fillText(`${currentUser.name} (${currentUser.role}) | ${timeStr}`, 15, canvasEl.height - 28);
-      ctx.font = "12px 'Inter', sans-serif";
-      ctx.fillStyle = "#94a3b8";
-      ctx.fillText((addressTxt || "GPS Geotagged").substring(0, 80), 15, canvasEl.height - 10);
+
+      // Baris 1: Nama, Role, dan Waktu
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 20px 'Inter', sans-serif";
+      ctx.fillText(`${currentUser.name} (${currentUser.role}) | ${timeStr}`, 15, canvasEl.height - barH + 30);
+
+      // Baris 2 & 3: Koordinat GPS & Alamat Lengkap (Font diperbesar 150%, dari 12px menjadi 18px bold)
+      ctx.font = "bold 18px 'Inter', sans-serif";
+      ctx.fillStyle = "#facc15"; // Kuning cerah agar sangat jelas terbaca di atas foto
+      const fullText = addressTxt || "GPS Geotagged";
+
+      if (fullText.length > 70) {
+        ctx.fillText(fullText.substring(0, 70), 15, canvasEl.height - barH + 58);
+        ctx.fillStyle = "#e2e8f0";
+        ctx.fillText(fullText.substring(70, 145), 15, canvasEl.height - barH + 82);
+      } else {
+        ctx.fillText(fullText, 15, canvasEl.height - barH + 64);
+      }
 
       const base64 = canvasEl.toDataURL("image/jpeg", 0.85);
       previewEl.src = base64;
