@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ProSync - Enterprise Attendance & Daily Jobs Progress</title>
+  <title>Kubik Madani Attendance & Daily Jobs Progress</title>
 
   <!-- Bootstrap 5.3 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -350,6 +350,9 @@
           <div class="text-muted" style="font-size: 0.75rem;" id="navUserRole">Role User</div>
         </div>
         <span class="badge-role" id="navRoleBadge">Staff</span>
+        <button class="btn btn-outline-primary btn-sm rounded-pill ms-1" id="btnHeaderSync" title="Sinkronkan Data Terbaru">
+          <i class="bi bi-arrow-clockwise"></i> <span class="d-none d-md-inline">Sinkron</span>
+        </button>
         <button class="btn btn-outline-danger btn-sm rounded-pill ms-2" id="btnHeaderLogout" title="Logout">
           <i class="bi bi-box-arrow-right"></i>
         </button>
@@ -618,6 +621,13 @@
                   <button type="button" class="btn btn-outline-dark fw-semibold" id="btnViewTechFormat">
                     <i class="bi bi-tools me-1"></i> Technician Format (Img 2)
                   </button>
+                </div>
+
+                <!-- FILTER PROYEK (UNTUK PM/PD/ADMIN) -->
+                <div id="wrapperFilterProject" class="d-none">
+                  <select class="form-select form-select-sm" id="selectRecapProjectFilter" style="font-size: 0.8rem;">
+                    <option value="all">Semua Proyek</option>
+                  </select>
                 </div>
 
                 <!-- FILTER WAKTU -->
@@ -1846,12 +1856,35 @@
 
     inputDate.addEventListener("change", refreshDailyAttendanceStatus);
 
+    function parseRecordDate(dStr) {
+      if (!dStr) return new Date();
+      if (dStr instanceof Date) return dStr;
+      // Handle format YYYY-MM-DD
+      if (/^\d{4}-\d{2}-\d{2}/.test(dStr)) {
+        return new Date(dStr);
+      }
+      // Handle format DD-MMM-YY (e.g. 03-Sep-26)
+      const parts = String(dStr).split("-");
+      if (parts.length === 3) {
+        const months = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+        const day = parseInt(parts[0], 10);
+        const mStr = parts[1].toLowerCase().slice(0, 3);
+        let year = parseInt(parts[2], 10);
+        if (year < 100) year += 2000;
+        if (!isNaN(day) && months[mStr] !== undefined) {
+          return new Date(year, months[mStr], day);
+        }
+      }
+      const parsed = new Date(dStr);
+      return isNaN(parsed.getTime()) ? new Date() : parsed;
+    }
+
     function filterByTime(list) {
       if (currentFilter === "all") return list;
       const now = new Date();
       if (currentFilter === "month") {
         return list.filter(item => {
-          const d = new Date(item.date);
+          const d = parseRecordDate(item.date);
           return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
         });
       }
@@ -1867,9 +1900,42 @@
       saturday.setHours(23, 59, 59, 999);
 
       return list.filter(item => {
-        const d = new Date(item.date);
+        const d = parseRecordDate(item.date);
         return d >= monday && d <= saturday;
       });
+    }
+
+    function updateProjectFilterOptions() {
+      const select = document.getElementById("selectRecapProjectFilter");
+      if (!select) return;
+      const projects = new Set();
+      db.progress.forEach(p => {
+        if (p.projectName && p.projectName !== "-" && p.projectName.trim() !== "") {
+          projects.add(p.projectName.trim());
+        }
+      });
+      db.users.forEach(u => {
+        if (u.projectName && u.projectName !== "-" && u.projectName.trim() !== "" && u.projectName.toLowerCase() !== "management") {
+          projects.add(u.projectName.trim());
+        }
+      });
+
+      const currentVal = select.value || "all";
+      select.innerHTML = '<option value="all">Semua Proyek</option>';
+      projects.forEach(proj => {
+        const opt = document.createElement("option");
+        opt.value = proj.toLowerCase();
+        opt.textContent = proj;
+        select.appendChild(opt);
+      });
+
+      // Default to PM's project if set, otherwise retain selection or 'all'
+      const userProj = (currentUser && currentUser.projectName) ? currentUser.projectName.trim().toLowerCase() : "";
+      if (userProj && userProj !== "all" && userProj !== "-" && userProj !== "management") {
+        select.value = userProj;
+      } else {
+        select.value = currentVal;
+      }
     }
 
     function renderRecapTable() {
@@ -1880,36 +1946,74 @@
 
       let list = [...db.progress];
 
-      // 1. Strict Project Scoping for PM, RPM, and PD:
-      // PM/PD only see records of their assigned Project!
       const userRole = currentUser.role;
       const userProject = (currentUser.projectName || "").trim().toLowerCase();
+      const projectFilterWrapper = document.getElementById("wrapperFilterProject");
+      const selectProject = document.getElementById("selectRecapProjectFilter");
 
       if (userRole === "Staff" || userRole === "Technician") {
         list = list.filter(p => p.username === currentUser.username);
         currentRecapViewRole = userRole;
+        if (projectFilterWrapper) projectFilterWrapper.classList.add("d-none");
         document.getElementById("recapHeadingTitle").textContent = `${userRole} - Jobs Progress (${currentUser.name})`;
         document.getElementById("recapSubHeadingText").textContent = `Project: ${currentUser.projectName || '-'}`;
       } else if (userRole === "PM" || userRole === "RPM" || userRole === "PD") {
-        // Strict filter by project!
+        if (projectFilterWrapper) projectFilterWrapper.classList.remove("d-none");
+        updateProjectFilterOptions();
+
+        const selectedProject = selectProject ? selectProject.value.toLowerCase() : "all";
+        
         list = list.filter(p => {
+          if (p.role !== currentRecapViewRole) return false;
           const itemProj = (p.projectName || "").trim().toLowerCase();
-          return itemProj === userProject && p.role === currentRecapViewRole;
+          
+          // Jika ada filter proyek yang dipilih di dropdown:
+          if (selectedProject && selectedProject !== "all") {
+            return itemProj === selectedProject;
+          }
+          // Jika user PM memiliki proyek spesifik:
+          if (userProject && userProject !== "all" && userProject !== "all projects" && userProject !== "-" && userProject !== "management") {
+            return itemProj === userProject;
+          }
+          // Jika proyek PM kosong atau 'all', tampilkan seluruhnya
+          return true;
         });
-        document.getElementById("recapHeadingTitle").textContent = `${currentRecapViewRole}s - Jobs Progress (${currentUser.projectName})`;
-        document.getElementById("recapSubHeadingText").textContent = `Akses Khusus ${userRole} untuk Proyek: ${currentUser.projectName}`;
+
+        const activeProjectName = (selectedProject && selectedProject !== "all") 
+          ? selectProject.options[selectProject.selectedIndex].text 
+          : ((userProject && userProject !== "all" && userProject !== "all projects" && userProject !== "-" && userProject !== "management") ? currentUser.projectName : "Semua Proyek");
+
+        document.getElementById("recapHeadingTitle").textContent = `${currentRecapViewRole}s - Jobs Progress (${activeProjectName})`;
+        document.getElementById("recapSubHeadingText").textContent = `Akses Khusus ${userRole} untuk Proyek: ${activeProjectName}`;
       } else {
         // Admin System: views all by current role format
-        list = list.filter(p => p.role === currentRecapViewRole);
-        document.getElementById("recapHeadingTitle").textContent = `${currentRecapViewRole}s - Jobs Progress (All Projects)`;
-        document.getElementById("recapSubHeadingText").textContent = `Mode Admin System - Seluruh Proyek`;
+        if (projectFilterWrapper) projectFilterWrapper.classList.remove("d-none");
+        updateProjectFilterOptions();
+
+        const selectedProject = selectProject ? selectProject.value.toLowerCase() : "all";
+        list = list.filter(p => {
+          if (p.role !== currentRecapViewRole) return false;
+          if (selectedProject && selectedProject !== "all") {
+            return (p.projectName || "").trim().toLowerCase() === selectedProject;
+          }
+          return true;
+        });
+
+        const activeProjectName = (selectedProject && selectedProject !== "all") 
+          ? selectProject.options[selectProject.selectedIndex].text 
+          : "Seluruh Proyek";
+
+        document.getElementById("recapHeadingTitle").textContent = `${currentRecapViewRole}s - Jobs Progress (${activeProjectName})`;
+        document.getElementById("recapSubHeadingText").textContent = `Mode Admin System - ${activeProjectName}`;
       }
 
       // Metadata card top values
       const targetUser = (list.length > 0) ? list[0] : currentUser;
       document.getElementById("recapMetaName").textContent = targetUser.name || currentUser.name;
       document.getElementById("recapMetaId").textContent = targetUser.idKaryawan || currentUser.idKaryawan || "-";
-      document.getElementById("recapMetaProject").textContent = (userRole === "Staff" || userRole === "Technician") ? (targetUser.projectName || "-") : (currentUser.projectName || "All Projects");
+      document.getElementById("recapMetaProject").textContent = (userRole === "Staff" || userRole === "Technician") 
+        ? (targetUser.projectName || "-") 
+        : ((selectProject && selectProject.value !== "all") ? selectProject.options[selectProject.selectedIndex].text : (currentUser.projectName || "All Projects"));
       document.getElementById("recapMetaCode").textContent = targetUser.projectCode || currentUser.projectCode || "-";
       document.getElementById("recapMetaPeriode").textContent = targetUser.periode || currentUser.periode || "-";
       document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
@@ -2063,6 +2167,19 @@
       btnViewTechFormat.classList.add("active");
       btnViewStaffFormat.classList.remove("active");
       renderRecapTable();
+    });
+
+    document.getElementById("selectRecapProjectFilter")?.addEventListener("change", () => {
+      renderRecapTable();
+    });
+
+    document.getElementById("btnHeaderSync")?.addEventListener("click", async () => {
+      showLoading("Menyinkronkan data terbaru dari server...");
+      await syncFromGAS();
+      hideLoading();
+      renderRecapTable();
+      renderPresensiLogTable();
+      Swal.fire("Tersinkron", "Data terbaru berhasil dimuat.", "success");
     });
 
     document.getElementById("btnFilterWeek").addEventListener("click", (e) => {
