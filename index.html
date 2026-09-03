@@ -1531,16 +1531,34 @@
 
       navigator.geolocation.getCurrentPosition(async (pos) => {
         const { latitude, longitude } = pos.coords;
-        const coordsStr = `[Lat: ${latitude.toFixed(6)}, Lon: ${longitude.toFixed(6)}]`;
+        const coordsStr = `Lat: ${latitude.toFixed(6)}, Lon: ${longitude.toFixed(6)}`;
         try {
           const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
           const data = await res.json();
-          // Pertahankan koordinat GPS presisi dan alamat lengkap sampai nomor rumah
-          const fullAddress = data.display_name ? `${coordsStr} ${data.display_name}` : `${coordsStr} Lokasi GPS terdeteksi`;
+
+          // Ambil detail nomor rumah, gedung, dan jalan jika tersedia
+          let streetDetail = "";
+          if (data.address) {
+            const a = data.address;
+            const houseNo = a.house_number ? `No. ${a.house_number}, ` : "";
+            const building = a.building ? `${a.building}, ` : "";
+            const road = a.road || a.pedestrian || a.street || a.residential || "";
+            if (houseNo || building || road) {
+              streetDetail = `${building}${road} ${houseNo}`.trim();
+            }
+          }
+
+          let baseAddress = data.display_name || "Lokasi terdeteksi";
+          if (streetDetail && !baseAddress.toLowerCase().includes(streetDetail.toLowerCase())) {
+            baseAddress = `${streetDetail}, ${baseAddress}`;
+          }
+
+          // Gabungkan koordinat dan alamat lengkap
+          const fullAddress = `${coordsStr} | ${baseAddress}`;
           targetElement.textContent = fullAddress;
           if (callback) callback(fullAddress);
         } catch (e) {
-          const fallback = `${coordsStr} (OpenStreetMap Offline)`;
+          const fallback = `${coordsStr} | OpenStreetMap Offline`;
           targetElement.textContent = fallback;
           if (callback) callback(fallback);
         }
@@ -1561,29 +1579,50 @@
       const ctx = canvasEl.getContext("2d");
       ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
 
-      // Watermark bar dengan tinggi disesuaikan agar font 150% muat sempurna
-      const barH = 95;
-      ctx.fillStyle = "rgba(15, 23, 42, 0.82)";
+      // Tinggikan bilah watermark agar font 200% (24px) muat sempurna
+      const barH = 145;
+      ctx.fillStyle = "rgba(15, 23, 42, 0.88)";
       ctx.fillRect(0, canvasEl.height - barH, canvasEl.width, barH);
 
       const timeStr = new Date().toLocaleString("id-ID");
 
-      // Baris 1: Nama, Role, dan Waktu
+      // Baris 1: Nama, Role, Tanggal & Waktu
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 20px 'Inter', sans-serif";
-      ctx.fillText(`${currentUser.name} (${currentUser.role}) | ${timeStr}`, 15, canvasEl.height - barH + 30);
-
-      // Baris 2 & 3: Koordinat GPS & Alamat Lengkap (Font diperbesar 150%, dari 12px menjadi 18px bold)
       ctx.font = "bold 18px 'Inter', sans-serif";
-      ctx.fillStyle = "#facc15"; // Kuning cerah agar sangat jelas terbaca di atas foto
-      const fullText = addressTxt || "GPS Geotagged";
+      ctx.fillText(`${currentUser.name} (${currentUser.role}) | ${timeStr}`, 15, canvasEl.height - barH + 28);
 
-      if (fullText.length > 70) {
-        ctx.fillText(fullText.substring(0, 70), 15, canvasEl.height - barH + 58);
+      // Pisahkan koordinat dan alamat
+      let coordsText = "Lat: Terdeteksi, Lon: Terdeteksi";
+      let streetText = addressTxt || "GPS Geotagged";
+
+      if (addressTxt && addressTxt.includes(" | ")) {
+        const parts = addressTxt.split(" | ");
+        coordsText = parts[0];
+        streetText = parts.slice(1).join(" | ");
+      } else if (addressTxt && addressTxt.includes("Lat:")) {
+        coordsText = addressTxt.substring(0, 36);
+        streetText = addressTxt.substring(36);
+      }
+
+      // Baris 2: Koordinat Lat & Lon (Font diperbesar 200% dari 12px -> 24px Bold, warna Kuning Terang)
+      ctx.font = "bold 24px 'Inter', sans-serif";
+      ctx.fillStyle = "#facc15";
+      ctx.fillText(coordsText, 15, canvasEl.height - barH + 62);
+
+      // Baris 3 & 4: Alamat Lengkap (Font diperbesar 200% -> 24px Bold, warna Putih Terang)
+      ctx.font = "bold 22px 'Inter', sans-serif";
+      ctx.fillStyle = "#ffffff";
+
+      // Bagi teks alamat jika melebihi lebar frame agar tidak terpotong
+      const maxCharPerLine = Math.floor(canvasEl.width / 14);
+      if (streetText.length > maxCharPerLine) {
+        const line1 = streetText.substring(0, maxCharPerLine);
+        const line2 = streetText.substring(maxCharPerLine, maxCharPerLine * 2);
+        ctx.fillText(line1, 15, canvasEl.height - barH + 96);
         ctx.fillStyle = "#e2e8f0";
-        ctx.fillText(fullText.substring(70, 145), 15, canvasEl.height - barH + 82);
+        ctx.fillText(line2, 15, canvasEl.height - barH + 126);
       } else {
-        ctx.fillText(fullText, 15, canvasEl.height - barH + 64);
+        ctx.fillText(streetText, 15, canvasEl.height - barH + 98);
       }
 
       const base64 = canvasEl.toDataURL("image/jpeg", 0.85);
