@@ -1604,13 +1604,13 @@
         streetText = addressTxt.substring(36);
       }
 
-      // Baris 2: Koordinat Lat & Lon (Font diperbesar 200% dari 12px -> 24px Bold, warna Kuning Terang)
-      ctx.font = "bold 24px 'Inter', sans-serif";
+      // Baris 2: Koordinat Lat & Lon (Font diperbesar 400% dari 12px -> 48px Bold, warna Kuning Terang)
+      ctx.font = "bold 48px 'Inter', sans-serif";
       ctx.fillStyle = "#facc15";
       ctx.fillText(coordsText, 15, canvasEl.height - barH + 62);
 
-      // Baris 3 & 4: Alamat Lengkap (Font diperbesar 200% -> 24px Bold, warna Putih Terang)
-      ctx.font = "bold 22px 'Inter', sans-serif";
+      // Baris 3 & 4: Alamat Lengkap (Font diperbesar 400% -> 48px Bold, warna Putih Terang)
+      ctx.font = "bold 37px 'Inter', sans-serif";
       ctx.fillStyle = "#ffffff";
 
       // Bagi teks alamat jika melebihi lebar frame agar tidak terpotong
