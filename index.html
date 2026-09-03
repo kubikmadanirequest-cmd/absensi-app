@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kubik - Presensi Attendance & Daily Jobs Progress</title>
+  <title>ProSync - Enterprise Attendance & Daily Jobs Progress</title>
 
   <!-- Bootstrap 5.3 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -292,7 +292,7 @@
       <div class="brand-icon-box">
         <i class="bi bi-shield-check"></i>
       </div>
-      <h4 class="fw-bold text-center text-dark mb-1">Kubik Presensi</h4>
+      <h4 class="fw-bold text-center text-dark mb-1">ProSync Enterprise</h4>
       <p class="text-center text-muted small mb-4">Sistem Presensi & Daily Jobs Progress</p>
 
       <form id="loginForm" autocomplete="off">
@@ -548,9 +548,12 @@
           <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-people-fill text-primary me-1"></i> Manajemen Pengguna & Karyawan</h6>
           <small class="text-muted">Kelola akun, hak akses role, serta kredensial login</small>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 flex-wrap">
           <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddUser">
             <i class="bi bi-person-plus-fill me-1"></i> Tambah User
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalBulkUpload">
+            <i class="bi bi-file-earmark-arrow-up me-1"></i> Upload CSV Karyawan
           </button>
           <button type="button" class="btn btn-sm btn-outline-success" id="btnDownloadUsersCsv">
             <i class="bi bi-download me-1"></i> Export Users
@@ -728,9 +731,60 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-sm btn-primary">Simpan Approval</button>
+            <button type="submit" class="btn btn-sm btn-primary">Simpan Approval & Remark</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Bulk Upload CSV (Admin System) -->
+  <div class="modal fade" id="modalBulkUpload" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title fw-bold"><i class="bi bi-file-earmark-arrow-up me-1"></i> Upload Bulk Karyawan (CSV)</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info small py-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <span>Gunakan format CSV dengan kolom: <code>username, password, name, role, idKaryawan, projectName, projectCode, periode, noWa</code></span>
+              <button type="button" class="btn btn-sm btn-outline-primary" id="btnDownloadTemplateCsv">
+                <i class="bi bi-download me-1"></i> Unduh Template
+              </button>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Pilih File CSV:</label>
+            <input type="file" class="form-control form-control-sm" id="inputBulkCsv" accept=".csv">
+          </div>
+          <div id="bulkUploadPreviewArea" class="d-none">
+            <h6 class="small fw-bold mb-2">Pratinjau Data yang Akan Diunggah:</h6>
+            <div class="table-responsive" style="max-height: 240px;">
+              <table class="table table-sm table-bordered small text-center align-middle" id="tableBulkPreview">
+                <thead class="table-light">
+                  <tr>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Nama</th>
+                    <th>Role</th>
+                    <th>ID</th>
+                    <th>Project</th>
+                    <th>No WA</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBulkPreviewBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Tutup</button>
+          <button type="button" class="btn btn-sm btn-success" id="btnProcessBulkUpload" disabled>
+            <i class="bi bi-check-circle me-1"></i> Simpan Semua Karyawan
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1013,6 +1067,64 @@
         pmRemark: "-",
         approval2: "ok",
         pdRemark: "-"
+      },
+      // Technician Records (Huawei Project - Ahmad Rizky)
+      {
+        id: "PROG-HW-01",
+        username: "ahmad.hw",
+        name: "Ahmad Rizky",
+        idKaryawan: "2601020044",
+        role: "Technician",
+        projectName: "Huawei",
+        projectCode: "HWI",
+        siteId: "HWI-JKT09",
+        sow: "Swap Antena Sektoral & Commisioning",
+        periode: "agustus - desember 26",
+        date: "2026-08-08",
+        timeMasuk: "08:05:00",
+        alamatMasuk: "Site HWI-JKT09 Kalibata",
+        photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+HWI-JKT09",
+        hasJobsProgress: true,
+        activityDesc: "Penggantian antena sektoral 3 sektor dan testing VSWR",
+        result: "done",
+        staffRemarks: "VSWR normal di bawah 1.3",
+        timePulang: "17:30:00",
+        alamatPulang: "Site HWI-JKT09 Kalibata",
+        photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+HWI-JKT09",
+        approval1: "pending",
+        pmRemark: "-",
+        approval2: "pending",
+        pdRemark: "-",
+        picRigger: "Ahmad Rizky"
+      },
+      // Technician Records (ZTE Project - Fajar Pratama)
+      {
+        id: "PROG-ZTE-01",
+        username: "fajar.zte",
+        name: "Fajar Pratama",
+        idKaryawan: "2601020099",
+        role: "Technician",
+        projectName: "ZTE",
+        projectCode: "ZTE-RO",
+        siteId: "ZTE-BDG02",
+        sow: "Drive Test Cluster 4",
+        periode: "agustus - desember 26",
+        date: "2026-08-08",
+        timeMasuk: "08:15:00",
+        alamatMasuk: "Cluster Bandung Timur",
+        photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+ZTE-BDG02",
+        hasJobsProgress: true,
+        activityDesc: "Single Site Verification (SSV) 5G NSA",
+        result: "Done",
+        staffRemarks: "Throughput download mencapai 450Mbps",
+        timePulang: "17:45:00",
+        alamatPulang: "Cluster Bandung Timur",
+        photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+ZTE-BDG02",
+        approval1: "pending",
+        pmRemark: "-",
+        approval2: "pending",
+        pdRemark: "-",
+        picRigger: "Fajar Pratama"
       },
       // Technician Records (Image 2 - Dewin Saputra)
       {
@@ -1756,21 +1868,36 @@
 
       let list = [...db.progress];
 
-      if (currentUser.role === "Staff" || currentUser.role === "Technician") {
+      // 1. Strict Project Scoping for PM, RPM, and PD:
+      // PM/PD only see records of their assigned Project!
+      const userRole = currentUser.role;
+      const userProject = (currentUser.projectName || "").trim().toLowerCase();
+
+      if (userRole === "Staff" || userRole === "Technician") {
         list = list.filter(p => p.username === currentUser.username);
-        currentRecapViewRole = currentUser.role;
-        document.getElementById("recapHeadingTitle").textContent = `${currentUser.role} - Jobs Progress (${currentUser.name})`;
+        currentRecapViewRole = userRole;
+        document.getElementById("recapHeadingTitle").textContent = `${userRole} - Jobs Progress (${currentUser.name})`;
+        document.getElementById("recapSubHeadingText").textContent = `Project: ${currentUser.projectName || '-'}`;
+      } else if (userRole === "PM" || userRole === "RPM" || userRole === "PD") {
+        // Strict filter by project!
+        list = list.filter(p => {
+          const itemProj = (p.projectName || "").trim().toLowerCase();
+          return itemProj === userProject && p.role === currentRecapViewRole;
+        });
+        document.getElementById("recapHeadingTitle").textContent = `${currentRecapViewRole}s - Jobs Progress (${currentUser.projectName})`;
+        document.getElementById("recapSubHeadingText").textContent = `Akses Khusus ${userRole} untuk Proyek: ${currentUser.projectName}`;
       } else {
-        // Management viewing Staff or Technician format
+        // Admin System: views all by current role format
         list = list.filter(p => p.role === currentRecapViewRole);
-        document.getElementById("recapHeadingTitle").textContent = `${currentRecapViewRole}s - Jobs Progress`;
+        document.getElementById("recapHeadingTitle").textContent = `${currentRecapViewRole}s - Jobs Progress (All Projects)`;
+        document.getElementById("recapSubHeadingText").textContent = `Mode Admin System - Seluruh Proyek`;
       }
 
       // Metadata card top values
       const targetUser = (list.length > 0) ? list[0] : currentUser;
       document.getElementById("recapMetaName").textContent = targetUser.name || currentUser.name;
       document.getElementById("recapMetaId").textContent = targetUser.idKaryawan || currentUser.idKaryawan || "-";
-      document.getElementById("recapMetaProject").textContent = targetUser.projectName || currentUser.projectName || "-";
+      document.getElementById("recapMetaProject").textContent = (userRole === "Staff" || userRole === "Technician") ? (targetUser.projectName || "-") : (currentUser.projectName || "All Projects");
       document.getElementById("recapMetaCode").textContent = targetUser.projectCode || currentUser.projectCode || "-";
       document.getElementById("recapMetaPeriode").textContent = targetUser.periode || currentUser.periode || "-";
       document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
@@ -1779,48 +1906,50 @@
       list.sort((a, b) => new Date(b.date) - new Date(a.date));
       document.getElementById("recapTotalCount").textContent = `Total: ${list.length} Catatan`;
 
-      // 1. RENDER HEADERS MATCHING EXACT TEMPLATES
+      // 2. RENDER HEADERS Sesuai Template Asli + Remark PM & PD (Tanpa Kolom Aksi Validasi)
       if (currentRecapViewRole === "Staff") {
-        // MATCHING IMAGE 1: Staff - Jobs Progress
-        // No | Date | Activity Description | Result | Remarks | Approval 1 | Approval 2 | Bukti Foto
+        // MATCHING IMAGE 1: Staff - Jobs Progress (with PM & PD remarks)
         thead.innerHTML = `
           <tr class="table-light">
             <th style="width: 45px;">No</th>
-            <th style="width: 105px;">Date</th>
+            <th style="width: 100px;">Date</th>
             <th>Activity Description</th>
-            <th style="width: 90px;">Result</th>
+            <th style="width: 85px;">Result</th>
             <th>Remarks</th>
-            <th style="width: 130px;">Approval 1</th>
-            <th style="width: 130px;">Approval 2</th>
-            <th style="width: 110px;">Bukti Foto</th>
+            <th style="width: 110px;">Approval 1</th>
+            <th style="width: 150px;">PM Remark</th>
+            <th style="width: 110px;">Approval 2</th>
+            <th style="width: 150px;">PD Remark</th>
+            <th style="width: 90px;">Bukti Foto</th>
           </tr>
         `;
       } else {
-        // MATCHING IMAGE 2: Technicians - Jobs Progress
-        // Grouped Header: No | Date | [Activity Description: Site ID | Sow | task or activity] | Result | Remarks | Approval 1 | Approval 2 | PIC Rigger | Bukti Foto
+        // MATCHING IMAGE 2: Technicians - Jobs Progress (with PM & PD remarks)
         thead.innerHTML = `
           <tr class="table-light align-middle">
             <th rowspan="2" style="width: 45px;">No</th>
-            <th rowspan="2" style="width: 105px;">Date</th>
+            <th rowspan="2" style="width: 100px;">Date</th>
             <th colspan="3" class="bg-secondary bg-opacity-10 fw-bold">Activity Description</th>
             <th rowspan="2" style="width: 80px;">Result</th>
             <th rowspan="2">Remarks</th>
-            <th rowspan="2" style="width: 130px;">Approval 1</th>
-            <th rowspan="2" style="width: 130px;">Approval 2</th>
-            <th rowspan="2" style="width: 130px;">PIC Rigger</th>
-            <th rowspan="2" style="width: 110px;">Bukti Foto</th>
+            <th rowspan="2" style="width: 110px;">Approval 1</th>
+            <th rowspan="2" style="width: 150px;">PM Remark</th>
+            <th rowspan="2" style="width: 110px;">Approval 2</th>
+            <th rowspan="2" style="width: 150px;">PD Remark</th>
+            <th rowspan="2" style="width: 120px;">PIC Rigger</th>
+            <th rowspan="2" style="width: 90px;">Bukti Foto</th>
           </tr>
           <tr class="table-light">
-            <th style="width: 120px;">Site ID</th>
-            <th style="width: 120px;">Sow</th>
+            <th style="width: 110px;">Site ID</th>
+            <th style="width: 110px;">Sow</th>
             <th>task or activity</th>
           </tr>
         `;
       }
 
       if (list.length === 0) {
-        const colSpan = (currentRecapViewRole === "Staff") ? 8 : 11;
-        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-4 text-muted">Belum ada catatan pekerjaan untuk ${currentRecapViewRole} pada filter ini.</td></tr>`;
+        const colSpan = (currentRecapViewRole === "Staff") ? 10 : 13;
+        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-4 text-muted">Belum ada catatan pekerjaan untuk ${currentRecapViewRole} pada filter atau proyek ini.</td></tr>`;
         return;
       }
 
@@ -1830,24 +1959,33 @@
           day: "2-digit", month: "short", year: "2-digit"
         }).replace(/ /g, "-");
 
-        // Check project responsibility match for PM and PD
-        const userProj = (currentUser.projectName || "").trim().toLowerCase();
+        // Verify project authorization for writing & editing
         const rowProj = (row.projectName || "").trim().toLowerCase();
-        const isProjectAuthorized = !userProj || userProj === "all" || userProj === "management" || userProj === rowProj || currentUser.role === "Admin System" || currentUser.role === "Admin";
+        const isProjectAuthorized = !userProject || userProject === "all" || userProject === "management" || userProject === rowProj || userRole === "Admin System" || userRole === "Admin";
 
-        // Interactive Approval 1 for PM / RPM
+        // PM & RPM: Interactive Approval 1 & PM Remark
         let app1Display = `<span class="badge bg-light text-dark border">${escapeHtml(row.approval1 || "pending")}</span>`;
-        if ((currentUser.role === "PM" || currentUser.role === "RPM" || currentUser.role === "Admin System" || currentUser.role === "Admin") && isProjectAuthorized) {
-          app1Display = `<button type="button" class="interactive-cell-btn" onclick="openApprovalModal('${row.id}', 'Approval 1')">
-            <strong>${escapeHtml(row.approval1 || "pending")}</strong> <i class="bi bi-pencil-fill text-primary"></i>
+        let pmRemarkDisplay = `<span class="small text-muted">${escapeHtml(row.pmRemark || "-")}</span>`;
+
+        if ((userRole === "PM" || userRole === "RPM" || userRole === "Admin System" || userRole === "Admin") && isProjectAuthorized) {
+          app1Display = `<button type="button" class="interactive-cell-btn" title="Klik untuk edit approval & remark" onclick="openApprovalModal('${row.id}', 'Approval 1')">
+            <strong>${escapeHtml(row.approval1 || "pending")}</strong> <i class="bi bi-pencil-fill text-primary ms-1"></i>
+          </button>`;
+          pmRemarkDisplay = `<button type="button" class="interactive-cell-btn text-start text-dark" title="Klik untuk edit remark PM" onclick="openApprovalModal('${row.id}', 'Approval 1')">
+            <span>${escapeHtml(row.pmRemark && row.pmRemark !== '-' ? row.pmRemark : 'Tulis Remark')}</span> <i class="bi bi-pencil-square text-primary ms-1"></i>
           </button>`;
         }
 
-        // Interactive Approval 2 for PD
+        // PD: Interactive Approval 2 & PD Remark
         let app2Display = `<span class="badge bg-light text-dark border">${escapeHtml(row.approval2 || "pending")}</span>`;
-        if ((currentUser.role === "PD" || currentUser.role === "Admin System" || currentUser.role === "Admin") && isProjectAuthorized) {
-          app2Display = `<button type="button" class="interactive-cell-btn" onclick="openApprovalModal('${row.id}', 'Approval 2')">
-            <strong>${escapeHtml(row.approval2 || "pending")}</strong> <i class="bi bi-pencil-fill text-warning"></i>
+        let pdRemarkDisplay = `<span class="small text-muted">${escapeHtml(row.pdRemark || "-")}</span>`;
+
+        if ((userRole === "PD" || userRole === "Admin System" || userRole === "Admin") && isProjectAuthorized) {
+          app2Display = `<button type="button" class="interactive-cell-btn" title="Klik untuk edit approval & remark" onclick="openApprovalModal('${row.id}', 'Approval 2')">
+            <strong>${escapeHtml(row.approval2 || "pending")}</strong> <i class="bi bi-pencil-fill text-warning ms-1"></i>
+          </button>`;
+          pdRemarkDisplay = `<button type="button" class="interactive-cell-btn text-start text-dark" title="Klik untuk edit remark PD" onclick="openApprovalModal('${row.id}', 'Approval 2')">
+            <span>${escapeHtml(row.pdRemark && row.pdRemark !== '-' ? row.pdRemark : 'Tulis Remark')}</span> <i class="bi bi-pencil-square text-warning ms-1"></i>
           </button>`;
         }
 
@@ -1866,7 +2004,9 @@
             <td class="fw-semibold text-primary">${escapeHtml(row.result || '-')}</td>
             <td class="text-start small text-muted">${escapeHtml(row.staffRemarks || '-')}</td>
             <td>${app1Display}</td>
+            <td class="text-start">${pmRemarkDisplay}</td>
             <td>${app2Display}</td>
+            <td class="text-start">${pdRemarkDisplay}</td>
             <td>
               ${photoMasukBtn} ${photoPulangBtn}
               ${(!photoMasukBtn && !photoPulangBtn) ? '<span class="text-muted">-</span>' : ''}
@@ -1884,7 +2024,9 @@
             <td class="fw-semibold text-primary">${escapeHtml(row.result || '-')}</td>
             <td class="text-start small text-muted">${escapeHtml(row.staffRemarks || '-')}</td>
             <td>${app1Display}</td>
+            <td class="text-start">${pmRemarkDisplay}</td>
             <td>${app2Display}</td>
+            <td class="text-start">${pdRemarkDisplay}</td>
             <td class="fw-semibold text-dark text-nowrap">${escapeHtml(picRiggerName)}</td>
             <td>
               ${photoMasukBtn} ${photoPulangBtn}
@@ -1936,8 +2078,13 @@
 
     document.getElementById("btnExportJobsCsv").addEventListener("click", () => {
       let list = db.progress.filter(p => p.role === currentRecapViewRole);
-      if (currentUser.role === "Staff" || currentUser.role === "Technician") {
+      const userRole = currentUser.role;
+      const userProject = (currentUser.projectName || "").trim().toLowerCase();
+
+      if (userRole === "Staff" || userRole === "Technician") {
         list = list.filter(p => p.username === currentUser.username);
+      } else if (userRole === "PM" || userRole === "RPM" || userRole === "PD") {
+        list = list.filter(p => (p.projectName || "").trim().toLowerCase() === userProject);
       }
       list = filterByTime(list);
 
@@ -1948,8 +2095,8 @@
 
       let csvContent = "";
       if (currentRecapViewRole === "Staff") {
-        // IMAGE 1 HEADERS
-        const headers = ["No", "Date", "Activity Description", "Result", "Remarks", "Approval 1", "Approval 2"];
+        // IMAGE 1 HEADERS (with PM & PD Remarks)
+        const headers = ["No", "Date", "Activity Description", "Result", "Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark"];
         const rows = list.map((item, i) => [
           i + 1,
           new Date(item.date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "2-digit" }).replace(/ /g, "-"),
@@ -1957,12 +2104,14 @@
           `"${(item.result || '-').replace(/"/g, '""')}"`,
           `"${(item.staffRemarks || '-').replace(/"/g, '""')}"`,
           item.approval1 || "-",
-          item.approval2 || "-"
+          `"${(item.pmRemark || '-').replace(/"/g, '""')}"`,
+          item.approval2 || "-",
+          `"${(item.pdRemark || '-').replace(/"/g, '""')}"`
         ]);
         csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
       } else {
-        // IMAGE 2 HEADERS
-        const headers = ["No", "Date", "Site ID", "Sow", "task or activity", "Result", "Remarks", "Approval 1", "Approval 2", "PIC Rigger"];
+        // IMAGE 2 HEADERS (with PM & PD Remarks)
+        const headers = ["No", "Date", "Site ID", "Sow", "task or activity", "Result", "Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark", "PIC Rigger"];
         const rows = list.map((item, i) => [
           i + 1,
           new Date(item.date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "2-digit" }).replace(/ /g, "-"),
@@ -1972,7 +2121,9 @@
           `"${(item.result || '-').replace(/"/g, '""')}"`,
           `"${(item.staffRemarks || '-').replace(/"/g, '""')}"`,
           item.approval1 || "-",
+          `"${(item.pmRemark || '-').replace(/"/g, '""')}"`,
           item.approval2 || "-",
+          `"${(item.pdRemark || '-').replace(/"/g, '""')}"`,
           `"${(item.picRigger || item.name || '-').replace(/"/g, '""')}"`
         ]);
         csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
@@ -1980,23 +2131,180 @@
 
       downloadCsv(csvContent, `${currentRecapViewRole}_Jobs_Progress_${currentFilter}_${new Date().toISOString().slice(0, 10)}.csv`);
     });
+    // Bulk Upload Handlers
+    let parsedBulkUsers = [];
+    const inputBulkCsv = document.getElementById("inputBulkCsv");
+    const btnProcessBulkUpload = document.getElementById("btnProcessBulkUpload");
+    const btnDownloadTemplateCsv = document.getElementById("btnDownloadTemplateCsv");
+    const bulkUploadPreviewArea = document.getElementById("bulkUploadPreviewArea");
+    const tableBulkPreviewBody = document.getElementById("tableBulkPreviewBody");
+
+    btnDownloadTemplateCsv.addEventListener("click", () => {
+      const templateContent = "username,password,name,role,idKaryawan,projectName,projectCode,periode,noWa\r\n" +
+        "rudi.zte,tech123,Rudi ZTE,Technician,2601020055,ZTE,ZTE-RO,Agustus - Desember 26,081233334444\r\n" +
+        "siti.hw,staff123,Siti Huawei,Staff,2601020066,Huawei,HWI,Agustus - Desember 26,081255556666\r\n" +
+        "budi.tlk,tech123,Budi Santoso,Technician,2601020077,Telkom infra,RO,Agustus - Desember 26,081277778888";
+      downloadCsv(templateContent, "Template_Upload_Karyawan_ProSync.csv");
+    });
+
+    inputBulkCsv.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) {
+        parsedBulkUsers = [];
+        btnProcessBulkUpload.disabled = true;
+        bulkUploadPreviewArea.classList.add("d-none");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const text = evt.target.result;
+        const lines = text.split(/\r\n|\n/).filter(line => line.trim() !== "");
+        if (lines.length <= 1) {
+          Swal.fire("Format CSV Kosong", "File CSV tidak memiliki baris data.", "warning");
+          return;
+        }
+
+        const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ''));
+        parsedBulkUsers = [];
+        tableBulkPreviewBody.innerHTML = "";
+
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(",").map(c => c.trim().replace(/^"|"$/g, ''));
+          if (cols.length >= 4) {
+            const userObj = {
+              username: (cols[0] || "").toLowerCase(),
+              password: cols[1] || "123456",
+              name: cols[2] || "Karyawan Baru",
+              role: cols[3] || "Technician",
+              idKaryawan: cols[4] || "-",
+              projectName: cols[5] || "Telkom infra",
+              projectCode: cols[6] || "RO",
+              periode: cols[7] || "Agustus - Desember 26",
+              noWa: cols[8] || "-"
+            };
+            parsedBulkUsers.push(userObj);
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td><code>${escapeHtml(userObj.username)}</code></td>
+              <td>••••••••</td>
+              <td class="text-start">${escapeHtml(userObj.name)}</td>
+              <td><span class="badge bg-secondary">${userObj.role}</span></td>
+              <td>${escapeHtml(userObj.idKaryawan)}</td>
+              <td>${escapeHtml(userObj.projectName)}</td>
+              <td>${escapeHtml(userObj.noWa)}</td>
+            `;
+            tableBulkPreviewBody.appendChild(tr);
+          }
+        }
+
+        if (parsedBulkUsers.length > 0) {
+          bulkUploadPreviewArea.classList.remove("d-none");
+          btnProcessBulkUpload.disabled = false;
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    btnProcessBulkUpload.addEventListener("click", async () => {
+      if (parsedBulkUsers.length === 0) return;
+
+      showLoading(`Mengunggah & menyimpan ${parsedBulkUsers.length} data karyawan...`);
+
+      parsedBulkUsers.forEach(newU => {
+        const existingIdx = db.users.findIndex(u => u.username.toLowerCase() === newU.username);
+        if (existingIdx !== -1) {
+          db.users[existingIdx] = newU;
+        } else {
+          db.users.push(newU);
+        }
+      });
+
+      saveDbToLocalStorage();
+
+      const apiUrl = gasApiUrlInput.value.trim();
+      if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
+        try {
+          await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "bulkUploadUsers", users: parsedBulkUsers })
+          });
+        } catch (err) {
+          console.warn("GAS bulk upload error:", err);
+        }
+      }
+
+      setTimeout(() => {
+        hideLoading();
+        bootstrap.Modal.getInstance(document.getElementById("modalBulkUpload")).hide();
+        inputBulkCsv.value = "";
+        parsedBulkUsers = [];
+        btnProcessBulkUpload.disabled = true;
+        bulkUploadPreviewArea.classList.add("d-none");
+        Swal.fire("Berhasil", "Data seluruh karyawan dan kredensial berhasil disimpan.", "success");
+        renderAdminUsers();
+      }, 450);
+    });
+
+    // Export Users CSV
+    document.getElementById("btnDownloadUsersCsv").addEventListener("click", () => {
+      if (db.users.length === 0) {
+        Swal.fire("Informasi", "Belum ada data user.", "info");
+        return;
+      }
+      const headers = ["Username", "Password", "Nama Karyawan", "Role", "ID Karyawan", "Project Name", "Project Code", "Periode", "No WA"];
+      const rows = db.users.map(u => [
+        `"${u.username}"`,
+        `"${u.password}"`,
+        `"${u.name.replace(/"/g, '""')}"`,
+        u.role,
+        `"${u.idKaryawan || '-'}"`,
+        `"${u.projectName || '-'}"`,
+        `"${u.projectCode || '-'}"`,
+        `"${u.periode || '-'}"`,
+        `"${u.noWa || '-'}"`
+      ]);
+      const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
+      downloadCsv(csv, `Data_Karyawan_${new Date().toISOString().slice(0, 10)}.csv`);
+    });
 
     function renderPresensiLogTable() {
       const tbody = document.getElementById("tablePresensiLogBody");
+      if (!tbody) return;
       tbody.innerHTML = "";
 
       let list = [...db.progress];
-      if (currentUser.role === "Staff" || currentUser.role === "Technician") {
+      const userRole = currentUser ? currentUser.role : "Staff";
+      const userProject = currentUser && currentUser.projectName ? currentUser.projectName.trim().toLowerCase() : "";
+
+      if (userRole === "Staff" || userRole === "Technician") {
         list = list.filter(p => p.username === currentUser.username);
+      } else if (userRole === "PM" || userRole === "RPM" || userRole === "PD") {
+        list = list.filter(p => (p.projectName || "").trim().toLowerCase() === userProject);
       }
 
+      list.sort((a, b) => new Date(b.date) - new Date(a.date));
+
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="11" class="text-center py-4 text-muted">Belum ada data presensi.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11" class="text-center py-3 text-muted">Belum ada data log presensi.</td></tr>`;
         return;
       }
 
       list.forEach((row, i) => {
         const tr = document.createElement("tr");
+        const masukInfo = (row.timeMasuk && row.timeMasuk !== "-") ?
+          `<div><span class="badge bg-primary">${escapeHtml(row.timeMasuk)}</span></div><small class="text-muted d-block text-truncate" style="max-width: 160px;" title="${escapeHtml(row.alamatMasuk || '')}">${escapeHtml(row.alamatMasuk || '-')}</small>` :
+          '<span class="text-muted">-</span>';
+
+        const pulangInfo = (row.timePulang && row.timePulang !== "-") ?
+          `<div><span class="badge bg-danger">${escapeHtml(row.timePulang)}</span></div><small class="text-muted d-block text-truncate" style="max-width: 160px;" title="${escapeHtml(row.alamatPulang || '')}">${escapeHtml(row.alamatPulang || '-')}</small>` :
+          '<span class="text-muted">-</span>';
+
+        const jobsInfo = row.hasJobsProgress ?
+          `<div class="text-start"><strong class="text-dark">${escapeHtml(row.activityDesc || '-')}</strong><br><small class="text-success fw-semibold">Result: ${escapeHtml(row.result || '-')}</small></div>` :
+          '<span class="badge bg-warning text-dark">Belum diisi</span>';
 
         const photoMasukBtn = (row.photoMasuk && row.photoMasuk !== "-") ?
           `<button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 mb-1" onclick="previewItemPhoto('${row.id}', 'masuk')"><i class="bi bi-box-arrow-in-right"></i> Masuk</button>` : '';
@@ -2005,24 +2313,18 @@
 
         tr.innerHTML = `
           <td>${i + 1}</td>
-          <td>${row.date}</td>
-          <td class="text-start"><strong>${escapeHtml(row.name)}</strong><br><small class="text-muted">${escapeHtml(row.idKaryawan || '-')}</small></td>
-          <td><span class="badge bg-secondary">${row.role}</span></td>
+          <td>${escapeHtml(row.date)}</td>
+          <td class="text-start fw-semibold">${escapeHtml(row.name)}<br><small class="text-muted">${escapeHtml(row.idKaryawan || '-')}</small></td>
+          <td><span class="badge bg-secondary">${escapeHtml(row.role)}</span></td>
           <td><small>${escapeHtml(row.projectName || '-')}</small></td>
-          <td class="text-start small">
-            <strong>${row.timeMasuk || '-'}</strong><br>
-            <span class="text-muted">${escapeHtml((row.alamatMasuk || '-').substring(0, 45))}</span>
-          </td>
-          <td class="text-start small">
-            <strong>${row.timePulang || '-'}</strong><br>
-            <span class="text-muted">${escapeHtml((row.alamatPulang || '-').substring(0, 45))}</span>
-          </td>
-          <td class="text-start small">${escapeHtml(row.activityDesc || '-')}</td>
-          <td><span class="badge bg-light text-dark border">${row.approval1 || 'pending'}</span></td>
-          <td><span class="badge bg-light text-dark border">${row.approval2 || 'pending'}</span></td>
+          <td>${masukInfo}</td>
+          <td>${pulangInfo}</td>
+          <td>${jobsInfo}</td>
+          <td><span class="badge bg-light text-dark border">${escapeHtml(row.approval1 || 'pending')}</span></td>
+          <td><span class="badge bg-light text-dark border">${escapeHtml(row.approval2 || 'pending')}</span></td>
           <td>
             ${photoMasukBtn} ${photoPulangBtn}
-            ${(!photoMasukBtn && !photoPulangBtn) ? '-' : ''}
+            ${(!photoMasukBtn && !photoPulangBtn) ? '<span class="text-muted">-</span>' : ''}
           </td>
         `;
         tbody.appendChild(tr);
