@@ -122,7 +122,7 @@
     .camera-stream {
       width: 100%;
       height: 260px;
-      object-fit: contain; /* Prevents close-up / zoomed-in crop */
+      object-fit: contain;
       background: #000000;
       display: block;
     }
@@ -381,7 +381,7 @@
         </div>
       </div>
 
-      <!-- TAHAP 1: ABSENSI MASUK (LIVE CAMERA + ALAMAT GPS REVERSE GEOCODING) -->
+      <!-- TAHAP 1: ABSENSI MASUK -->
       <div class="app-card border-primary border-opacity-25" id="cardTahapMasuk">
         <div class="app-card-header bg-primary bg-opacity-10 py-2">
           <span class="fw-bold text-primary small d-flex align-items-center gap-2">
@@ -437,7 +437,7 @@
         </div>
       </div>
 
-      <!-- TAHAP 2: FORM HARIAN DAILY JOBS PROGRESS (BISA DISIMPAN SORE/MALAM) -->
+      <!-- TAHAP 2: FORM HARIAN DAILY JOBS PROGRESS -->
       <div class="app-card" id="cardTahapJobs">
         <div class="app-card-header py-2">
           <span class="fw-bold text-dark small d-flex align-items-center gap-2">
@@ -453,7 +453,7 @@
                 <input type="date" class="form-control form-control-sm" id="inputDate" required>
               </div>
 
-              <!-- KHUSUS TECHNICIAN: SITE ID & SOW (SESUAI GAMBAR 2) -->
+              <!-- KHUSUS TECHNICIAN: SITE ID & SOW -->
               <div class="col-md-4 d-none" id="colTechSiteId">
                 <label class="form-label small fw-semibold text-secondary">Site ID</label>
                 <input type="text" class="form-control form-control-sm" id="inputSiteId" placeholder="Contoh: NNK108, NNK060">
@@ -489,7 +489,7 @@
         </div>
       </div>
 
-      <!-- TAHAP 3: ABSENSI PULANG (TERKUNCI JIKA JOBS PROGRESS BELUM DIISI) -->
+      <!-- TAHAP 3: ABSENSI PULANG -->
       <div class="app-card border-danger border-opacity-25" id="cardTahapPulang">
         <div class="app-card-header bg-danger bg-opacity-10 py-2">
           <span class="fw-bold text-danger small d-flex align-items-center gap-2">
@@ -545,6 +545,7 @@
 
     </section>
 
+    <!-- ADMIN SYSTEM PANEL -->
     <section id="adminSection" class="app-card d-none">
       <div class="app-card-header">
         <div>
@@ -585,6 +586,7 @@
       </div>
     </section>
 
+    <!-- TAB REKAP & LAPORAN -->
     <div id="reportNavTabs" class="d-none">
       <ul class="nav nav-pills mb-3 gap-2" role="tablist">
         <li class="nav-item" role="presentation">
@@ -600,7 +602,7 @@
       </ul>
 
       <div class="tab-content">
-        <!-- TAB 1: REKAPITULASI JOBS PROGRESS (MATCHING IMAGE 1 & IMAGE 2) -->
+        <!-- TAB 1: REKAPITULASI JOBS PROGRESS (IMAGE 1 & IMAGE 2) -->
         <div class="tab-pane fade show active" id="tab-jobs" role="tabpanel">
           <div class="app-card">
             <div class="p-3 border-bottom bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -623,7 +625,7 @@
                   </button>
                 </div>
 
-                <!-- FILTER PROYEK (UNTUK PM/PD/ADMIN) -->
+                <!-- FILTER PROYEK -->
                 <div id="wrapperFilterProject" class="d-none">
                   <select class="form-select form-select-sm" id="selectRecapProjectFilter" style="font-size: 0.8rem;">
                     <option value="all">Semua Proyek</option>
@@ -643,7 +645,7 @@
               </div>
             </div>
 
-            <!-- METADATA CARD MATCHING EXACT TEMPLATE (NAME, ID, PROJECT, PERIODE) -->
+            <!-- METADATA CARD (IMAGE 1 & 2 HEADER) -->
             <div class="px-3 pt-3">
               <div class="p-3 rounded-3 border bg-light small mb-2">
                 <div class="row g-2">
@@ -939,7 +941,7 @@
     </div>
   </div>
 
-  <!-- Modal Lightbox Preview Foto -->
+  <!-- Modal Lightbox Preview Foto (Anti-Bocor Base64) -->
   <div class="modal fade" id="modalPhotoViewer" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -973,9 +975,9 @@
 
     let currentUser = null;
     let currentFilter = "week";
-    let currentRecapViewRole = "Staff"; // "Staff" (Image 1) or "Technician" (Image 2)
+    let currentRecapViewRole = "Staff";
     let mediaStream = null;
-    let activeCameraType = "masuk"; // "masuk" or "pulang"
+    let activeCameraType = "masuk";
     let currentFacingMode = "user";
 
     let capturedPhotoMasuk = null;
@@ -1003,7 +1005,6 @@
     ];
 
     const defaultProgress = [
-      // Staff Records (Image 1 - Denizar)
       {
         id: "PROG-101",
         username: "denizar",
@@ -1032,61 +1033,6 @@
         pdRemark: "Disetujui untuk dikirimkan."
       },
       {
-        id: "PROG-102",
-        username: "denizar",
-        name: "Denizar",
-        idKaryawan: "2601020033",
-        role: "Staff",
-        projectName: "Telkom infra",
-        projectCode: "RO",
-        siteId: "-",
-        sow: "-",
-        periode: "agustus - desember 26",
-        date: "2026-08-08",
-        timeMasuk: "08:25:30",
-        alamatMasuk: "Jl. Kebon Sirih No. 10, Jakarta Pusat",
-        photoMasuk: "https://placehold.co/400x300/1e293b/ffffff?text=Selfie+Masuk+Selasa",
-        hasJobsProgress: true,
-        activityDesc: "memperbaiki aplikasi absensi",
-        result: "80%",
-        staffRemarks: "bisa dipercepat",
-        timePulang: "17:15:10",
-        alamatPulang: "Jl. Kebon Sirih No. 10, Jakarta Pusat",
-        photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Selfie+Pulang+Selasa",
-        approval1: "ok",
-        pmRemark: "Lanjutkan ke pengetesan kamera dan reverse geocoding.",
-        approval2: "ok",
-        pdRemark: "Sudah oke"
-      },
-      {
-        id: "PROG-103",
-        username: "denizar",
-        name: "Denizar",
-        idKaryawan: "2601020033",
-        role: "Staff",
-        projectName: "Telkom infra",
-        projectCode: "RO",
-        siteId: "-",
-        sow: "-",
-        periode: "agustus - desember 26",
-        date: "2026-08-08",
-        timeMasuk: "08:30:00",
-        alamatMasuk: "Jl. Gatot Subroto No. 52, Jakarta Selatan",
-        photoMasuk: "-",
-        hasJobsProgress: true,
-        activityDesc: "meeting dengan Tim",
-        result: "done",
-        staffRemarks: "sip",
-        timePulang: "17:00:00",
-        alamatPulang: "-",
-        photoPulang: "-",
-        approval1: "ok",
-        pmRemark: "-",
-        approval2: "ok",
-        pdRemark: "-"
-      },
-      // Technician Records (Huawei Project - Ahmad Rizky)
-      {
         id: "PROG-HW-01",
         username: "ahmad.hw",
         name: "Ahmad Rizky",
@@ -1114,36 +1060,6 @@
         pdRemark: "-",
         picRigger: "Ahmad Rizky"
       },
-      // Technician Records (ZTE Project - Fajar Pratama)
-      {
-        id: "PROG-ZTE-01",
-        username: "fajar.zte",
-        name: "Fajar Pratama",
-        idKaryawan: "2601020099",
-        role: "Technician",
-        projectName: "ZTE",
-        projectCode: "ZTE-RO",
-        siteId: "ZTE-BDG02",
-        sow: "Drive Test Cluster 4",
-        periode: "agustus - desember 26",
-        date: "2026-08-08",
-        timeMasuk: "08:15:00",
-        alamatMasuk: "Cluster Bandung Timur",
-        photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+ZTE-BDG02",
-        hasJobsProgress: true,
-        activityDesc: "Single Site Verification (SSV) 5G NSA",
-        result: "Done",
-        staffRemarks: "Throughput download mencapai 450Mbps",
-        timePulang: "17:45:00",
-        alamatPulang: "Cluster Bandung Timur",
-        photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+ZTE-BDG02",
-        approval1: "pending",
-        pmRemark: "-",
-        approval2: "pending",
-        pdRemark: "-",
-        picRigger: "Fajar Pratama"
-      },
-      // Technician Records (Image 2 - Dewin Saputra)
       {
         id: "PROG-TECH-01",
         username: "dewin",
@@ -1168,62 +1084,6 @@
         photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+NNK108",
         approval1: "Michael",
         pmRemark: "Pekerjaan sesuai standar",
-        approval2: "-",
-        pdRemark: "-",
-        picRigger: "Dewin Saputra"
-      },
-      {
-        id: "PROG-TECH-02",
-        username: "dewin",
-        name: "Dewin Saputra",
-        idKaryawan: "Rigger",
-        role: "Technician",
-        projectName: "RO Kalimantan",
-        projectCode: "-",
-        siteId: "NNK066",
-        sow: "Complaint",
-        periode: "Agustus 2026",
-        date: "2026-08-02",
-        timeMasuk: "08:15:00",
-        alamatMasuk: "Site NNK066 Kalimantan",
-        photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+NNK066",
-        hasJobsProgress: true,
-        activityDesc: "Physical Tuning & Drive Test",
-        result: "Done",
-        staffRemarks: "-",
-        timePulang: "17:45:00",
-        alamatPulang: "Site NNK066 Kalimantan",
-        photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+NNK066",
-        approval1: "Michael",
-        pmRemark: "-",
-        approval2: "-",
-        pdRemark: "-",
-        picRigger: "Dewin Saputra"
-      },
-      {
-        id: "PROG-TECH-03",
-        username: "dewin",
-        name: "Dewin Saputra",
-        idKaryawan: "Rigger",
-        role: "Technician",
-        projectName: "RO Kalimantan",
-        projectCode: "-",
-        siteId: "TRK018,TRK078,",
-        sow: "Red Coverage",
-        periode: "Agustus 2026",
-        date: "2026-08-03",
-        timeMasuk: "08:10:00",
-        alamatMasuk: "Site TRK018 Kalimantan",
-        photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+TRK018",
-        hasJobsProgress: true,
-        activityDesc: "Physical Tuning",
-        result: "Done",
-        staffRemarks: "-",
-        timePulang: "18:00:00",
-        alamatPulang: "Site TRK018 Kalimantan",
-        photoPulang: "-",
-        approval1: "Michael",
-        pmRemark: "-",
         approval2: "-",
         pdRemark: "-",
         picRigger: "Dewin Saputra"
@@ -1261,7 +1121,7 @@
       try {
         localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(db.users));
         localStorage.setItem(LOCAL_PROGRESS_KEY, JSON.stringify(db.progress));
-      } catch (e) { console.warn("Quota full or storage error", e); }
+      } catch (e) { console.warn("Storage warning", e); }
     }
 
     const loginSection = document.getElementById("loginSection");
@@ -1283,7 +1143,6 @@
     const inputSOW = document.getElementById("inputSOW");
     const labelTaskOrActivity = document.getElementById("labelTaskOrActivity");
 
-    // Camera Masuk elements
     const videoFeedMasuk = document.getElementById("videoFeedMasuk");
     const photoPreviewMasuk = document.getElementById("photoPreviewMasuk");
     const canvasCaptureMasuk = document.getElementById("canvasCaptureMasuk");
@@ -1295,7 +1154,6 @@
     const btnRefreshGpsMasuk = document.getElementById("btnRefreshGpsMasuk");
     const btnSubmitAbsenMasuk = document.getElementById("btnSubmitAbsenMasuk");
 
-    // Camera Pulang elements
     const videoFeedPulang = document.getElementById("videoFeedPulang");
     const photoPreviewPulang = document.getElementById("photoPreviewPulang");
     const canvasCapturePulang = document.getElementById("canvasCapturePulang");
@@ -1319,9 +1177,7 @@
       localStorage.setItem("prosync_gas_api", gasApiUrlInput.value.trim() || DEFAULT_GAS_URL);
     });
 
-    // Auto-sync users and data from Google Sheets immediately on startup
     syncFromGAS();
-
     inputDate.value = new Date().toISOString().slice(0, 10);
 
     function wireEyeToggle(buttonId, inputId, iconId) {
@@ -1379,11 +1235,10 @@
             return;
           }
         } catch (err) {
-          console.warn("GAS Login fallback to local storage:", err);
+          console.warn("GAS Login fallback:", err);
         }
       }
 
-      // Local / Offline fallback
       setTimeout(() => {
         hideLoading();
         const found = db.users.find(u => u.username.toLowerCase() === username && u.password === password);
@@ -1423,7 +1278,6 @@
       else navRoleBadge.classList.add("badge-tech");
       navRoleBadge.textContent = currentUser.role;
 
-      // Set initial recap format
       if (currentUser.role === "Technician") {
         currentRecapViewRole = "Technician";
         btnViewTechFormat.classList.add("active");
@@ -1448,7 +1302,6 @@
         renderRecapTable();
         renderPresensiLogTable();
       } else {
-        // Staff or Technician: Attendance portal at TOP
         adminSection.classList.add("d-none");
         formProgressSection.classList.remove("d-none");
         document.getElementById("recapRoleSelectorGroup").classList.add("d-none");
@@ -1525,7 +1378,7 @@
           targetElement.textContent = address;
           if (callback) callback(address);
         } catch (e) {
-          const fallback = `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)} (OpenStreetMap Offline)`;
+          const fallback = `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)}`;
           targetElement.textContent = fallback;
           if (callback) callback(fallback);
         }
@@ -1546,7 +1399,6 @@
       const ctx = canvasEl.getContext("2d");
       ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
 
-      // Add elegant watermark bar
       const barH = 50;
       ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
       ctx.fillRect(0, canvasEl.height - barH, canvasEl.width, barH);
@@ -1637,15 +1489,19 @@
 
       saveDbToLocalStorage();
 
-      // Sync to Google Apps Script
       const apiUrl = getApiUrl();
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
         try {
-          await fetch(apiUrl, {
+          const res = await fetch(apiUrl, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({ action: "submitCheckIn", data: record })
           });
+          const resJson = await res.json();
+          if (resJson && resJson.photoUrl && resJson.photoUrl.startsWith("http")) {
+            record.photoMasuk = resJson.photoUrl;
+            saveDbToLocalStorage();
+          }
         } catch (e) { console.warn("GAS check-in error:", e); }
       }
 
@@ -1751,11 +1607,16 @@
       const apiUrl = getApiUrl();
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
         try {
-          await fetch(apiUrl, {
+          const res = await fetch(apiUrl, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({ action: "submitCheckOut", data: record })
           });
+          const resJson = await res.json();
+          if (resJson && resJson.photoUrl && resJson.photoUrl.startsWith("http")) {
+            record.photoPulang = resJson.photoUrl;
+            saveDbToLocalStorage();
+          }
         } catch (e) { console.warn("GAS checkout error:", e); }
       }
 
@@ -1784,7 +1645,6 @@
       const pulangContent = document.getElementById("pulangSectionContent");
 
       if (!record || !record.timeMasuk || record.timeMasuk === "-") {
-        // Stage 1: Has not checked in yet
         stepMasuk.className = "workflow-step-item active";
         stepJobs.className = "workflow-step-item";
         stepPulang.className = "workflow-step-item";
@@ -1804,7 +1664,6 @@
         startCamera(videoFeedMasuk, cameraStatusMasuk);
         requestGpsAddress(txtAddressMasuk, addr => detectedAddressMasuk = addr);
       } else {
-        // Check-in completed
         stepMasuk.className = "workflow-step-item completed";
         badgeMasuk.textContent = `Masuk: ${record.timeMasuk}`;
         badgeMasuk.className = "badge bg-success rounded-pill";
@@ -1814,7 +1673,6 @@
           badgeJobs.textContent = "Sudah Diisi";
           badgeJobs.className = "badge bg-success rounded-pill";
 
-          // Pre-fill form
           document.getElementById("inputActivity").value = record.activityDesc;
           document.getElementById("inputResult").value = record.result;
           document.getElementById("inputRemarks").value = record.staffRemarks;
@@ -1823,7 +1681,6 @@
             document.getElementById("inputSOW").value = record.sow || "";
           }
 
-          // Stage 3: Unlock Check-Out
           lockNotice.classList.add("d-none");
           pulangContent.classList.remove("opacity-50", "pe-none");
 
@@ -1840,7 +1697,6 @@
             requestGpsAddress(txtAddressPulang, addr => detectedAddressPulang = addr);
           }
         } else {
-          // Stage 2: Waiting for jobs progress
           stepJobs.className = "workflow-step-item active";
           badgeJobs.textContent = "Belum Disimpan";
           badgeJobs.className = "badge bg-warning text-dark rounded-pill";
@@ -1859,11 +1715,9 @@
     function parseRecordDate(dStr) {
       if (!dStr) return new Date();
       if (dStr instanceof Date) return dStr;
-      // Handle format YYYY-MM-DD
       if (/^\d{4}-\d{2}-\d{2}/.test(dStr)) {
         return new Date(dStr);
       }
-      // Handle format DD-MMM-YY (e.g. 03-Sep-26)
       const parts = String(dStr).split("-");
       if (parts.length === 3) {
         const months = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
@@ -1888,7 +1742,6 @@
           return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
         });
       }
-      // Week: Monday to Saturday of current week
       const currentDay = now.getDay();
       const diffToMonday = (currentDay === 0 ? -6 : 1) - currentDay;
       const monday = new Date(now);
@@ -1929,7 +1782,6 @@
         select.appendChild(opt);
       });
 
-      // Default to PM's project if set, otherwise retain selection or 'all'
       const userProj = (currentUser && currentUser.projectName) ? currentUser.projectName.trim().toLowerCase() : "";
       if (userProj && userProj !== "all" && userProj !== "-" && userProj !== "management") {
         select.value = userProj;
@@ -1967,15 +1819,12 @@
           if (p.role !== currentRecapViewRole) return false;
           const itemProj = (p.projectName || "").trim().toLowerCase();
           
-          // Jika ada filter proyek yang dipilih di dropdown:
           if (selectedProject && selectedProject !== "all") {
             return itemProj === selectedProject;
           }
-          // Jika user PM memiliki proyek spesifik:
           if (userProject && userProject !== "all" && userProject !== "all projects" && userProject !== "-" && userProject !== "management") {
             return itemProj === userProject;
           }
-          // Jika proyek PM kosong atau 'all', tampilkan seluruhnya
           return true;
         });
 
@@ -1986,7 +1835,6 @@
         document.getElementById("recapHeadingTitle").textContent = `${currentRecapViewRole}s - Jobs Progress (${activeProjectName})`;
         document.getElementById("recapSubHeadingText").textContent = `Akses Khusus ${userRole} untuk Proyek: ${activeProjectName}`;
       } else {
-        // Admin System: views all by current role format
         if (projectFilterWrapper) projectFilterWrapper.classList.remove("d-none");
         updateProjectFilterOptions();
 
@@ -2007,7 +1855,6 @@
         document.getElementById("recapSubHeadingText").textContent = `Mode Admin System - ${activeProjectName}`;
       }
 
-      // Metadata card top values
       const targetUser = (list.length > 0) ? list[0] : currentUser;
       document.getElementById("recapMetaName").textContent = targetUser.name || currentUser.name;
       document.getElementById("recapMetaId").textContent = targetUser.idKaryawan || currentUser.idKaryawan || "-";
@@ -2022,9 +1869,7 @@
       list.sort((a, b) => new Date(b.date) - new Date(a.date));
       document.getElementById("recapTotalCount").textContent = `Total: ${list.length} Catatan`;
 
-      // 2. RENDER HEADERS Sesuai Template Asli + Remark PM & PD (Tanpa Kolom Aksi Validasi)
       if (currentRecapViewRole === "Staff") {
-        // MATCHING IMAGE 1: Staff - Jobs Progress (with PM & PD remarks)
         thead.innerHTML = `
           <tr class="table-light">
             <th style="width: 45px;">No</th>
@@ -2040,7 +1885,6 @@
           </tr>
         `;
       } else {
-        // MATCHING IMAGE 2: Technicians - Jobs Progress (with PM & PD remarks)
         thead.innerHTML = `
           <tr class="table-light align-middle">
             <th rowspan="2" style="width: 45px;">No</th>
@@ -2075,11 +1919,9 @@
           day: "2-digit", month: "short", year: "2-digit"
         }).replace(/ /g, "-");
 
-        // Verify project authorization for writing & editing
         const rowProj = (row.projectName || "").trim().toLowerCase();
         const isProjectAuthorized = !userProject || userProject === "all" || userProject === "management" || userProject === rowProj || userRole === "Admin System" || userRole === "Admin";
 
-        // PM & RPM: Interactive Approval 1 & PM Remark
         let app1Display = `<span class="badge bg-light text-dark border">${escapeHtml(row.approval1 || "pending")}</span>`;
         let pmRemarkDisplay = `<span class="small text-muted">${escapeHtml(row.pmRemark || "-")}</span>`;
 
@@ -2092,7 +1934,6 @@
           </button>`;
         }
 
-        // PD: Interactive Approval 2 & PD Remark
         let app2Display = `<span class="badge bg-light text-dark border">${escapeHtml(row.approval2 || "pending")}</span>`;
         let pdRemarkDisplay = `<span class="small text-muted">${escapeHtml(row.pdRemark || "-")}</span>`;
 
@@ -2105,14 +1946,12 @@
           </button>`;
         }
 
-        // Photo Action Buttons
         const photoMasukBtn = (row.photoMasuk && row.photoMasuk !== "-") ?
           `<button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 mb-1" onclick="previewItemPhoto('${row.id}', 'masuk')"><i class="bi bi-box-arrow-in-right"></i> Masuk</button>` : '';
         const photoPulangBtn = (row.photoPulang && row.photoPulang !== "-") ?
           `<button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" onclick="previewItemPhoto('${row.id}', 'pulang')"><i class="bi bi-box-arrow-left"></i> Pulang</button>` : '';
 
         if (currentRecapViewRole === "Staff") {
-          // Render Staff Row (Image 1)
           tr.innerHTML = `
             <td class="fw-bold">${index + 1}</td>
             <td>${formattedDate}</td>
@@ -2129,7 +1968,6 @@
             </td>
           `;
         } else {
-          // Render Technician Row (Image 2)
           const picRiggerName = row.picRigger || row.name || "-";
           tr.innerHTML = `
             <td class="fw-bold">${index + 1}</td>
@@ -2224,7 +2062,6 @@
 
       let csvContent = "";
       if (currentRecapViewRole === "Staff") {
-        // IMAGE 1 HEADERS (with PM & PD Remarks)
         const headers = ["No", "Date", "Activity Description", "Result", "Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark"];
         const rows = list.map((item, i) => [
           i + 1,
@@ -2239,7 +2076,6 @@
         ]);
         csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
       } else {
-        // IMAGE 2 HEADERS (with PM & PD Remarks)
         const headers = ["No", "Date", "Site ID", "Sow", "task or activity", "Result", "Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark", "PIC Rigger"];
         const rows = list.map((item, i) => [
           i + 1,
@@ -2260,7 +2096,7 @@
 
       downloadCsv(csvContent, `${currentRecapViewRole}_Jobs_Progress_${currentFilter}_${new Date().toISOString().slice(0, 10)}.csv`);
     });
-    // Bulk Upload Handlers
+
     let parsedBulkUsers = [];
     const inputBulkCsv = document.getElementById("inputBulkCsv");
     const btnProcessBulkUpload = document.getElementById("btnProcessBulkUpload");
@@ -2294,7 +2130,6 @@
           return;
         }
 
-        const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ''));
         parsedBulkUsers = [];
         tableBulkPreviewBody.innerHTML = "";
 
@@ -2377,7 +2212,6 @@
       }, 450);
     });
 
-    // Export Users CSV
     document.getElementById("btnDownloadUsersCsv").addEventListener("click", () => {
       if (db.users.length === 0) {
         Swal.fire("Informasi", "Belum ada data user.", "info");
@@ -2399,6 +2233,9 @@
       downloadCsv(csv, `Data_Karyawan_${new Date().toISOString().slice(0, 10)}.csv`);
     });
 
+    /**
+     * PERBAIKAN: Fungsi Render Tabel Presensi Log (Aman dari String Base64)
+     */
     function renderPresensiLogTable() {
       const tbody = document.getElementById("tablePresensiLogBody");
       if (!tbody) return;
@@ -2435,9 +2272,13 @@
           `<div class="text-start"><strong class="text-dark">${escapeHtml(row.activityDesc || '-')}</strong><br><small class="text-success fw-semibold">Result: ${escapeHtml(row.result || '-')}</small></div>` :
           '<span class="badge bg-warning text-dark">Belum diisi</span>';
 
-        const photoMasukBtn = (row.photoMasuk && row.photoMasuk !== "-") ?
+        // PENANGANAN FOTO AGAR STRING BASE64 TIDAK BOCOR KE TABEL
+        const hasMasukPhoto = row.photoMasuk && row.photoMasuk !== "-" && row.photoMasuk.length > 5;
+        const hasPulangPhoto = row.photoPulang && row.photoPulang !== "-" && row.photoPulang.length > 5;
+
+        const photoMasukBtn = hasMasukPhoto ?
           `<button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 mb-1" onclick="previewItemPhoto('${row.id}', 'masuk')"><i class="bi bi-box-arrow-in-right"></i> Masuk</button>` : '';
-        const photoPulangBtn = (row.photoPulang && row.photoPulang !== "-") ?
+        const photoPulangBtn = hasPulangPhoto ?
           `<button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" onclick="previewItemPhoto('${row.id}', 'pulang')"><i class="bi bi-box-arrow-left"></i> Pulang</button>` : '';
 
         tr.innerHTML = `
@@ -2453,7 +2294,7 @@
           <td><span class="badge bg-light text-dark border">${escapeHtml(row.approval2 || 'pending')}</span></td>
           <td>
             ${photoMasukBtn} ${photoPulangBtn}
-            ${(!photoMasukBtn && !photoPulangBtn) ? '<span class="text-muted">-</span>' : ''}
+            ${(!hasMasukPhoto && !hasPulangPhoto) ? '<span class="text-muted">-</span>' : ''}
           </td>
         `;
         tbody.appendChild(tr);
@@ -2616,7 +2457,7 @@
 
       showLoading("Menambahkan user...");
       db.users.push(newUser);
-      saveDbToLocalStorage(); // Permanent in browser!
+      saveDbToLocalStorage();
 
       const apiUrl = getApiUrl();
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
@@ -2685,7 +2526,7 @@
         });
       }
 
-      saveDbToLocalStorage(); // Permanent in browser!
+      saveDbToLocalStorage();
       showLoading("Memperbarui user...");
 
       const apiUrl = getApiUrl();
