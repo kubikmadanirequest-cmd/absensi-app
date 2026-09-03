@@ -619,7 +619,6 @@
                     <th>Approval 2 (PD)</th>
                     <th>PD Remark</th>
                     <th>Foto & Lokasi</th>
-                    <th id="thActionHeader" class="d-none">Aksi Validasi</th>
                   </tr>
                 </thead>
                 <tbody id="tableRecapBody">
@@ -978,11 +977,14 @@
         { username: "rpm.irwan", password: "rpm123", name: "Irwan Syahputra", idKaryawan: "RPM-1003", role: "RPM", projectName: "Telkom infra", projectCode: "RO", periode: "Agustus - Desember 26", noWa: "08129999000" },
         { username: "pm.hendra", password: "pm123", name: "Hendra Wijaya, ST", idKaryawan: "PM-1002", role: "PM", projectName: "Telkom infra", projectCode: "RO", periode: "Agustus - Desember 26", noWa: "08129999111" },
         { username: "pm.zte", password: "pm123", name: "Rudi Hartono, MT", idKaryawan: "PM-2001", role: "PM", projectName: "ZTE", projectCode: "ZTE-RO", periode: "Agustus - Desember 26", noWa: "08129999333" },
+        { username: "pm.huawei", password: "pm123", name: "Budi Santoso, MT", idKaryawan: "PM-3001", role: "PM", projectName: "Huawei", projectCode: "HWI", periode: "Agustus - Desember 26", noWa: "08129999444" },
         { username: "pd.bambang", password: "pd123", name: "Ir. Bambang Prakoso", idKaryawan: "PD-1001", role: "PD", projectName: "Telkom infra", projectCode: "RO", periode: "Agustus - Desember 26", noWa: "08128888222" },
         { username: "pd.zte", password: "pd123", name: "Gunawan Santoso, MBA", idKaryawan: "PD-2001", role: "PD", projectName: "ZTE", projectCode: "ZTE-RO", periode: "Agustus - Desember 26", noWa: "08128888444" },
+        { username: "pd.huawei", password: "pd123", name: "H. Ridwan Kamil, MM", idKaryawan: "PD-3001", role: "PD", projectName: "Huawei", projectCode: "HWI", periode: "Agustus - Desember 26", noWa: "08128888555" },
         { username: "denizar", password: "staff123", name: "Denizar", idKaryawan: "2601020033", role: "Staff", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08137777333" },
         { username: "teguh", password: "tech123", name: "Teguh Santoso", idKaryawan: "2601020088", role: "Technician", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08136666444" },
-        { username: "fajar.zte", password: "tech123", name: "Fajar Pratama", idKaryawan: "2601020099", role: "Technician", projectName: "ZTE", projectCode: "ZTE-RO", periode: "agustus - desember 26", noWa: "08135555777" }
+        { username: "fajar.zte", password: "tech123", name: "Fajar Pratama", idKaryawan: "2601020099", role: "Technician", projectName: "ZTE", projectCode: "ZTE-RO", periode: "agustus - desember 26", noWa: "08135555777" },
+        { username: "ahmad.hw", password: "tech123", name: "Ahmad Rizky", idKaryawan: "2601020044", role: "Technician", projectName: "Huawei", projectCode: "HWI", periode: "agustus - desember 26", noWa: "08138888999" }
       ],
       progress: [
         {
@@ -1088,6 +1090,33 @@
           timePulang: "17:45:30",
           alamatPulang: "Jl. Soekarno Hatta No. 120, Bandung",
           photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+ZTE+BDG-0118",
+          approval1: "pending",
+          pmRemark: "-",
+          approval2: "pending",
+          pdRemark: "-"
+        },
+        {
+          id: "PROG-105",
+          username: "ahmad.hw",
+          name: "Ahmad Rizky",
+          idKaryawan: "2601020044",
+          role: "Technician",
+          projectName: "Huawei",
+          projectCode: "HWI",
+          siteId: "JKT-HW09",
+          sow: "Instalasi Rack & Power Rectifier",
+          periode: "agustus - desember 26",
+          date: "2026-09-02",
+          timeMasuk: "08:15:00",
+          alamatMasuk: "Site Huawei TB Simatupang, Jakarta Selatan",
+          photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+Huawei+JKT-HW09",
+          hasJobsProgress: true,
+          activityDesc: "Instalasi modul BBU 5G dan penyambungan kabel power DC",
+          result: "done",
+          staffRemarks: "Semua port terhubung rapi",
+          timePulang: "17:30:00",
+          alamatPulang: "Site Huawei TB Simatupang, Jakarta Selatan",
+          photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+Huawei+JKT-HW09",
           approval1: "pending",
           pmRemark: "-",
           approval2: "pending",
@@ -1250,7 +1279,6 @@
         adminSection.classList.remove("d-none");
         recapSection.classList.remove("d-none");
         formProgressSection.classList.add("d-none");
-        document.getElementById("thActionHeader").classList.add("d-none");
         renderAdminUsers();
         renderRecapTable();
         renderPresensiReport();
@@ -1259,7 +1287,6 @@
         adminSection.classList.add("d-none");
         recapSection.classList.remove("d-none");
         formProgressSection.classList.add("d-none");
-        document.getElementById("thActionHeader").classList.remove("d-none");
         renderRecapTable();
         renderPresensiReport();
       } 
@@ -1268,7 +1295,6 @@
         adminSection.classList.add("d-none");
         recapSection.classList.remove("d-none");
         formProgressSection.classList.remove("d-none");
-        document.getElementById("thActionHeader").classList.add("d-none");
 
         document.getElementById("labelKaryawanMasuk").textContent = currentUser.name;
         document.getElementById("labelIdMasuk").textContent = currentUser.idKaryawan;
@@ -1847,7 +1873,7 @@
       document.getElementById("recapTotalCount").textContent = `Total: ${list.length} Catatan`;
 
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="16" class="text-center py-4 text-muted">Belum ada data progress untuk filter ini.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="15" class="text-center py-4 text-muted">Belum ada data progress untuk filter ini.</td></tr>`;
         return;
       }
 
@@ -1860,24 +1886,41 @@
         const app1Badge = getApprovalBadge(row.approval1);
         const app2Badge = getApprovalBadge(row.approval2);
 
-        // Project authorization check: PM and PD can only approve their own project
+        // Project authorization check: PM and PD can edit their own project
         const userProj = (currentUser.projectName || "").trim().toLowerCase();
         const rowProj = (row.projectName || "").trim().toLowerCase();
-        const isProjectMatch = userProj === rowProj || currentUser.role === "Admin System" || currentUser.role === "Admin";
+        const isProjectMatch = !userProj || userProj === "all" || userProj === "management" || userProj === rowProj || currentUser.role === "Admin System" || currentUser.role === "Admin";
 
-        let actionBtnHtml = "";
-        if (currentUser.role === "PM" || currentUser.role === "RPM") {
-          if (isProjectMatch) {
-            actionBtnHtml = `<button class="btn btn-primary btn-sm py-1 px-2 fw-semibold" onclick="openApprovalModal('${row.id}', 'Approval 1')"><i class="bi bi-pencil-fill me-1"></i>Approval 1</button>`;
-          } else {
-            actionBtnHtml = `<button class="btn btn-outline-secondary btn-sm py-1 px-2 opacity-50" disabled title="Khusus PM Project ${escapeHtml(row.projectName)}"><i class="bi bi-lock-fill me-1"></i>Bukan Project Anda</button>`;
-          }
-        } else if (currentUser.role === "PD") {
-          if (isProjectMatch) {
-            actionBtnHtml = `<button class="btn btn-warning btn-sm py-1 px-2 fw-semibold text-dark" onclick="openApprovalModal('${row.id}', 'Approval 2')"><i class="bi bi-check-all me-1"></i>Approval 2</button>`;
-          } else {
-            actionBtnHtml = `<button class="btn btn-outline-secondary btn-sm py-1 px-2 opacity-50" disabled title="Khusus PD Project ${escapeHtml(row.projectName)}"><i class="bi bi-lock-fill me-1"></i>Bukan Project Anda</button>`;
-          }
+        // Interactive columns for PM / RPM (Approval 1 & PM Remark)
+        let app1Display = app1Badge;
+        let pmRemarkDisplay = `<span class="small text-muted">${escapeHtml(row.pmRemark || "-")}</span>`;
+
+        if ((currentUser.role === "PM" || currentUser.role === "RPM" || currentUser.role === "Admin System" || currentUser.role === "Admin") && isProjectMatch) {
+          app1Display = `<button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-1" onclick="openApprovalModal('${row.id}', 'Approval 1')" title="Klik untuk edit Approval 1">${app1Badge} <i class="bi bi-pencil-square"></i></button>`;
+          
+          const hasPmRemark = row.pmRemark && row.pmRemark !== "-";
+          pmRemarkDisplay = `
+            <div role="button" class="p-1 rounded bg-light border border-primary-subtle text-start text-dark small" style="cursor:pointer; max-width: 150px; white-space: normal;" onclick="openApprovalModal('${row.id}', 'Approval 1')" title="Klik untuk menulis/mengedit PM Remark">
+              ${hasPmRemark ? escapeHtml(row.pmRemark) : '<span class="text-primary fst-italic"><i class="bi bi-pencil me-1"></i>Tulis Remark</span>'}
+              <i class="bi bi-pencil-fill text-primary ms-1" style="font-size:0.65rem;"></i>
+            </div>
+          `;
+        }
+
+        // Interactive columns for PD (Approval 2 & PD Remark)
+        let app2Display = app2Badge;
+        let pdRemarkDisplay = `<span class="small text-muted">${escapeHtml(row.pdRemark || "-")}</span>`;
+
+        if ((currentUser.role === "PD" || currentUser.role === "Admin System" || currentUser.role === "Admin") && isProjectMatch) {
+          app2Display = `<button type="button" class="btn btn-sm btn-outline-warning text-dark py-0 px-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-1" onclick="openApprovalModal('${row.id}', 'Approval 2')" title="Klik untuk edit Approval 2">${app2Badge} <i class="bi bi-pencil-square"></i></button>`;
+          
+          const hasPdRemark = row.pdRemark && row.pdRemark !== "-";
+          pdRemarkDisplay = `
+            <div role="button" class="p-1 rounded bg-light border border-warning-subtle text-start text-dark small" style="cursor:pointer; max-width: 150px; white-space: normal;" onclick="openApprovalModal('${row.id}', 'Approval 2')" title="Klik untuk menulis/mengedit PD Remark">
+              ${hasPdRemark ? escapeHtml(row.pdRemark) : '<span class="text-warning-emphasis fst-italic"><i class="bi bi-pencil me-1"></i>Tulis Remark</span>'}
+              <i class="bi bi-pencil-fill text-warning ms-1" style="font-size:0.65rem;"></i>
+            </div>
+          `;
         }
 
         const viewPhotoMasukBtn = (row.photoMasuk && row.photoMasuk !== "-") ? 
@@ -1902,15 +1945,14 @@
           <td><div style="max-width: 200px; white-space: normal;">${escapeHtml(row.activityDesc)}</div></td>
           <td class="fw-semibold text-primary">${escapeHtml(row.result)}</td>
           <td class="small text-muted">${escapeHtml(row.staffRemarks || "-")}</td>
-          <td class="text-center">${app1Badge}</td>
-          <td class="small text-muted" style="max-width: 140px;">${escapeHtml(row.pmRemark || "-")}</td>
-          <td class="text-center">${app2Badge}</td>
-          <td class="small text-muted" style="max-width: 140px;">${escapeHtml(row.pdRemark || "-")}</td>
+          <td class="text-center text-nowrap">${app1Display}</td>
+          <td>${pmRemarkDisplay}</td>
+          <td class="text-center text-nowrap">${app2Display}</td>
+          <td>${pdRemarkDisplay}</td>
           <td class="text-center text-nowrap">
             ${viewPhotoMasukBtn} ${viewPhotoPulangBtn}
             ${(!viewPhotoMasukBtn && !viewPhotoPulangBtn) ? '<span class="text-muted">-</span>' : ''}
           </td>
-          ${(currentUser.role === "PM" || currentUser.role === "RPM" || currentUser.role === "PD") ? `<td class="text-center text-nowrap">${actionBtnHtml}</td>` : ""}
         `;
 
         tbody.appendChild(tr);
@@ -2159,12 +2201,23 @@
 
       showLoading("Menyimpan validasi persetujuan...");
 
+      const titleText = document.getElementById("approvalModalTitle").textContent || "";
+      const isApproval1 = titleText.includes("Approval 1");
+
       if (currentUser.role === "PM" || currentUser.role === "RPM") {
         item.approval1 = status;
         item.pmRemark = remark;
       } else if (currentUser.role === "PD") {
         item.approval2 = status;
         item.pdRemark = remark;
+      } else if (currentUser.role === "Admin System" || currentUser.role === "Admin") {
+        if (isApproval1) {
+          item.approval1 = status;
+          item.pmRemark = remark;
+        } else {
+          item.approval2 = status;
+          item.pdRemark = remark;
+        }
       }
 
       const apiUrl = gasApiUrlInput.value.trim();
