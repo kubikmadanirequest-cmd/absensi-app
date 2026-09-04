@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ProSync - Enterprise Attendance & Daily Jobs Progress</title>
+  <title>KM Remote Presensi Attendance & Daily Jobs Progress</title>
 
   <!-- Bootstrap 5.3 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -292,7 +292,7 @@
       <div class="brand-icon-box">
         <i class="bi bi-shield-check"></i>
       </div>
-      <h4 class="fw-bold text-center text-dark mb-1">Kubik Madani</h4>
+      <h4 class="fw-bold text-center text-dark mb-1">KM Remote Presensi</h4>
       <p class="text-center text-muted small mb-4">Sistem Presensi & Daily Jobs Progress</p>
 
       <form id="loginForm" autocomplete="off">
@@ -439,7 +439,7 @@
 
       <!-- TAHAP 2: FORM HARIAN DAILY JOBS PROGRESS (BISA DISIMPAN SORE/MALAM) -->
       <div class="app-card" id="cardTahapJobs">
-        <div class="app-card-header py-2">
+        <div class="app-card-header py-2 d-flex justify-content-between align-items-center">
           <span class="fw-bold text-dark small d-flex align-items-center gap-2">
             <i class="bi bi-journal-check text-primary"></i> 2. Daily Jobs Progress (Bisa Diisi Sore atau Malam Hari)
           </span>
@@ -447,43 +447,25 @@
         </div>
         <div class="p-3">
           <form id="formJobsProgressOnly">
-            <div class="row g-3">
+            <div class="row g-3 mb-2">
               <div class="col-md-4">
                 <label class="form-label small fw-semibold text-secondary">Tanggal Pekerjaan</label>
                 <input type="date" class="form-control form-control-sm" id="inputDate" required>
               </div>
+            </div>
 
-              <!-- KHUSUS TECHNICIAN: SITE ID & SOW (SESUAI GAMBAR 2) -->
-              <div class="col-md-4 d-none" id="colTechSiteId">
-                <label class="form-label small fw-semibold text-secondary">Site ID</label>
-                <input type="text" class="form-control form-control-sm" id="inputSiteId" placeholder="Contoh: NNK108, NNK060">
-              </div>
+            <!-- CONTAINER MULTI-KEGIATAN (BISA LEBIH DARI 1 KEGIATAN) -->
+            <div id="jobsActivitiesContainer" class="d-flex flex-column gap-3 mb-3">
+              <!-- Item kegiatan akan dirender di sini via JS -->
+            </div>
 
-              <div class="col-md-4 d-none" id="colTechSOW">
-                <label class="form-label small fw-semibold text-secondary">Sow (Scope of Work)</label>
-                <input type="text" class="form-control form-control-sm" id="inputSOW" placeholder="Contoh: Complaint / Red Coverage">
-              </div>
-
-              <div class="col-md-8">
-                <label class="form-label small fw-semibold text-secondary" id="labelTaskOrActivity">Activity Description</label>
-                <input type="text" class="form-control form-control-sm" id="inputActivity" placeholder="Rincian pekerjaan yang dilakukan hari ini..." required>
-              </div>
-
-              <div class="col-md-4">
-                <label class="form-label small fw-semibold text-secondary">Result</label>
-                <input type="text" class="form-control form-control-sm" id="inputResult" placeholder="Contoh: Done / 80%" required>
-              </div>
-
-              <div class="col-md-8">
-                <label class="form-label small fw-semibold text-secondary">Staff Remarks (Catatan Anda)</label>
-                <input type="text" class="form-control form-control-sm" id="inputRemarks" placeholder="Catatan opsional dari Anda...">
-              </div>
-
-              <div class="col-md-4 d-flex align-items-end">
-                <button type="submit" class="btn btn-success w-100 fw-semibold shadow-sm" id="btnSaveJobsProgress">
-                  <i class="bi bi-save me-1"></i> Simpan Jobs Progress
-                </button>
-              </div>
+            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+              <button type="button" class="btn btn-outline-primary btn-sm fw-semibold rounded-pill px-3 shadow-sm" id="btnAddActivityRow">
+                <i class="bi bi-plus-circle-fill me-1"></i> Tambah Kegiatan
+              </button>
+              <button type="submit" class="btn btn-success fw-semibold shadow-sm px-4" id="btnSaveJobsProgress">
+                <i class="bi bi-save me-1"></i> Simpan Jobs Progress
+              </button>
             </div>
           </form>
         </div>
@@ -1577,7 +1559,7 @@
       const ctx = canvasEl.getContext("2d");
       ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
 
-      // Tinggikan bilah watermark agar font 250% (30px) muat sempurna
+      // Tinggikan bilah watermark agar font 200% (24px) muat sempurna
       const barH = 145;
       ctx.fillStyle = "rgba(15, 23, 42, 0.88)";
       ctx.fillRect(0, canvasEl.height - barH, canvasEl.width, barH);
@@ -1602,12 +1584,12 @@
         streetText = addressTxt.substring(36);
       }
 
-      // Baris 2: Koordinat Lat & Lon (Font diperbesar 250% dari 12px -> 30px Bold, warna Kuning Terang)
+      // Baris 2: Koordinat Lat & Lon (Font diperbesar 200% dari 12px -> 24px Bold, warna Kuning Terang)
       ctx.font = "bold 24px 'Inter', sans-serif";
       ctx.fillStyle = "#facc15";
       ctx.fillText(coordsText, 15, canvasEl.height - barH + 62);
 
-      // Baris 3 & 4: Alamat Lengkap (Font diperbesar 250% -> 30px Bold, warna Putih Terang)
+      // Baris 3 & 4: Alamat Lengkap (Font diperbesar 200% -> 24px Bold, warna Putih Terang)
       ctx.font = "bold 22px 'Inter', sans-serif";
       ctx.fillStyle = "#ffffff";
 
@@ -1722,26 +1704,165 @@
       }, 400);
     });
 
+    // -------------------------------------------------------------
+    // LOGIKA MULTI-KEGIATAN PADA DAILY JOBS PROGRESS (TAMBAH KEGIATAN)
+    // -------------------------------------------------------------
+    let activityItems = [
+      { siteId: "", sow: "", activityDesc: "", result: "", staffRemarks: "" }
+    ];
+
+    function renderActivityInputRows() {
+      const container = document.getElementById("jobsActivitiesContainer");
+      if (!container) return;
+      const isTech = currentUser && currentUser.role === "Technician";
+
+      container.innerHTML = activityItems.map((item, idx) => {
+        const deleteBtn = activityItems.length > 1 
+          ? `<button type="button" class="btn btn-outline-danger btn-sm py-0 px-2 rounded-pill" onclick="removeActivityRow(${idx})" title="Hapus Kegiatan ini"><i class="bi bi-trash"></i> Hapus</button>` 
+          : '';
+
+        if (isTech) {
+          return `
+            <div class="p-3 rounded-3 border bg-light position-relative">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-primary text-white">Kegiatan #${idx + 1} (Technician)</span>
+                ${deleteBtn}
+              </div>
+              <div class="row g-2">
+                <div class="col-md-3">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Site ID</label>
+                  <input type="text" class="form-control form-control-sm input-site-id" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108, NNK060" required>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Sow (Scope of Work)</label>
+                  <input type="text" class="form-control form-control-sm input-sow" data-index="${idx}" value="${escapeHtml(item.sow || '')}" placeholder="Contoh: Complaint / Red Coverage" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Task or Activity</label>
+                  <input type="text" class="form-control form-control-sm input-activity" data-index="${idx}" value="${escapeHtml(item.activityDesc || '')}" placeholder="Rincian tugas yang dilakukan..." required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Result</label>
+                  <input type="text" class="form-control form-control-sm input-result" data-index="${idx}" value="${escapeHtml(item.result || '')}" placeholder="Contoh: Done / 80%" required>
+                </div>
+                <div class="col-md-8">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Remarks (Catatan)</label>
+                  <input type="text" class="form-control form-control-sm input-remarks" data-index="${idx}" value="${escapeHtml(item.staffRemarks || '')}" placeholder="Catatan pekerjaan opsional...">
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="p-3 rounded-3 border bg-light position-relative">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-secondary text-white">Kegiatan #${idx + 1} (Staff)</span>
+                ${deleteBtn}
+              </div>
+              <div class="row g-2">
+                <div class="col-md-8">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Activity Description</label>
+                  <input type="text" class="form-control form-control-sm input-activity" data-index="${idx}" value="${escapeHtml(item.activityDesc || '')}" placeholder="Rincian pekerjaan yang dilakukan hari ini..." required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Result</label>
+                  <input type="text" class="form-control form-control-sm input-result" data-index="${idx}" value="${escapeHtml(item.result || '')}" placeholder="Contoh: Done / 80%" required>
+                </div>
+                <div class="col-12">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Remarks (Catatan)</label>
+                  <input type="text" class="form-control form-control-sm input-remarks" data-index="${idx}" value="${escapeHtml(item.staffRemarks || '')}" placeholder="Catatan pekerjaan opsional...">
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }).join("");
+
+      // Re-bind change listeners
+      container.querySelectorAll(".input-site-id").forEach(el => {
+        el.addEventListener("input", e => activityItems[e.target.dataset.index].siteId = e.target.value);
+      });
+      container.querySelectorAll(".input-sow").forEach(el => {
+        el.addEventListener("input", e => activityItems[e.target.dataset.index].sow = e.target.value);
+      });
+      container.querySelectorAll(".input-activity").forEach(el => {
+        el.addEventListener("input", e => activityItems[e.target.dataset.index].activityDesc = e.target.value);
+      });
+      container.querySelectorAll(".input-result").forEach(el => {
+        el.addEventListener("input", e => activityItems[e.target.dataset.index].result = e.target.value);
+      });
+      container.querySelectorAll(".input-remarks").forEach(el => {
+        el.addEventListener("input", e => activityItems[e.target.dataset.index].staffRemarks = e.target.value);
+      });
+    }
+
+    document.getElementById("btnAddActivityRow")?.addEventListener("click", () => {
+      activityItems.push({ siteId: "", sow: "", activityDesc: "", result: "", staffRemarks: "" });
+      renderActivityInputRows();
+    });
+
+    window.removeActivityRow = function(index) {
+      if (activityItems.length > 1) {
+        activityItems.splice(index, 1);
+        renderActivityInputRows();
+      }
+    };
+
     document.getElementById("formJobsProgressOnly").addEventListener("submit", async (e) => {
       e.preventDefault();
       const today = inputDate.value;
 
-      let record = db.progress.find(p => p.username === currentUser.username && p.date === today);
-      if (!record) {
+      let baseRecord = db.progress.find(p => p.username === currentUser.username && p.date === today);
+      if (!baseRecord) {
         Swal.fire("Peringatan", "Anda belum melakukan Absen Masuk untuk tanggal ini.", "warning");
         return;
       }
 
       showLoading("Menyimpan Daily Jobs Progress...");
 
-      record.hasJobsProgress = true;
-      record.activityDesc = document.getElementById("inputActivity").value.trim();
-      record.result = document.getElementById("inputResult").value.trim();
-      record.staffRemarks = document.getElementById("inputRemarks").value.trim() || "-";
+      // Update kegiatan pertama ke base record hari ini
+      const firstItem = activityItems[0];
+      baseRecord.hasJobsProgress = true;
+      baseRecord.activityDesc = firstItem.activityDesc.trim();
+      baseRecord.result = firstItem.result.trim();
+      baseRecord.staffRemarks = firstItem.staffRemarks.trim() || "-";
 
       if (currentUser.role === "Technician") {
-        record.siteId = document.getElementById("inputSiteId").value.trim() || "-";
-        record.sow = document.getElementById("inputSOW").value.trim() || "-";
+        baseRecord.siteId = firstItem.siteId.trim() || "-";
+        baseRecord.sow = firstItem.sow.trim() || "-";
+      }
+
+      // Jika ada kegiatan ke-2, ke-3, dst, buatkan entri record baru untuk masing-masing kegiatan
+      for (let i = 1; i < activityItems.length; i++) {
+        const item = activityItems[i];
+        if (item.activityDesc && item.activityDesc.trim() !== "") {
+          const extraRecord = {
+            ...baseRecord,
+            id: "PROG-" + Date.now() + "-" + i,
+            siteId: (currentUser.role === "Technician") ? (item.siteId.trim() || "-") : "-",
+            sow: (currentUser.role === "Technician") ? (item.sow.trim() || "-") : "-",
+            activityDesc: item.activityDesc.trim(),
+            result: item.result.trim(),
+            staffRemarks: item.staffRemarks.trim() || "-",
+            approval1: "pending",
+            pmRemark: "-",
+            approval2: "pending",
+            pdRemark: "-"
+          };
+          db.progress.unshift(extraRecord);
+
+          // Sync kegiatan tambahan ke GAS
+          const apiUrl = getApiUrl();
+          if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
+            try {
+              fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "submitJobsProgress", data: extraRecord })
+              }).catch(err => console.warn(err));
+            } catch (err) {}
+          }
+        }
       }
 
       saveDbToLocalStorage();
@@ -1752,14 +1873,14 @@
           await fetch(apiUrl, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ action: "submitJobsProgress", data: record })
+            body: JSON.stringify({ action: "submitJobsProgress", data: baseRecord })
           });
         } catch (e) { console.warn("GAS save jobs error:", e); }
       }
 
       setTimeout(() => {
         hideLoading();
-        Swal.fire("Tersimpan", "Daily Jobs Progress berhasil disimpan. Akses Absen Pulang kini terbuka.", "success");
+        Swal.fire("Tersimpan", `${activityItems.length} kegiatan Daily Jobs Progress berhasil disimpan. Akses Absen Pulang kini terbuka.`, "success");
         refreshDailyAttendanceStatus();
         renderRecapTable();
         renderPresensiLogTable();
@@ -1878,14 +1999,15 @@
           badgeJobs.textContent = "Sudah Diisi";
           badgeJobs.className = "badge bg-success rounded-pill";
 
-          // Pre-fill form
-          document.getElementById("inputActivity").value = record.activityDesc;
-          document.getElementById("inputResult").value = record.result;
-          document.getElementById("inputRemarks").value = record.staffRemarks;
-          if (currentUser.role === "Technician") {
-            document.getElementById("inputSiteId").value = record.siteId || "";
-            document.getElementById("inputSOW").value = record.sow || "";
-          }
+          // Pre-fill form kegiatan
+          activityItems = [{
+            siteId: record.siteId && record.siteId !== '-' ? record.siteId : '',
+            sow: record.sow && record.sow !== '-' ? record.sow : '',
+            activityDesc: record.activityDesc && record.activityDesc !== '-' ? record.activityDesc : '',
+            result: record.result && record.result !== '-' ? record.result : '',
+            staffRemarks: record.staffRemarks && record.staffRemarks !== '-' ? record.staffRemarks : ''
+          }];
+          renderActivityInputRows();
 
           // Stage 3: Unlock Check-Out
           lockNotice.classList.add("d-none");
@@ -1914,6 +2036,9 @@
 
           lockNotice.classList.remove("d-none");
           pulangContent.classList.add("opacity-50", "pe-none");
+
+          activityItems = [{ siteId: "", sow: "", activityDesc: "", result: "", staffRemarks: "" }];
+          renderActivityInputRows();
         }
       }
     }
@@ -2139,19 +2264,20 @@
           day: "2-digit", month: "short", year: "2-digit"
         }).replace(/ /g, "-");
 
-        // Verify project authorization for writing & editing
-        const rowProj = (row.projectName || "").trim().toLowerCase();
-        const isProjectAuthorized = !userProject || userProject === "all" || userProject === "management" || userProject === rowProj || userRole === "Admin System" || userRole === "Admin";
+        // PASTIKAN TOMBOL APPROVAL & REMARK AKTIF UNTUK ROLE PM, RPM, PD, DAN ADMIN SYSTEM
+        const safeRowId = row.id || (row.username + "_" + row.date);
+        const canPmApprove = (userRole === "PM" || userRole === "RPM" || userRole === "Admin System" || userRole === "Admin");
+        const canPdApprove = (userRole === "PD" || userRole === "Admin System" || userRole === "Admin");
 
         // PM & RPM: Interactive Approval 1 & PM Remark
         let app1Display = `<span class="badge bg-light text-dark border">${escapeHtml(row.approval1 || "pending")}</span>`;
         let pmRemarkDisplay = `<span class="small text-muted">${escapeHtml(row.pmRemark || "-")}</span>`;
 
-        if ((userRole === "PM" || userRole === "RPM" || userRole === "Admin System" || userRole === "Admin") && isProjectAuthorized) {
-          app1Display = `<button type="button" class="interactive-cell-btn" title="Klik untuk edit approval & remark" onclick="openApprovalModal('${row.id}', 'Approval 1')">
+        if (canPmApprove) {
+          app1Display = `<button type="button" class="interactive-cell-btn" title="Klik untuk edit approval & remark" onclick="openApprovalModal('${safeRowId}', 'Approval 1')">
             <strong>${escapeHtml(row.approval1 || "pending")}</strong> <i class="bi bi-pencil-fill text-primary ms-1"></i>
           </button>`;
-          pmRemarkDisplay = `<button type="button" class="interactive-cell-btn text-start text-dark" title="Klik untuk edit remark PM" onclick="openApprovalModal('${row.id}', 'Approval 1')">
+          pmRemarkDisplay = `<button type="button" class="interactive-cell-btn text-start text-dark" title="Klik untuk edit remark PM" onclick="openApprovalModal('${safeRowId}', 'Approval 1')">
             <span>${escapeHtml(row.pmRemark && row.pmRemark !== '-' ? row.pmRemark : 'Tulis Remark')}</span> <i class="bi bi-pencil-square text-primary ms-1"></i>
           </button>`;
         }
@@ -2160,20 +2286,26 @@
         let app2Display = `<span class="badge bg-light text-dark border">${escapeHtml(row.approval2 || "pending")}</span>`;
         let pdRemarkDisplay = `<span class="small text-muted">${escapeHtml(row.pdRemark || "-")}</span>`;
 
-        if ((userRole === "PD" || userRole === "Admin System" || userRole === "Admin") && isProjectAuthorized) {
-          app2Display = `<button type="button" class="interactive-cell-btn" title="Klik untuk edit approval & remark" onclick="openApprovalModal('${row.id}', 'Approval 2')">
+        if (canPdApprove) {
+          app2Display = `<button type="button" class="interactive-cell-btn" title="Klik untuk edit approval & remark" onclick="openApprovalModal('${safeRowId}', 'Approval 2')">
             <strong>${escapeHtml(row.approval2 || "pending")}</strong> <i class="bi bi-pencil-fill text-warning ms-1"></i>
           </button>`;
-          pdRemarkDisplay = `<button type="button" class="interactive-cell-btn text-start text-dark" title="Klik untuk edit remark PD" onclick="openApprovalModal('${row.id}', 'Approval 2')">
+          pdRemarkDisplay = `<button type="button" class="interactive-cell-btn text-start text-dark" title="Klik untuk edit remark PD" onclick="openApprovalModal('${safeRowId}', 'Approval 2')">
             <span>${escapeHtml(row.pdRemark && row.pdRemark !== '-' ? row.pdRemark : 'Tulis Remark')}</span> <i class="bi bi-pencil-square text-warning ms-1"></i>
           </button>`;
         }
 
-        // Photo Action Buttons
-        const photoMasukBtn = (row.photoMasuk && row.photoMasuk !== "-") ?
-          `<button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 mb-1" onclick="previewItemPhoto('${row.id}', 'masuk')"><i class="bi bi-box-arrow-in-right"></i> Masuk</button>` : '';
-        const photoPulangBtn = (row.photoPulang && row.photoPulang !== "-") ?
-          `<button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" onclick="previewItemPhoto('${row.id}', 'pulang')"><i class="bi bi-box-arrow-left"></i> Pulang</button>` : '';
+        // Photo Action Buttons (Mendukung semua format alias foto dari server)
+        const photoMasukUrl = row.photoMasuk || row.photoUrl || row.buktifoto || row.buktifotourl || row.fotoMasuk || row.fotomasukurl || "";
+        const photoPulangUrl = row.photoPulang || row.fotopulang || row.fotopulangurl || "";
+
+        const hasMasukPhoto = photoMasukUrl && photoMasukUrl !== "-" && photoMasukUrl.length > 5;
+        const hasPulangPhoto = photoPulangUrl && photoPulangUrl !== "-" && photoPulangUrl.length > 5;
+
+        const photoMasukBtn = hasMasukPhoto ?
+          `<button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 mb-1" onclick="previewItemPhoto('${safeRowId}', 'masuk')"><i class="bi bi-box-arrow-in-right"></i> Masuk</button>` : '';
+        const photoPulangBtn = hasPulangPhoto ?
+          `<button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" onclick="previewItemPhoto('${safeRowId}', 'pulang')"><i class="bi bi-box-arrow-left"></i> Pulang</button>` : '';
 
         if (currentRecapViewRole === "Staff") {
           // Render Staff Row (Image 1)
@@ -2573,10 +2705,16 @@
     });
 
     window.openApprovalModal = function(progId, appType) {
-      const record = db.progress.find(p => p.id === progId);
-      if (!record) return;
+      let record = db.progress.find(p => String(p.id) === String(progId) || (p.username + "_" + p.date) === String(progId));
+      if (!record) {
+        record = db.progress.find(p => String(p.id).includes(String(progId)));
+      }
+      if (!record) {
+        console.warn("Record not found for id:", progId);
+        return;
+      }
 
-      document.getElementById("modalAppProgressId").value = progId;
+      document.getElementById("modalAppProgressId").value = record.id || progId;
       document.getElementById("modalAppType").value = appType;
       document.getElementById("modalApprovalTitle").textContent = `Validasi ${appType} (${record.name})`;
 
@@ -2600,7 +2738,7 @@
       const status = document.getElementById("modalAppStatus").value;
       const remark = document.getElementById("modalAppRemark").value.trim() || "-";
 
-      const record = db.progress.find(p => p.id === progId);
+      let record = db.progress.find(p => String(p.id) === String(progId) || (p.username + "_" + p.date) === String(progId));
       if (!record) return;
 
       if (appType === "Approval 1") {
@@ -2622,7 +2760,7 @@
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({
               action: "submitApproval",
-              progressId: progId,
+              progressId: record.id,
               role: (appType === "Approval 1") ? "PM" : "PD",
               status,
               remark
@@ -2641,10 +2779,16 @@
     });
 
     window.previewItemPhoto = function(progId, stage) {
-      const record = db.progress.find(p => p.id === progId);
+      let record = db.progress.find(p => String(p.id) === String(progId) || (p.username + "_" + p.date) === String(progId));
+      if (!record) {
+        record = db.progress.find(p => String(p.id).includes(String(progId)));
+      }
       if (!record) return;
 
-      const photoUrl = (stage === "masuk") ? record.photoMasuk : record.photoPulang;
+      const photoMasukUrl = record.photoMasuk || record.photoUrl || record.buktifoto || record.buktifotourl || record.fotoMasuk || record.fotomasukurl || "";
+      const photoPulangUrl = record.photoPulang || record.fotopulang || record.fotopulangurl || "";
+
+      const photoUrl = (stage === "masuk") ? photoMasukUrl : photoPulangUrl;
       const location = (stage === "masuk") ? record.alamatMasuk : record.alamatPulang;
       const timeStr = (stage === "masuk") ? record.timeMasuk : record.timePulang;
 
@@ -2855,7 +2999,7 @@
           db.users = json.users;
         }
         if (json.progress && json.progress.length) {
-          // Bersihkan data dari server agar field role/name yang pernah terkontaminasi Base64 kembali normal
+          // Bersihkan dan selaraskan data foto dari server
           db.progress = json.progress.map(p => {
             if (p.role && p.role.startsWith("data:image")) {
               p.photoMasuk = p.role;
@@ -2865,6 +3009,8 @@
               p.alamatMasuk = p.name;
               p.name = p.username || "Karyawan";
             }
+            p.photoMasuk = p.photoMasuk || p.photoUrl || p.buktifoto || p.buktifotourl || p.fotoMasuk || p.fotomasukurl || "-";
+            p.photoPulang = p.photoPulang || p.fotopulang || p.fotopulangurl || "-";
             return p;
           });
         }
