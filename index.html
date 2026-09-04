@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kubik Madani Attendance & Daily Jobs Progress</title>
+  <title>ProSync - Enterprise Attendance & Daily Jobs Progress</title>
 
   <!-- Bootstrap 5.3 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -1586,7 +1586,7 @@
 
       // Baris 1: Nama, Role, Tanggal & Waktu
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 30px 'Inter', sans-serif";
+      ctx.font = "bold 18px 'Inter', sans-serif";
       ctx.fillText(`${currentUser.name} (${currentUser.role}) | ${timeStr}`, 15, canvasEl.height - barH + 28);
 
       // Pisahkan koordinat dan alamat
@@ -1603,12 +1603,12 @@
       }
 
       // Baris 2: Koordinat Lat & Lon (Font diperbesar 250% dari 12px -> 30px Bold, warna Kuning Terang)
-      ctx.font = "bold 30px 'Inter', sans-serif";
+      ctx.font = "bold 24px 'Inter', sans-serif";
       ctx.fillStyle = "#facc15";
       ctx.fillText(coordsText, 15, canvasEl.height - barH + 62);
 
       // Baris 3 & 4: Alamat Lengkap (Font diperbesar 250% -> 30px Bold, warna Putih Terang)
-      ctx.font = "bold 30px 'Inter', sans-serif";
+      ctx.font = "bold 22px 'Inter', sans-serif";
       ctx.fillStyle = "#ffffff";
 
       // Bagi teks alamat jika melebihi lebar frame agar tidak terpotong
