@@ -1577,7 +1577,7 @@
       const ctx = canvasEl.getContext("2d");
       ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
 
-      // Tinggikan bilah watermark agar font 500% (60px) muat sempurna
+      // Tinggikan bilah watermark agar font 250% (30px) muat sempurna
       const barH = 145;
       ctx.fillStyle = "rgba(15, 23, 42, 0.88)";
       ctx.fillRect(0, canvasEl.height - barH, canvasEl.width, barH);
@@ -1586,7 +1586,7 @@
 
       // Baris 1: Nama, Role, Tanggal & Waktu
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 40px 'Inter', sans-serif";
+      ctx.font = "bold 30px 'Inter', sans-serif";
       ctx.fillText(`${currentUser.name} (${currentUser.role}) | ${timeStr}`, 15, canvasEl.height - barH + 28);
 
       // Pisahkan koordinat dan alamat
@@ -1602,13 +1602,13 @@
         streetText = addressTxt.substring(36);
       }
 
-      // Baris 2: Koordinat Lat & Lon (Font diperbesar 500% dari 12px -> 60px Bold, warna Kuning Terang)
-      ctx.font = "bold 60px 'Inter', sans-serif";
+      // Baris 2: Koordinat Lat & Lon (Font diperbesar 250% dari 12px -> 30px Bold, warna Kuning Terang)
+      ctx.font = "bold 30px 'Inter', sans-serif";
       ctx.fillStyle = "#facc15";
       ctx.fillText(coordsText, 15, canvasEl.height - barH + 62);
 
-      // Baris 3 & 4: Alamat Lengkap (Font diperbesar 500% -> 60px Bold, warna Putih Terang)
-      ctx.font = "bold 50px 'Inter', sans-serif";
+      // Baris 3 & 4: Alamat Lengkap (Font diperbesar 250% -> 30px Bold, warna Putih Terang)
+      ctx.font = "bold 30px 'Inter', sans-serif";
       ctx.fillStyle = "#ffffff";
 
       // Bagi teks alamat jika melebihi lebar frame agar tidak terpotong
