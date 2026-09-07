@@ -1976,7 +1976,14 @@
         stepMasuk.className = "workflow-step-item completed";
         badgeMasuk.textContent = `Masuk: ${record.timeMasuk}`;
         badgeMasuk.className = "badge bg-success rounded-pill";
-
+        // 👇 TEMPELKAN 3 BARIS INI DI SINI:
+  const btnKirimMasuk = document.getElementById("btnSubmitAbsenMasuk");
+  if (btnKirimMasuk) {
+    btnKirimMasuk.disabled = true;
+    btnKirimMasuk.innerHTML = `<i class="bi bi-check-all me-1"></i> Sudah Absen Masuk Hari Ini`;
+    btnKirimMasuk.className = "btn btn-secondary w-100 mt-3 fw-semibold pe-none";
+  }
+  // 👆 BATAS PENEMPELAN
         if (record.hasJobsProgress) {
           stepJobs.className = "workflow-step-item completed";
           badgeJobs.textContent = "Sudah Diisi";
@@ -2215,7 +2222,7 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
             <th rowspan="2" style="width: 150px;">RPM/PM Remark</th>
             <th rowspan="2" style="width: 110px;">Approval 2</th>
             <th rowspan="2" style="width: 150px;">PD Remark</th>
-            <th rowspan="2" style="width: 120px;">PIC Rigger</th>
+            <th rowspan="2" style="width: 130px;">Nama Karyawan</th>
             <th rowspan="2" style="width: 90px;">Bukti Foto</th>
           </tr>
           <tr class="table-light">
@@ -2402,7 +2409,7 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
         ]);
         csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
       } else {
-        const headers = ["No", "Date", "Site ID", "Sow", "task or activity", "Result", "Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark", "PIC Rigger"];
+        const headers = ["No", "Date", "Site ID", "Sow", "task or activity", "Result", "Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark", "Nama Karyawan"];
         const rows = list.map((item, i) => [
           i + 1,
           new Date(item.date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "2-digit" }).replace(/ /g, "-"),
