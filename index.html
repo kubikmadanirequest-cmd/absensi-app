@@ -2168,15 +2168,21 @@
         document.getElementById("recapSubHeadingText").textContent = `Mode Admin System - ${activeProjectName}`;
       }
 
-      const targetUser = (list.length > 0) ? list[0] : currentUser;
-      document.getElementById("recapMetaName").textContent = targetUser.name || currentUser.name;
-      document.getElementById("recapMetaId").textContent = targetUser.idKaryawan || currentUser.idKaryawan || "-";
-      document.getElementById("recapMetaProject").textContent = (userRole === "Staff" || userRole === "Technician") 
-        ? (targetUser.projectName || "-") 
-        : ((selectProject && selectProject.value !== "all") ? selectProject.options[selectProject.selectedIndex].text : (currentUser.projectName || "All Projects"));
-      document.getElementById("recapMetaCode").textContent = targetUser.projectCode || currentUser.projectCode || "-";
-      document.getElementById("recapMetaPeriode").textContent = targetUser.periode || currentUser.periode || "-";
-      document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
+      if (userRole === "Staff" || userRole === "Technician") {
+  document.getElementById("recapMetaName").textContent = currentUser.name;
+  document.getElementById("recapMetaId").textContent = currentUser.idKaryawan || "-";
+  document.getElementById("recapMetaProject").textContent = currentUser.projectName || "-";
+  document.getElementById("recapMetaCode").textContent = currentUser.projectCode || "-";
+  document.getElementById("recapMetaPeriode").textContent = currentUser.periode || "-";
+} else {
+  // Jika dibuka oleh PM, RPM, atau PD:
+  document.getElementById("recapMetaName").textContent = `${currentUser.name} (${userRole})`;
+  document.getElementById("recapMetaId").textContent = currentUser.idKaryawan || "-";
+  document.getElementById("recapMetaProject").textContent = (userRole === "PM" || userRole === "RPM") ? (currentUser.projectName || "Huawei") : "Semua Proyek";
+  document.getElementById("recapMetaCode").textContent = currentUser.projectCode || "ALL";
+  document.getElementById("recapMetaPeriode").textContent = currentUser.periode || "2026";
+}
+document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
 
       list = filterByTime(list);
       list.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -2205,8 +2211,8 @@
             <th colspan="3" class="bg-secondary bg-opacity-10 fw-bold">Activity Description</th>
             <th rowspan="2" style="width: 80px;">Result</th>
             <th rowspan="2">Remarks</th>
-            <th rowspan="2" style="width: 110px;">Approval 1</th>
-            <th rowspan="2" style="width: 150px;">PM Remark</th>
+            <th rowspan="2" style="width: 120px;">Approval 1 (RPM/PM)</th>
+            <th rowspan="2" style="width: 150px;">RPM/PM Remark</th>
             <th rowspan="2" style="width: 110px;">Approval 2</th>
             <th rowspan="2" style="width: 150px;">PD Remark</th>
             <th rowspan="2" style="width: 120px;">PIC Rigger</th>
@@ -2671,10 +2677,10 @@
       document.getElementById("modalAppType").value = appType;
       document.getElementById("modalApprovalTitle").textContent = `Validasi ${appType} (${record.name})`;
 
-      if (appType === "Approval 1") {
-        document.getElementById("modalAppStatus").value = record.approval1 || "ok";
-        document.getElementById("modalAppRemark").value = record.pmRemark && record.pmRemark !== "-" ? record.pmRemark : "";
-        document.getElementById("modalAppRemarkLabel").textContent = "PM / RPM Remark:";
+      if (appType === "Approval 1" || appType === "RPM/PM") {
+  document.getElementById("modalAppStatus").value = record.approval1 || "ok";
+  document.getElementById("modalAppRemark").value = record.pmRemark && record.pmRemark !== "-" ? record.pmRemark : "";
+  document.getElementById("modalAppRemarkLabel").textContent = "RPM / PM Remark:";
       } else {
         document.getElementById("modalAppStatus").value = record.approval2 || "ok";
         document.getElementById("modalAppRemark").value = record.pdRemark && record.pdRemark !== "-" ? record.pdRemark : "";
