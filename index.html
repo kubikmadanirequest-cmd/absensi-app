@@ -809,14 +809,15 @@
               </div>
               <div class="col-6">
                 <label class="form-label small fw-semibold">Role</label>
-                <select class="form-select form-select-sm" id="newRole" required>
-                  <option value="Staff">Staff</option>
-                  <option value="Technician">Technician</option>
-                  <option value="RPM">RPM</option>
-                  <option value="PM">PM</option>
-                  <option value="PD">PD</option>
-                  <option value="Admin System">Admin System</option>
-                </select>
+                <input type="text" class="form-control form-control-sm" id="newRole" list="roleSuggestions" placeholder="Pilih / ketik role..." required>
+                <datalist id="roleSuggestions">
+                  <option value="Staff"></option>
+                  <option value="Technician"></option>
+                  <option value="RPM"></option>
+                  <option value="PM"></option>
+                  <option value="PD"></option>
+                  <option value="Admin System"></option>
+                </datalist>
               </div>
               <div class="col-6">
                 <label class="form-label small fw-semibold">ID Karyawan</label>
@@ -824,11 +825,25 @@
               </div>
               <div class="col-6">
                 <label class="form-label small fw-semibold">Project Name</label>
-                <input type="text" class="form-control form-control-sm" id="newProjectName" value="Telkom infra">
+                <input type="text" class="form-control form-control-sm" id="newProjectName" list="projectNameSuggestions" placeholder="Pilih / ketik nama proyek..." value="Telkom infra">
+                <datalist id="projectNameSuggestions">
+                  <option value="Telkom infra"></option>
+                  <option value="Huawei"></option>
+                  <option value="ZTE"></option>
+                  <option value="RO Kalimantan"></option>
+                  <option value="Management"></option>
+                </datalist>
               </div>
               <div class="col-6">
                 <label class="form-label small fw-semibold">Project Code</label>
-                <input type="text" class="form-control form-control-sm" id="newProjectCode" value="RO">
+                <input type="text" class="form-control form-control-sm" id="newProjectCode" list="projectCodeSuggestions" placeholder="Pilih / ketik kode proyek..." value="RO">
+                <datalist id="projectCodeSuggestions">
+                  <option value="RO"></option>
+                  <option value="HWI"></option>
+                  <option value="ZTE-RO"></option>
+                  <option value="MGT"></option>
+                  <option value="-"></option>
+                </datalist>
               </div>
               <div class="col-6">
                 <label class="form-label small fw-semibold">Periode</label>
