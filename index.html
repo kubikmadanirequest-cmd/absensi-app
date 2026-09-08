@@ -1468,17 +1468,8 @@
 
    async function startCamera(videoElement, statusElement) {
       stopActiveCamera();
-      if (!videoElement) return;
-
-      if (statusElement) {
-        statusElement.innerHTML = `<span class="spinner-border spinner-border-sm text-warning"></span> Mengaktifkan kamera...`;
-      }
-
-      // Pastikan atribut autoplay dan playsinline aktif untuk kompatibilitas mobile/iOS
-      videoElement.setAttribute("autoplay", "");
-      videoElement.setAttribute("muted", "");
-      videoElement.setAttribute("playsinline", "");
-
+      if (!statusElement) return;
+      statusElement.innerHTML = `<span class="spinner-border spinner-border-sm text-warning"></span> Mengaktifkan kamera...`;
       try {
         const constraints = {
           video: {
@@ -1488,33 +1479,22 @@
           },
           audio: false
         };
-
         mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
         videoElement.srcObject = mediaStream;
-
-        // Tangani promise play agar tidak terkena unhandled rejection
-        videoElement.onloadedmetadata = () => {
-          videoElement.play().catch(e => console.warn("Autoplay dicegah browser:", e));
-        };
-
-        if (statusElement) {
-          statusElement.innerHTML = `<i class="bi bi-dot text-success"></i> Kamera Aktif`;
-        }
+        await videoElement.play();
+        statusElement.innerHTML = `<i class="bi bi-dot text-success"></i> Kamera Aktif`;
       } catch (err) {
         console.error("Camera error:", err);
-        if (statusElement) {
-          statusElement.innerHTML = `<i class="bi bi-exclamation-circle text-danger"></i> Akses Kamera Ditolak / Tidak Siap`;
-        }
+        statusElement.innerHTML = `<i class="bi bi-exclamation-circle text-danger"></i> Akses Kamera Ditolak`;
       }
     }
 
     function stopActiveCamera() {
       if (mediaStream) {
-        mediaStream.getTracks().forEach(track => {
-          track.stop();
-        });
+        mediaStream.getTracks().forEach(t => t.stop());
         mediaStream = null;
       }
+    }
       if (videoFeedMasuk) videoFeedMasuk.srcObject = null;
       if (videoFeedPulang) videoFeedPulang.srcObject = null;
     }
@@ -2177,11 +2157,10 @@
       const userRole = currentUser ? currentUser.role : "";
       const userProj = (currentUser && currentUser.projectName) ? currentUser.projectName.trim().toLowerCase() : "";
 
-      // Jika yang login PM atau RPM, kunci opsi hanya ke proyeknya sendiri
       if ((userRole === "PM" || userRole === "RPM") && userProj && userProj !== "management" && userProj !== "-") {
         select.innerHTML = `<option value="${userProj}">${currentUser.projectName}</option>`;
         select.value = userProj;
-        select.disabled = true; // Kunci dropdown agar PM tidak bisa memilih proyek lain
+        select.disabled = true;
         return;
       }
 
