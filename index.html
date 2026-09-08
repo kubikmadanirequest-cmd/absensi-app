@@ -2259,19 +2259,30 @@
           // 1. Pastikan role sesuai tab yang aktif (Staff / Technician)
           if (p.role !== currentRecapViewRole) return false;
 
-          const itemProj = String(p.projectName || "").toLowerCase().trim();
+          // Cari data user pemilik absensi di master db.users untuk validasi project yang akurat
+          const ownerUser = db.users.find(u => 
+            (u.username && p.username && String(u.username).toLowerCase().trim() === String(p.username).toLowerCase().trim()) ||
+            (u.name && p.name && String(u.name).toLowerCase().trim() === String(p.name).toLowerCase().trim()) ||
+            (u.idKaryawan && p.idKaryawan && String(u.idKaryawan).trim() === String(p.idKaryawan).trim())
+          );
 
-          // 2. Kunci hak akses: PM dan RPM HANYA boleh melihat proyek miliknya
+          // Ambil nama project dari record absensi, jika kosong ambil dari profil user aslinya
+          const itemProj = String(p.projectName || (ownerUser ? ownerUser.projectName : "") || "").toLowerCase().trim();
+
+          // 2. KUNCI KETAT PM & RPM: Hanya boleh melihat yang project-nya sama persis
           if (userRole === "PM" || userRole === "RPM") {
-            if (userProject && userProject !== "all" && userProject !== "management" && userProject !== "-") {
-              // Cocokkan apakah nama proyek saling memuat (toleran penamaan)
-              return itemProj.includes(userProject) || userProject.includes(itemProj);
-            }
+            if (!userProject || userProject === "-" || userProject === "all") return true;
+
+            // Jika project data kosong/strip, jangan tampilkan di PM
+            if (!itemProj || itemProj === "-") return false;
+
+            // Pencocokan ketat: nama project harus identik
+            return itemProj === userProject;
           }
 
-          // 3. Untuk PD / Admin: Bebas memfilter via dropdown
+          // 3. Untuk PD / Admin: Gunakan filter dropdown
           if (selectedProject && selectedProject !== "all") {
-            return itemProj === selectedProject || itemProj.includes(selectedProject);
+            return itemProj === selectedProject;
           }
 
           return true;
