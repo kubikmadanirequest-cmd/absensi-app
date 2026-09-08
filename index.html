@@ -1975,8 +1975,11 @@
         return isUserMatch && pDateStr === today;
       });
 
-      // Validasi: pastikan data ada dan Jobs Progress sudah terisi
-      const hasJobs = record && (record.hasJobsProgress || (record.activityDesc && record.activityDesc !== "-"));
+      // Validasi fleksibel: cek flag boolean ATAU teks kegiatan dari berbagai alias field
+      const actText = record ? (record.activityDesc || record.activityDescription || record.task || record.taskoractivity || "") : "";
+      const isActFilled = actText && actText !== "-" && String(actText).trim() !== "";
+      const hasJobs = record && (record.hasJobsProgress === true || String(record.hasJobsProgress) === "true" || isActFilled);
+
       if (!record || !hasJobs) {
         Swal.fire("Peringatan", "Jobs Progress belum terisi.", "error");
         hideLoading();
