@@ -2203,24 +2203,34 @@
         if (projectFilterWrapper) projectFilterWrapper.classList.remove("d-none");
         updateProjectFilterOptions();
 
-        const selectedProject = selectProject ? selectProject.value.toLowerCase() : "all";
-        
+        // Ambil filter terpilih dari dropdown jika ada
+        const selectedProject = selectProject ? selectProject.value.toLowerCase().trim() : "all";
+
         list = list.filter(p => {
+          // 1. Pastikan role sesuai tab yang aktif (Staff / Technician)
           if (p.role !== currentRecapViewRole) return false;
-          const itemProj = (p.projectName || "").trim().toLowerCase();
-          
+
+          const itemProj = String(p.projectName || "").toLowerCase().trim();
+
+          // 2. Kunci hak akses: PM dan RPM HANYA boleh melihat proyek miliknya
+          if (userRole === "PM" || userRole === "RPM") {
+            if (userProject && userProject !== "all" && userProject !== "management" && userProject !== "-") {
+              // Cocokkan apakah nama proyek saling memuat (toleran penamaan)
+              return itemProj.includes(userProject) || userProject.includes(itemProj);
+            }
+          }
+
+          // 3. Untuk PD / Admin: Bebas memfilter via dropdown
           if (selectedProject && selectedProject !== "all") {
-            return itemProj === selectedProject;
+            return itemProj === selectedProject || itemProj.includes(selectedProject);
           }
-          if (userProject && userProject !== "all" && userProject !== "all projects" && userProject !== "-" && userProject !== "management") {
-            return itemProj === userProject;
-          }
+
           return true;
         });
 
-        const activeProjectName = (selectedProject && selectedProject !== "all") 
-          ? selectProject.options[selectProject.selectedIndex].text 
-          : ((userProject && userProject !== "all" && userProject !== "all projects" && userProject !== "-" && userProject !== "management") ? currentUser.projectName : "Semua Proyek");
+        const activeProjectName = (userRole === "PM" || userRole === "RPM") 
+          ? (currentUser.projectName || "Huawei") 
+          : ((selectedProject && selectedProject !== "all") ? selectProject.options[selectProject.selectedIndex].text : "Semua Proyek");
 
         document.getElementById("recapHeadingTitle").textContent = `${currentRecapViewRole}s - Jobs Progress (${activeProjectName})`;
         document.getElementById("recapSubHeadingText").textContent = `Akses Khusus ${userRole} untuk Proyek: ${activeProjectName}`;
