@@ -1951,69 +1951,80 @@
     // PERBAIKAN: NORMALISASI TANGGAL & PENGUNCIAN ABSEN MASUK 1X DALAM 24 JAM
     // ====================================================================
     function refreshDailyAttendanceStatus() {
-      if (!currentUser) return;
-      const today = (inputDate && inputDate.value) ? inputDate.value : new Date().toISOString().slice(0, 10);
+  if (!currentUser) return;
 
-      // Normalisasi pencocokan tanggal 10 digit (YYYY-MM-DD) agar tidak terganggu oleh jam 00:00:00 dari Spreadsheet
-      const record = db.progress.find(p => {
-        if (!p.username || p.username.toLowerCase() !== currentUser.username.toLowerCase()) return false;
-        const dStr = String(p.date || "").trim().slice(0, 10);
-        return dStr === today;
-      });
+  // 1. Pastikan tanggal selalu valid (jika inputDate kosong, ambil tanggal lokal hari ini YYYY-MM-DD)
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const fallbackToday = `${year}-${month}-${day}`;
 
-      const stepMasuk = document.getElementById("stepIndicatorMasuk");
-      const stepJobs = document.getElementById("stepIndicatorJobs");
-      const stepPulang = document.getElementById("stepIndicatorPulang");
+  const today = (inputDate && inputDate.value) ? inputDate.value : fallbackToday;
+  if (inputDate && !inputDate.value) inputDate.value = fallbackToday;
 
-      const badgeMasuk = document.getElementById("badgeStatusMasuk");
-      const badgeJobs = document.getElementById("badgeStatusJobs");
-      const badgePulang = document.getElementById("badgeStatusPulang");
+  // 2. Pencocokan tanggal toleran: cocokkan 10 karakter pertama (YYYY-MM-DD) dan case-insensitive username
+  const record = db.progress.find(p => {
+    if (!p.username || !currentUser.username) return false;
+    const userMatch = p.username.toLowerCase().trim() === currentUser.username.toLowerCase().trim();
+    const dStr = String(p.date || "").trim().slice(0, 10);
+    return userMatch && dStr === today;
+  });
 
-      const lockNotice = document.getElementById("pulangLockNotice");
-      const pulangContent = document.getElementById("pulangSectionContent");
-      const btnKirimMasuk = document.getElementById("btnSubmitAbsenMasuk");
+  const stepMasuk = document.getElementById("stepIndicatorMasuk");
+  const stepJobs = document.getElementById("stepIndicatorJobs");
+  const stepPulang = document.getElementById("stepIndicatorPulang");
 
-      if (!record || !record.timeMasuk || record.timeMasuk === "-") {
-        // Belum absen masuk hari ini
-        stepMasuk.className = "workflow-step-item active";
-        stepJobs.className = "workflow-step-item";
-        stepPulang.className = "workflow-step-item";
+  const badgeMasuk = document.getElementById("badgeStatusMasuk");
+  const badgeJobs = document.getElementById("badgeStatusJobs");
+  const badgePulang = document.getElementById("badgeStatusPulang");
 
-        badgeMasuk.textContent = "Belum Absen Masuk";
-        badgeMasuk.className = "badge bg-warning text-dark rounded-pill";
+  const lockNotice = document.getElementById("pulangLockNotice");
+  const pulangContent = document.getElementById("pulangSectionContent");
+  const btnKirimMasuk = document.getElementById("btnSubmitAbsenMasuk");
 
-        badgeJobs.textContent = "Menunggu Check-In";
-        badgeJobs.className = "badge bg-secondary rounded-pill";
+  // 3. Pengecekan apakah user SUDAH absen masuk hari ini
+  if (!record || !record.timeMasuk || record.timeMasuk === "-") {
+    // KONDISI A: BELUM ABSEN MASUK HARI INI
+    stepMasuk.className = "workflow-step-item active";
+    stepJobs.className = "workflow-step-item";
+    stepPulang.className = "workflow-step-item";
 
-        badgePulang.textContent = "Terkunci";
-        badgePulang.className = "badge bg-secondary rounded-pill";
+    badgeMasuk.textContent = "Belum Absen Masuk";
+    badgeMasuk.className = "badge bg-warning text-dark rounded-pill";
 
-        lockNotice.classList.remove("d-none");
-        pulangContent.classList.add("opacity-50", "pe-none");
+    badgeJobs.textContent = "Menunggu Check-In";
+    badgeJobs.className = "badge bg-secondary rounded-pill";
 
-        if (btnKirimMasuk) {
-          btnKirimMasuk.disabled = false;
-          btnKirimMasuk.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> Kirim Presensi Masuk`;
-          btnKirimMasuk.className = "btn btn-primary w-100 mt-3 fw-semibold shadow-sm";
-        }
+    badgePulang.textContent = "Terkunci";
+    badgePulang.className = "badge bg-secondary rounded-pill";
 
-        startCamera(videoFeedMasuk, cameraStatusMasuk);
-        requestGpsAddress(txtAddressMasuk, addr => detectedAddressMasuk = addr);
-      } else {
-        // SUDAH ABSEN MASUK HARI INI (DIKUNCI MAKSIMAL 1X DALAM 24 JAM / HARI BERJALAN)
-        stepMasuk.className = "workflow-step-item completed";
-        badgeMasuk.textContent = `Masuk: ${record.timeMasuk}`;
-        badgeMasuk.className = "badge bg-success rounded-pill";
+    lockNotice.classList.remove("d-none");
+    pulangContent.classList.add("opacity-50", "pe-none");
 
-        // Kunci tombol kirim presensi masuk agar tidak meminta absen ulang
-        if (btnKirimMasuk) {
-          btnKirimMasuk.disabled = true;
-          btnKirimMasuk.innerHTML = `<i class="bi bi-check-all me-1"></i> Sudah Absen Masuk Hari Ini`;
-          btnKirimMasuk.className = "btn btn-secondary w-100 mt-3 fw-semibold pe-none";
-        }
+    if (btnKirimMasuk) {
+      btnKirimMasuk.disabled = false;
+      btnKirimMasuk.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> Kirim Presensi Masuk`;
+      btnKirimMasuk.className = "btn btn-primary w-100 mt-3 fw-semibold shadow-sm";
+    }
 
-        // Hentikan kamera masuk jika sudah absen agar hemat daya baterai
-        stopActiveCamera();
+    startCamera(videoFeedMasuk, cameraStatusMasuk);
+    requestGpsAddress(txtAddressMasuk, addr => detectedAddressMasuk = addr);
+  } else {
+    // KONDISI B: SUDAH ABSEN MASUK HARI INI (KUNCI AGAR TIDAK BISA ABSEN ULANG DALAM 24 JAM)
+    stepMasuk.className = "workflow-step-item completed";
+    badgeMasuk.textContent = `Masuk: ${record.timeMasuk}`;
+    badgeMasuk.className = "badge bg-success rounded-pill";
+
+    // Kunci tombol absen masuk
+    if (btnKirimMasuk) {
+      btnKirimMasuk.disabled = true;
+      btnKirimMasuk.innerHTML = `<i class="bi bi-check-all me-1"></i> Sudah Absen Masuk Hari Ini`;
+      btnKirimMasuk.className = "btn btn-secondary w-100 mt-3 fw-semibold pe-none";
+    }
+
+    // Matikan kamera swafoto masuk karena presensi sudah tercatat
+    stopActiveCamera();
 
         if (record.hasJobsProgress) {
           stepJobs.className = "workflow-step-item completed";
