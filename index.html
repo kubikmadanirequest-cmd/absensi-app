@@ -679,8 +679,8 @@
                       <th>Jam & Alamat Masuk</th>
                       <th>Jam & Alamat Pulang</th>
                       <th>Jobs Progress</th>
-                      <th>Approval 1</th>
-                      <th>Approval 2</th>
+                      <th>Approval 1 (RPM/PM)</th>
+                      <th>Approval 2 (PD)</th>
                       <th>Bukti Foto</th>
                     </tr>
                   </thead>
@@ -695,7 +695,7 @@
 
   </main>
 
-  <!-- MODAL APPROVAL (PM & PD) -->
+  <!-- MODAL APPROVAL (RPM/PM & PD) -->
   <div class="modal fade" id="modalApproval" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -954,7 +954,7 @@
     }
 
     // ====================================================================
-    // HELPER UNIVERSAL: MENGUBAH URL GOOGLE DRIVE MENJADI DIRECT IMAGE STREAM
+    // HELPER: MENGUBAH URL GOOGLE DRIVE MENJADI DIRECT IMAGE STREAM
     // ====================================================================
     function resolveDriveImage(url) {
       if (!url || url === "-" || url.trim() === "") {
@@ -963,7 +963,6 @@
       if (url.startsWith("data:image")) return url;
       if (url.includes("drive.google.com/thumbnail")) return url;
 
-      // Tangkap ID berkas Drive dari semua format URL
       const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
       if (match && match[1]) {
         return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
@@ -1003,7 +1002,6 @@
     ];
 
     const defaultProgress = [
-      // Staff Records (Denizar)
       {
         id: "PROG-101",
         username: "denizar",
@@ -1085,7 +1083,6 @@
         approval2: "ok",
         pdRemark: "-"
       },
-      // Technician Records (Huawei Project - Ahmad Rizky)
       {
         id: "PROG-HW-01",
         username: "ahmad.hw",
@@ -1114,7 +1111,6 @@
         pdRemark: "-",
         picRigger: "Ahmad Rizky"
       },
-      // Technician Records (ZTE Project - Fajar Pratama)
       {
         id: "PROG-ZTE-01",
         username: "fajar.zte",
@@ -1143,7 +1139,6 @@
         pdRemark: "-",
         picRigger: "Fajar Pratama"
       },
-      // Technician Records (Dewin Saputra)
       {
         id: "PROG-TECH-01",
         username: "dewin",
@@ -1276,7 +1271,6 @@
       } catch (e) { console.warn("Quota full or storage error", e); }
     }
 
-    // Inisialisasi Elemen DOM
     const loginSection = document.getElementById("loginSection");
     const mainNavbar = document.getElementById("mainNavbar");
     const formProgressSection = document.getElementById("formProgressSection");
@@ -1291,7 +1285,6 @@
 
     const inputDate = document.getElementById("inputDate");
 
-    // Camera Masuk elements
     const videoFeedMasuk = document.getElementById("videoFeedMasuk");
     const photoPreviewMasuk = document.getElementById("photoPreviewMasuk");
     const canvasCaptureMasuk = document.getElementById("canvasCaptureMasuk");
@@ -1303,7 +1296,6 @@
     const btnRefreshGpsMasuk = document.getElementById("btnRefreshGpsMasuk");
     const btnSubmitAbsenMasuk = document.getElementById("btnSubmitAbsenMasuk");
 
-    // Camera Pulang elements
     const videoFeedPulang = document.getElementById("videoFeedPulang");
     const photoPreviewPulang = document.getElementById("photoPreviewPulang");
     const canvasCapturePulang = document.getElementById("canvasCapturePulang");
@@ -1361,12 +1353,15 @@
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 
+    // ====================================================================
+    // PERBAIKAN LOGIN: TUNGGU SINKRONISASI SELESAI SEBELUM MEMBUKA DASHBOARD
+    // ====================================================================
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const username = document.getElementById("loginUsername").value.trim().toLowerCase();
       const password = document.getElementById("loginPassword").value;
 
-      showLoading("Memverifikasi kredensial...");
+      showLoading("Memverifikasi kredensial & menyinkronkan data...");
 
       const apiUrl = getApiUrl();
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
@@ -1379,6 +1374,7 @@
           const result = await res.json();
           if (result.status === "success") {
             currentUser = result.user;
+            // Pastikan data presensi terbaru diunduh dan tersimpan di db.progress sebelum dashboard ditampilkan
             await syncFromGAS();
             hideLoading();
             configureUserDashboard();
@@ -1389,13 +1385,15 @@
         }
       }
 
-      setTimeout(() => {
-        hideLoading();
+      setTimeout(async () => {
         const found = db.users.find(u => u.username.toLowerCase() === username && u.password === password);
         if (found) {
           currentUser = found;
+          await syncFromGAS();
+          hideLoading();
           configureUserDashboard();
         } else {
+          hideLoading();
           Swal.fire("Login Gagal", "Username atau password salah.", "error");
         }
       }, 300);
@@ -1411,9 +1409,6 @@
       loginSection.classList.remove("d-none");
     });
 
-    // ====================================================================
-    // PERBAIKAN FATAL: MENCEGAH TYPEERROR NULL DI SINI DENGAN TEPAT
-    // ====================================================================
     function configureUserDashboard() {
       loginSection.classList.add("d-none");
       mainNavbar.classList.remove("d-none");
@@ -1431,7 +1426,6 @@
       else navRoleBadge.classList.add("badge-tech");
       navRoleBadge.textContent = currentUser.role;
 
-      // Set initial recap format
       if (currentUser.role === "Technician") {
         currentRecapViewRole = "Technician";
         btnViewTechFormat?.classList.add("active");
@@ -1449,11 +1443,9 @@
       document.getElementById("labelRoleMasuk").textContent = currentUser.role;
       document.getElementById("labelProjectMasuk").textContent = `${currentUser.projectName || '-'} [${currentUser.projectCode || '-'}]`;
 
-      // Render ulang input kegiatan dinamis sesuai role
       renderActivityInputRows();
       refreshDailyAttendanceStatus();
 
-      // Manajemen Hak Akses Admin System vs PM/PD/RPM
       if (currentUser.role === "Admin System" || currentUser.role === "Admin") {
         adminSection.classList.remove("d-none");
         document.getElementById("recapRoleSelectorGroup")?.classList.remove("d-none");
@@ -1467,7 +1459,6 @@
         }
       }
 
-      // Pastikan kedua tabel dieksekusi tanpa terputus
       renderRecapTable();
       renderPresensiLogTable();
     }
@@ -1640,7 +1631,12 @@
       const today = inputDate.value;
       const timeNow = new Date().toTimeString().slice(0, 8);
 
-      let record = db.progress.find(p => p.username === currentUser.username && p.date === today);
+      let record = db.progress.find(p => {
+        const uMatch = p.username && currentUser && p.username.toLowerCase() === currentUser.username.toLowerCase();
+        const dStr = String(p.date || "").trim().slice(0, 10);
+        return uMatch && dStr === today;
+      });
+
       if (!record) {
         record = {
           id: "PROG-" + Date.now(),
@@ -1667,7 +1663,8 @@
           approval1: "pending",
           pmRemark: "-",
           approval2: "pending",
-          pdRemark: "-"
+          pdRemark: "-",
+          picRigger: currentUser.name
         };
         db.progress.unshift(record);
       } else {
@@ -1691,7 +1688,7 @@
 
       setTimeout(() => {
         hideLoading();
-        Swal.fire("Berhasil", "Presensi masuk berhasil dicatat.", "success");
+        Swal.fire("Berhasil", "Presensi masuk berhasil dicatat. Akses Jobs Progress terbuka.", "success");
         refreshDailyAttendanceStatus();
         renderRecapTable();
         renderPresensiLogTable();
@@ -1802,7 +1799,12 @@
       e.preventDefault();
       const today = inputDate.value;
 
-      let baseRecord = db.progress.find(p => p.username === currentUser.username && p.date === today);
+      let baseRecord = db.progress.find(p => {
+        const uMatch = p.username && currentUser && p.username.toLowerCase() === currentUser.username.toLowerCase();
+        const dStr = String(p.date || "").trim().slice(0, 10);
+        return uMatch && dStr === today;
+      });
+
       if (!baseRecord) {
         Swal.fire("Peringatan", "Anda belum melakukan Absen Masuk untuk tanggal ini.", "warning");
         return;
@@ -1841,11 +1843,13 @@
 
           const apiUrl = getApiUrl();
           if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
-            fetch(apiUrl, {
-              method: "POST",
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify({ action: "submitJobsProgress", data: extraRecord })
-            }).catch(err => console.warn(err));
+            try {
+              fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "submitJobsProgress", data: extraRecord })
+              }).catch(err => console.warn(err));
+            } catch (err) {}
           }
         }
       }
@@ -1905,7 +1909,12 @@
       const today = inputDate.value;
       const timeNow = new Date().toTimeString().slice(0, 8);
 
-      let record = db.progress.find(p => p.username === currentUser.username && p.date === today);
+      let record = db.progress.find(p => {
+        const uMatch = p.username && currentUser && p.username.toLowerCase() === currentUser.username.toLowerCase();
+        const dStr = String(p.date || "").trim().slice(0, 10);
+        return uMatch && dStr === today;
+      });
+
       if (!record || !record.hasJobsProgress) {
         Swal.fire("Peringatan", "Jobs Progress belum terisi.", "error");
         hideLoading();
@@ -1938,9 +1947,19 @@
       }, 400);
     });
 
+    // ====================================================================
+    // PERBAIKAN: NORMALISASI TANGGAL & PENGUNCIAN ABSEN MASUK 1X DALAM 24 JAM
+    // ====================================================================
     function refreshDailyAttendanceStatus() {
-      const today = inputDate.value;
-      const record = db.progress.find(p => p.username === currentUser.username && p.date === today);
+      if (!currentUser) return;
+      const today = (inputDate && inputDate.value) ? inputDate.value : new Date().toISOString().slice(0, 10);
+
+      // Normalisasi pencocokan tanggal 10 digit (YYYY-MM-DD) agar tidak terganggu oleh jam 00:00:00 dari Spreadsheet
+      const record = db.progress.find(p => {
+        if (!p.username || p.username.toLowerCase() !== currentUser.username.toLowerCase()) return false;
+        const dStr = String(p.date || "").trim().slice(0, 10);
+        return dStr === today;
+      });
 
       const stepMasuk = document.getElementById("stepIndicatorMasuk");
       const stepJobs = document.getElementById("stepIndicatorJobs");
@@ -1952,8 +1971,10 @@
 
       const lockNotice = document.getElementById("pulangLockNotice");
       const pulangContent = document.getElementById("pulangSectionContent");
+      const btnKirimMasuk = document.getElementById("btnSubmitAbsenMasuk");
 
       if (!record || !record.timeMasuk || record.timeMasuk === "-") {
+        // Belum absen masuk hari ini
         stepMasuk.className = "workflow-step-item active";
         stepJobs.className = "workflow-step-item";
         stepPulang.className = "workflow-step-item";
@@ -1970,20 +1991,30 @@
         lockNotice.classList.remove("d-none");
         pulangContent.classList.add("opacity-50", "pe-none");
 
+        if (btnKirimMasuk) {
+          btnKirimMasuk.disabled = false;
+          btnKirimMasuk.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> Kirim Presensi Masuk`;
+          btnKirimMasuk.className = "btn btn-primary w-100 mt-3 fw-semibold shadow-sm";
+        }
+
         startCamera(videoFeedMasuk, cameraStatusMasuk);
         requestGpsAddress(txtAddressMasuk, addr => detectedAddressMasuk = addr);
       } else {
+        // SUDAH ABSEN MASUK HARI INI (DIKUNCI MAKSIMAL 1X DALAM 24 JAM / HARI BERJALAN)
         stepMasuk.className = "workflow-step-item completed";
         badgeMasuk.textContent = `Masuk: ${record.timeMasuk}`;
         badgeMasuk.className = "badge bg-success rounded-pill";
-        // 👇 TEMPELKAN 3 BARIS INI DI SINI:
-  const btnKirimMasuk = document.getElementById("btnSubmitAbsenMasuk");
-  if (btnKirimMasuk) {
-    btnKirimMasuk.disabled = true;
-    btnKirimMasuk.innerHTML = `<i class="bi bi-check-all me-1"></i> Sudah Absen Masuk Hari Ini`;
-    btnKirimMasuk.className = "btn btn-secondary w-100 mt-3 fw-semibold pe-none";
-  }
-  // 👆 BATAS PENEMPELAN
+
+        // Kunci tombol kirim presensi masuk agar tidak meminta absen ulang
+        if (btnKirimMasuk) {
+          btnKirimMasuk.disabled = true;
+          btnKirimMasuk.innerHTML = `<i class="bi bi-check-all me-1"></i> Sudah Absen Masuk Hari Ini`;
+          btnKirimMasuk.className = "btn btn-secondary w-100 mt-3 fw-semibold pe-none";
+        }
+
+        // Hentikan kamera masuk jika sudah absen agar hemat daya baterai
+        stopActiveCamera();
+
         if (record.hasJobsProgress) {
           stepJobs.className = "workflow-step-item completed";
           badgeJobs.textContent = "Sudah Diisi";
@@ -2014,6 +2045,7 @@
             requestGpsAddress(txtAddressPulang, addr => detectedAddressPulang = addr);
           }
         } else {
+          // Tahap 2: Absen masuk selesai, langsung buka form Jobs Progress
           stepJobs.className = "workflow-step-item active";
           badgeJobs.textContent = "Belum Disimpan";
           badgeJobs.className = "badge bg-warning text-dark rounded-pill";
@@ -2109,6 +2141,9 @@
       }
     }
 
+    // ====================================================================
+    // RENDER REKAPITULASI (APPROVAL 1 RPM/PM & NAMA KARYAWAN)
+    // ====================================================================
     function renderRecapTable() {
       const thead = document.getElementById("tableRecapHead");
       const tbody = document.getElementById("tableRecapBody");
@@ -2175,21 +2210,21 @@
         document.getElementById("recapSubHeadingText").textContent = `Mode Admin System - ${activeProjectName}`;
       }
 
+      // Metadata Top Card (Tidak lagi terkunci nama teknisi jika dibuka oleh PM/RPM/PD)
       if (userRole === "Staff" || userRole === "Technician") {
-  document.getElementById("recapMetaName").textContent = currentUser.name;
-  document.getElementById("recapMetaId").textContent = currentUser.idKaryawan || "-";
-  document.getElementById("recapMetaProject").textContent = currentUser.projectName || "-";
-  document.getElementById("recapMetaCode").textContent = currentUser.projectCode || "-";
-  document.getElementById("recapMetaPeriode").textContent = currentUser.periode || "-";
-} else {
-  // Jika dibuka oleh PM, RPM, atau PD:
-  document.getElementById("recapMetaName").textContent = `${currentUser.name} (${userRole})`;
-  document.getElementById("recapMetaId").textContent = currentUser.idKaryawan || "-";
-  document.getElementById("recapMetaProject").textContent = (userRole === "PM" || userRole === "RPM") ? (currentUser.projectName || "Huawei") : "Semua Proyek";
-  document.getElementById("recapMetaCode").textContent = currentUser.projectCode || "ALL";
-  document.getElementById("recapMetaPeriode").textContent = currentUser.periode || "2026";
-}
-document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
+        document.getElementById("recapMetaName").textContent = currentUser.name;
+        document.getElementById("recapMetaId").textContent = currentUser.idKaryawan || "-";
+        document.getElementById("recapMetaProject").textContent = currentUser.projectName || "-";
+        document.getElementById("recapMetaCode").textContent = currentUser.projectCode || "-";
+        document.getElementById("recapMetaPeriode").textContent = currentUser.periode || "-";
+      } else {
+        document.getElementById("recapMetaName").textContent = `${currentUser.name} (${userRole})`;
+        document.getElementById("recapMetaId").textContent = currentUser.idKaryawan || "-";
+        document.getElementById("recapMetaProject").textContent = (userRole === "PM" || userRole === "RPM") ? (currentUser.projectName || "Huawei") : "Semua Proyek";
+        document.getElementById("recapMetaCode").textContent = currentUser.projectCode || "ALL";
+        document.getElementById("recapMetaPeriode").textContent = currentUser.periode || "2026";
+      }
+      document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
 
       list = filterByTime(list);
       list.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -2203,8 +2238,8 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
             <th>Activity Description</th>
             <th style="width: 85px;">Result</th>
             <th>Remarks</th>
-            <th style="width: 110px;">Approval 1</th>
-            <th style="width: 150px;">PM Remark</th>
+            <th style="width: 120px;">Approval 1 (RPM/PM)</th>
+            <th style="width: 150px;">RPM/PM Remark</th>
             <th style="width: 110px;">Approval 2</th>
             <th style="width: 150px;">PD Remark</th>
             <th style="width: 90px;">Bukti Foto</th>
@@ -2222,7 +2257,7 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
             <th rowspan="2" style="width: 150px;">RPM/PM Remark</th>
             <th rowspan="2" style="width: 110px;">Approval 2</th>
             <th rowspan="2" style="width: 150px;">PD Remark</th>
-            <th rowspan="2" style="width: 130px;">Nama Karyawan</th>
+            <th rowspan="2" style="width: 130px;" class="table-primary">Nama Karyawan</th>
             <th rowspan="2" style="width: 90px;">Bukti Foto</th>
           </tr>
           <tr class="table-light">
@@ -2253,10 +2288,10 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
         let pmRemarkDisplay = `<span class="small text-muted">${escapeHtml(row.pmRemark || "-")}</span>`;
 
         if (canPmApprove) {
-          app1Display = `<button type="button" class="interactive-cell-btn" title="Klik untuk edit approval & remark" onclick="openApprovalModal('${safeRowId}', 'Approval 1')">
-            <strong>${escapeHtml(row.approval1 || "pending")}</strong> <i class="bi bi-pencil-fill text-primary ms-1"></i>
+          app1Display = `<button type="button" class="interactive-cell-btn text-primary" title="Klik untuk edit approval & remark" onclick="openApprovalModal('${safeRowId}', 'Approval 1')">
+            <strong>${escapeHtml(row.approval1 || "pending")}</strong> <i class="bi bi-pencil-fill ms-1"></i>
           </button>`;
-          pmRemarkDisplay = `<button type="button" class="interactive-cell-btn text-start text-dark" title="Klik untuk edit remark PM" onclick="openApprovalModal('${safeRowId}', 'Approval 1')">
+          pmRemarkDisplay = `<button type="button" class="interactive-cell-btn text-start text-dark" title="Klik untuk edit remark RPM/PM" onclick="openApprovalModal('${safeRowId}', 'Approval 1')">
             <span>${escapeHtml(row.pmRemark && row.pmRemark !== '-' ? row.pmRemark : 'Tulis Remark')}</span> <i class="bi bi-pencil-square text-primary ms-1"></i>
           </button>`;
         }
@@ -2314,7 +2349,7 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
             <td class="text-start">${pmRemarkDisplay}</td>
             <td>${app2Display}</td>
             <td class="text-start">${pdRemarkDisplay}</td>
-            <td class="fw-semibold text-dark text-nowrap">${escapeHtml(picRiggerName)}</td>
+            <td class="fw-semibold text-dark text-nowrap table-primary">${escapeHtml(picRiggerName)}</td>
             <td>
               ${photoMasukBtn} ${photoPulangBtn}
               ${(!photoMasukBtn && !photoPulangBtn) ? '<span class="text-muted">-</span>' : ''}
@@ -2348,6 +2383,7 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
       showLoading("Menyinkronkan data terbaru dari server...");
       await syncFromGAS();
       hideLoading();
+      refreshDailyAttendanceStatus();
       renderRecapTable();
       renderPresensiLogTable();
       Swal.fire("Tersinkron", "Data terbaru berhasil dimuat.", "success");
@@ -2395,7 +2431,7 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
 
       let csvContent = "";
       if (currentRecapViewRole === "Staff") {
-        const headers = ["No", "Date", "Activity Description", "Result", "Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark"];
+        const headers = ["No", "Date", "Activity Description", "Result", "Remarks", "Approval 1 (RPM/PM)", "RPM/PM Remark", "Approval 2", "PD Remark"];
         const rows = list.map((item, i) => [
           i + 1,
           new Date(item.date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "2-digit" }).replace(/ /g, "-"),
@@ -2409,7 +2445,7 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
         ]);
         csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
       } else {
-        const headers = ["No", "Date", "Site ID", "Sow", "task or activity", "Result", "Remarks", "Approval 1", "PM Remark", "Approval 2", "PD Remark", "Nama Karyawan"];
+        const headers = ["No", "Date", "Site ID", "Sow", "task or activity", "Result", "Remarks", "Approval 1 (RPM/PM)", "RPM/PM Remark", "Approval 2", "PD Remark", "Nama Karyawan"];
         const rows = list.map((item, i) => [
           i + 1,
           new Date(item.date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "2-digit" }).replace(/ /g, "-"),
@@ -2652,7 +2688,7 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
       if (currentUser && (currentUser.role === "Staff" || currentUser.role === "Technician")) {
         list = list.filter(p => p.username === currentUser.username);
       }
-      const headers = ["No", "Tanggal", "Nama", "ID Karyawan", "Role", "Project", "Jam Masuk", "Alamat Masuk", "Jam Pulang", "Alamat Pulang", "Activity", "Result", "Approval 1", "Approval 2"];
+      const headers = ["No", "Tanggal", "Nama", "ID Karyawan", "Role", "Project", "Jam Masuk", "Alamat Masuk", "Jam Pulang", "Alamat Pulang", "Activity", "Result", "Approval 1 (RPM/PM)", "Approval 2"];
       const rows = list.map((item, i) => [
         i + 1,
         item.date,
@@ -2685,9 +2721,9 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
       document.getElementById("modalApprovalTitle").textContent = `Validasi ${appType} (${record.name})`;
 
       if (appType === "Approval 1" || appType === "RPM/PM") {
-  document.getElementById("modalAppStatus").value = record.approval1 || "ok";
-  document.getElementById("modalAppRemark").value = record.pmRemark && record.pmRemark !== "-" ? record.pmRemark : "";
-  document.getElementById("modalAppRemarkLabel").textContent = "RPM / PM Remark:";
+        document.getElementById("modalAppStatus").value = record.approval1 || "ok";
+        document.getElementById("modalAppRemark").value = record.pmRemark && record.pmRemark !== "-" ? record.pmRemark : "";
+        document.getElementById("modalAppRemarkLabel").textContent = "RPM / PM Remark:";
       } else {
         document.getElementById("modalAppStatus").value = record.approval2 || "ok";
         document.getElementById("modalAppRemark").value = record.pdRemark && record.pdRemark !== "-" ? record.pdRemark : "";
@@ -2707,7 +2743,7 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
       let record = db.progress.find(p => String(p.id) === String(progId) || (p.username + "_" + p.date) === String(progId));
       if (!record) return;
 
-      if (appType === "Approval 1") {
+      if (appType === "Approval 1" || appType === "RPM/PM") {
         record.approval1 = status;
         record.pmRemark = remark;
       } else {
@@ -2727,7 +2763,7 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
             body: JSON.stringify({
               action: "submitApproval",
               progressId: record.id,
-              role: (appType === "Approval 1") ? "PM" : "PD",
+              role: (appType === "Approval 1" || appType === "RPM/PM") ? "PM" : "PD",
               status,
               remark
             })
@@ -2744,9 +2780,6 @@ document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
       }, 350);
     });
 
-    // ====================================================================
-    // PERBAIKAN: RESOLVE DRIVE IMAGE & HAPUS TEKS UNDEFINED DI MODAL
-    // ====================================================================
     window.previewItemPhoto = function(progId, stage) {
       let record = db.progress.find(p => String(p.id) === String(progId) || (p.username + "_" + p.date) === String(progId));
       if (!record) {
