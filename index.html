@@ -825,7 +825,7 @@
               </div>
               <div class="col-6">
                 <label class="form-label small fw-semibold">Project Name</label>
-                <input type="text" class="form-control form-control-sm" id="newProjectName" list="projectNameSuggestions" placeholder="Pilih / ketik nama proyek..." value="Telkom infra">
+                <input type="text" class="form-control form-control-sm" id="newProjectName" list="projectNameSuggestions" placeholder="Pilih / ketik nama proyek...">
                 <datalist id="projectNameSuggestions">
                   <option value="Telkom infra"></option>
                   <option value="Huawei"></option>
@@ -836,7 +836,7 @@
               </div>
               <div class="col-6">
                 <label class="form-label small fw-semibold">Project Code</label>
-                <input type="text" class="form-control form-control-sm" id="newProjectCode" list="projectCodeSuggestions" placeholder="Pilih / ketik kode proyek..." value="RO">
+                <input type="text" class="form-control form-control-sm" id="newProjectCode" list="projectCodeSuggestions" placeholder="Pilih / ketik kode proyek...">
                 <datalist id="projectCodeSuggestions">
                   <option value="RO"></option>
                   <option value="HWI"></option>
@@ -2998,7 +2998,35 @@
         tbody.appendChild(tr);
       });
     }
+// Isi otomatis opsi Project Name & Code dari spreadsheet ke datalist saat modal dibuka
+    document.getElementById("modalAddUser")?.addEventListener("show.bs.modal", () => {
+      const projectListEl = document.getElementById("projectNameSuggestions");
+      const codeListEl = document.getElementById("projectCodeSuggestions");
+      
+      const projects = new Set();
+      const codes = new Set();
 
+      // Ambil seluruh proyek dari data spreadsheet yang tersinkron
+      db.users.forEach(u => {
+        if (u.projectName && u.projectName !== "-" && u.projectName.trim() !== "") projects.add(u.projectName.trim());
+        if (u.projectCode && u.projectCode !== "-" && u.projectCode.trim() !== "") codes.add(u.projectCode.trim());
+      });
+      db.progress.forEach(p => {
+        if (p.projectName && p.projectName !== "-" && p.projectName.trim() !== "") projects.add(p.projectName.trim());
+        if (p.projectCode && p.projectCode !== "-" && p.projectCode.trim() !== "") codes.add(p.projectCode.trim());
+      });
+
+      if (projectListEl) {
+        projectListEl.innerHTML = Array.from(projects).map(p => `<option value="${p}"></option>`).join("");
+      }
+      if (codeListEl) {
+        codeListEl.innerHTML = Array.from(codes).map(c => `<option value="${c}"></option>`).join("");
+      }
+
+      // Pastikan form input kosong siap pakai
+      document.getElementById("newProjectName").value = "";
+      document.getElementById("newProjectCode").value = "";
+    });
     document.getElementById("formAddUser").addEventListener("submit", async (e) => {
       e.preventDefault();
       const newUser = {
