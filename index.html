@@ -1959,34 +1959,37 @@
     function refreshDailyAttendanceStatus() {
       if (!currentUser) return;
 
-      // 1. Ambil tanggal hari ini secara konsisten (YYYY-MM-DD)
+      // 1. Ambil tanggal hari ini (YYYY-MM-DD)
       const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const localToday = `${year}-${month}-${day}`;
-
+      const localToday = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
       const today = (inputDate && inputDate.value) ? inputDate.value : localToday;
       if (inputDate && !inputDate.value) inputDate.value = localToday;
 
-      // 2. Kunci pencocokan: Cocokkan username ('yudho'), Nama ('yudho p'), atau ID ('2601010009')
+      // 2. Kunci pencocokan user
       const targetUser = String(currentUser.username || "").toLowerCase().trim();
       const targetName = String(currentUser.name || "").toLowerCase().trim();
-      const targetId = String(currentUser.idKaryawan || "").trim();
+      const targetId = String(currentUser.idKaryawan || "").toLowerCase().trim();
 
       const record = db.progress.find(p => {
         const pUser = String(p.username || "").toLowerCase().trim();
-        const pName = String(p.name || "").toLowerCase().trim();
-        const pId = String(p.idKaryawan || "").trim();
+        const pName = String(p.name || p.nama || "").toLowerCase().trim();
+        const pId = String(p.idKaryawan || "").toLowerCase().trim();
 
-        // Normalisasi tanggal spreadsheet (ambil 10 karakter awal: YYYY-MM-DD)
-        const pDate = String(p.date || "").trim().slice(0, 10);
+        // Normalisasi tanggal spreadsheet agar kompatibel (mendukung YYYY-MM-DD dan d-MMM-yy)
+        const pDateRaw = String(p.date || "").trim();
+        let pDateStr = pDateRaw.slice(0, 10);
+        if (pDateRaw.includes("-") && pDateRaw.length <= 11) {
+          const parsed = parseRecordDate(pDateRaw);
+          if (!isNaN(parsed.getTime())) {
+            pDateStr = `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
+          }
+        }
 
-        const isUserMatch = (pUser && pUser === targetUser) || 
-                            (pName && pName === targetName) || 
+        const isUserMatch = (pUser && targetUser && pUser === targetUser) || 
+                            (pName && targetName && pName === targetName) || 
                             (pId && targetId && pId === targetId);
 
-        return isUserMatch && pDate === today;
+        return isUserMatch && pDateStr === today;
       });
 
       const stepMasuk = document.getElementById("stepIndicatorMasuk");
@@ -2001,10 +2004,14 @@
       const pulangContent = document.getElementById("pulangSectionContent");
       const btnKirimMasuk = document.getElementById("btnSubmitAbsenMasuk");
 
-      // 3. PENGUNCIAN KETAT: Jika sudah ada waktu masuk hari ini, KUNCI TOMBOL!
-      if (record && record.timeMasuk && record.timeMasuk !== "-") {
+      // Periksa jam masuk (toleransi berbagai alias field waktu)
+      const masukTime = record ? (record.timeMasuk || record.time || record.waktu) : null;
+
+      // 3. JIKA SUDAH ABSEN MASUK HARI INI
+      if (record && masukTime && masukTime !== "-") {
+        record.timeMasuk = masukTime; // sinkronkan properti
         stepMasuk.className = "workflow-step-item completed";
-        badgeMasuk.textContent = `Masuk: ${record.timeMasuk}`;
+        badgeMasuk.textContent = `Masuk: ${masukTime}`;
         badgeMasuk.className = "badge bg-success rounded-pill";
 
         if (btnKirimMasuk) {
@@ -2013,10 +2020,9 @@
           btnKirimMasuk.className = "btn btn-secondary w-100 mt-3 fw-semibold pe-none";
         }
 
-        // Matikan stream kamera masuk agar hemat baterai
         stopActiveCamera();
 
-        // BUKA TAHAP 2 (JOBS PROGRESS)
+        // CEK TAHAP 2: JOBS PROGRESS
         if (record.hasJobsProgress || (record.activityDesc && record.activityDesc !== "-")) {
           stepJobs.className = "workflow-step-item completed";
           badgeJobs.textContent = "Sudah Diisi";
@@ -2034,10 +2040,11 @@
           lockNotice.classList.add("d-none");
           pulangContent.classList.remove("opacity-50", "pe-none");
 
-          // CEK TAHAP 3 (ABSEN PULANG)
-          if (record.timePulang && record.timePulang !== "-") {
+          // CEK TAHAP 3: ABSEN PULANG
+          const pulangTime = record.timePulang && record.timePulang !== "-" ? record.timePulang : null;
+          if (pulangTime) {
             stepPulang.className = "workflow-step-item completed";
-            badgePulang.textContent = `Pulang: ${record.timePulang}`;
+            badgePulang.textContent = `Pulang: ${pulangTime}`;
             badgePulang.className = "badge bg-success rounded-pill";
           } else {
             stepPulang.className = "workflow-step-item active";
@@ -2048,6 +2055,7 @@
             requestGpsAddress(txtAddressPulang, addr => detectedAddressPulang = addr);
           }
         } else {
+          // TAHAP 2: MENUNGGU JOBS PROGRESS DIISI
           stepJobs.className = "workflow-step-item active";
           badgeJobs.textContent = "Belum Disimpan";
           badgeJobs.className = "badge bg-warning text-dark rounded-pill";
@@ -2062,7 +2070,7 @@
           renderActivityInputRows();
         }
       } else {
-        // BELUM ABSEN MASUK HARI INI
+        // BELUM ABSEN MASUK
         stepMasuk.className = "workflow-step-item active";
         stepJobs.className = "workflow-step-item";
         stepPulang.className = "workflow-step-item";
