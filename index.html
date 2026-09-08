@@ -1950,13 +1950,34 @@
       const today = inputDate.value;
       const timeNow = new Date().toTimeString().slice(0, 8);
 
+      const targetUser = String(currentUser.username || "").toLowerCase().trim();
+      const targetName = String(currentUser.name || "").toLowerCase().trim();
+      const targetId = String(currentUser.idKaryawan || "").toLowerCase().trim();
+
       let record = db.progress.find(p => {
-        const uMatch = p.username && currentUser && p.username.toLowerCase() === currentUser.username.toLowerCase();
-        const dStr = String(p.date || "").trim().slice(0, 10);
-        return uMatch && dStr === today;
+        const pUser = String(p.username || "").toLowerCase().trim();
+        const pName = String(p.name || p.nama || "").toLowerCase().trim();
+        const pId = String(p.idKaryawan || "").toLowerCase().trim();
+
+        const pDateRaw = String(p.date || "").trim();
+        let pDateStr = pDateRaw.slice(0, 10);
+        if (pDateRaw.includes("-") && pDateRaw.length <= 11) {
+          const parsed = parseRecordDate(pDateRaw);
+          if (!isNaN(parsed.getTime())) {
+            pDateStr = `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
+          }
+        }
+
+        const isUserMatch = (pUser && targetUser && pUser === targetUser) || 
+                            (pName && targetName && pName === targetName) || 
+                            (pId && targetId && pId === targetId);
+
+        return isUserMatch && pDateStr === today;
       });
 
-      if (!record || !record.hasJobsProgress) {
+      // Validasi: pastikan data ada dan Jobs Progress sudah terisi
+      const hasJobs = record && (record.hasJobsProgress || (record.activityDesc && record.activityDesc !== "-"));
+      if (!record || !hasJobs) {
         Swal.fire("Peringatan", "Jobs Progress belum terisi.", "error");
         hideLoading();
         return;
