@@ -2147,6 +2147,19 @@
     function updateProjectFilterOptions() {
       const select = document.getElementById("selectRecapProjectFilter");
       if (!select) return;
+
+      const userRole = currentUser ? currentUser.role : "";
+      const userProj = (currentUser && currentUser.projectName) ? currentUser.projectName.trim().toLowerCase() : "";
+
+      // Jika yang login PM atau RPM, kunci opsi hanya ke proyeknya sendiri
+      if ((userRole === "PM" || userRole === "RPM") && userProj && userProj !== "management" && userProj !== "-") {
+        select.innerHTML = `<option value="${userProj}">${currentUser.projectName}</option>`;
+        select.value = userProj;
+        select.disabled = true; // Kunci dropdown agar PM tidak bisa memilih proyek lain
+        return;
+      }
+
+      select.disabled = false;
       const projects = new Set();
       db.progress.forEach(p => {
         if (p.projectName && p.projectName !== "-" && p.projectName.trim() !== "") {
@@ -2163,17 +2176,12 @@
       select.innerHTML = '<option value="all">Semua Proyek</option>';
       projects.forEach(proj => {
         const opt = document.createElement("option");
-        opt.value = proj.toLowerCase();
+        opt.value = proj.toLowerCase().trim();
         opt.textContent = proj;
         select.appendChild(opt);
       });
 
-      const userProj = (currentUser && currentUser.projectName) ? currentUser.projectName.trim().toLowerCase() : "";
-      if (userProj && userProj !== "all" && userProj !== "-" && userProj !== "management") {
-        select.value = userProj;
-      } else {
-        select.value = currentVal;
-      }
+      select.value = currentVal;
     }
 
     // ====================================================================
