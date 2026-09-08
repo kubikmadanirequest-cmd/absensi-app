@@ -2447,58 +2447,112 @@
       targetBtn.classList.add("active");
     }
 
+    // Helper sanitasi kolom CSV agar kebal dari tipe data angka/null/simbol
+    function safeCsv(val) {
+      if (val === null || val === undefined) return '""';
+      const str = String(val);
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+
     document.getElementById("btnExportJobsCsv").addEventListener("click", () => {
-      let list = db.progress.filter(p => p.role === currentRecapViewRole);
-      const userRole = currentUser ? currentUser.role : "Staff";
-      const userProject = (currentUser && currentUser.projectName ? currentUser.projectName : "").trim().toLowerCase();
+      try {
+        let list = [...db.progress];
+        const userRole = currentUser ? currentUser.role : "Staff";
+        const userProject = (currentUser && currentUser.projectName ? currentUser.projectName : "").trim().toLowerCase();
+        const selectProject = document.getElementById("selectRecapProjectFilter");
+        const selectedProject = selectProject ? selectProject.value.toLowerCase() : "all";
 
-      if (userRole === "Staff" || userRole === "Technician") {
-        list = list.filter(p => p.username === currentUser.username);
-      } else if (userRole === "PM" || userRole === "RPM" || userRole === "PD") {
-        list = list.filter(p => (p.projectName || "").trim().toLowerCase() === userProject);
+        // 1. Filter Role & Akun sesuai tampilan tabel saat ini
+        if (userRole === "Staff" || userRole === "Technician") {
+          const targetU = String(currentUser.username || "").toLowerCase().trim();
+          const targetN = String(currentUser.name || "").toLowerCase().trim();
+          const targetI = String(currentUser.idKaryawan || "").toLowerCase().trim();
+
+          list = list.filter(p => {
+            if (p.role !== currentRecapViewRole) return false;
+            const pU = String(p.username || "").toLowerCase().trim();
+            const pN = String(p.name || p.nama || "").toLowerCase().trim();
+            const pI = String(p.idKaryawan || "").toLowerCase().trim();
+            return (pU && targetU && pU === targetU) || (pN && targetN && pN === targetN) || (pI && targetI && pI === targetI);
+          });
+        } else {
+          list = list.filter(p => {
+            if (p.role !== currentRecapViewRole) return false;
+            const itemProj = (p.projectName || "").trim().toLowerCase();
+            if (selectedProject && selectedProject !== "all") {
+              return itemProj === selectedProject;
+            }
+            if (userProject && userProject !== "all" && userProject !== "management" && userProject !== "-") {
+              return itemProj === userProject;
+            }
+            return true;
+          });
+        }
+
+        // 2. Filter Waktu (Minggu Ini / Bulan Ini / Semua)
+        list = filterByTime(list);
+        list.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (list.length === 0) {
+          Swal.fire("Informasi", `Tidak ada data pekerjaan untuk diekspor pada format ${currentRecapViewRole}.`, "info");
+          return;
+        }
+
+        // 3. Format CSV yang Aman (Tidak akan crash jika ada angka atau tanda kutip)
+        let csvContent = "";
+        if (currentRecapViewRole === "Staff") {
+          const headers = ["No", "Date", "Activity Description", "Result", "Remarks", "Approval 1 (RPM/PM)", "RPM/PM Remark", "Approval 2", "PD Remark"];
+          const rows = list.map((item, i) => {
+            const parsedD = parseRecordDate(item.date);
+            const dateStr = !isNaN(parsedD.getTime()) 
+              ? parsedD.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "2-digit" }).replace(/ /g, "-")
+              : String(item.date || "-");
+
+            return [
+              i + 1,
+              safeCsv(dateStr),
+              safeCsv(item.activityDesc || "-"),
+              safeCsv(item.result || "-"),
+              safeCsv(item.staffRemarks || "-"),
+              safeCsv(item.approval1 || "-"),
+              safeCsv(item.pmRemark || "-"),
+              safeCsv(item.approval2 || "-"),
+              safeCsv(item.pdRemark || "-")
+            ];
+          });
+          csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
+        } else {
+          const headers = ["No", "Date", "Site ID", "Sow", "task or activity", "Result", "Remarks", "Approval 1 (RPM/PM)", "RPM/PM Remark", "Approval 2", "PD Remark", "Nama Karyawan"];
+          const rows = list.map((item, i) => {
+            const parsedD = parseRecordDate(item.date);
+            const dateStr = !isNaN(parsedD.getTime()) 
+              ? parsedD.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "2-digit" }).replace(/ /g, "-")
+              : String(item.date || "-");
+
+            return [
+              i + 1,
+              safeCsv(dateStr),
+              safeCsv(item.siteId || "-"),
+              safeCsv(item.sow || "-"),
+              safeCsv(item.activityDesc || "-"),
+              safeCsv(item.result || "-"),
+              safeCsv(item.staffRemarks || "-"),
+              safeCsv(item.approval1 || "-"),
+              safeCsv(item.pmRemark || "-"),
+              safeCsv(item.approval2 || "-"),
+              safeCsv(item.pdRemark || "-"),
+              safeCsv(item.picRigger || item.name || "-")
+            ];
+          });
+          csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
+        }
+
+        const fileName = `${currentRecapViewRole}_Jobs_Progress_${currentFilter}_${new Date().toISOString().slice(0, 10)}.csv`;
+        downloadCsv(csvContent, fileName);
+      } catch (err) {
+        console.error("Error export CSV:", err);
+        Swal.fire("Gagal Unduh", "Terjadi kesalahan saat memproses file CSV: " + err.message, "error");
       }
-      list = filterByTime(list);
-
-      if (list.length === 0) {
-        Swal.fire("Informasi", `Tidak ada data pekerjaan untuk diekspor pada format ${currentRecapViewRole}.`, "info");
-        return;
-      }
-
-      let csvContent = "";
-      if (currentRecapViewRole === "Staff") {
-        const headers = ["No", "Date", "Activity Description", "Result", "Remarks", "Approval 1 (RPM/PM)", "RPM/PM Remark", "Approval 2", "PD Remark"];
-        const rows = list.map((item, i) => [
-          i + 1,
-          new Date(item.date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "2-digit" }).replace(/ /g, "-"),
-          `"${(item.activityDesc || '-').replace(/"/g, '""')}"`,
-          `"${(item.result || '-').replace(/"/g, '""')}"`,
-          `"${(item.staffRemarks || '-').replace(/"/g, '""')}"`,
-          item.approval1 || "-",
-          `"${(item.pmRemark || '-').replace(/"/g, '""')}"`,
-          item.approval2 || "-",
-          `"${(item.pdRemark || '-').replace(/"/g, '""')}"`
-        ]);
-        csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
-      } else {
-        const headers = ["No", "Date", "Site ID", "Sow", "task or activity", "Result", "Remarks", "Approval 1 (RPM/PM)", "RPM/PM Remark", "Approval 2", "PD Remark", "Nama Karyawan"];
-        const rows = list.map((item, i) => [
-          i + 1,
-          new Date(item.date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "2-digit" }).replace(/ /g, "-"),
-          `"${(item.siteId || '-').replace(/"/g, '""')}"`,
-          `"${(item.sow || '-').replace(/"/g, '""')}"`,
-          `"${(item.activityDesc || '-').replace(/"/g, '""')}"`,
-          `"${(item.result || '-').replace(/"/g, '""')}"`,
-          `"${(item.staffRemarks || '-').replace(/"/g, '""')}"`,
-          item.approval1 || "-",
-          `"${(item.pmRemark || '-').replace(/"/g, '""')}"`,
-          item.approval2 || "-",
-          `"${(item.pdRemark || '-').replace(/"/g, '""')}"`,
-          `"${(item.picRigger || item.name || '-').replace(/"/g, '""')}"`
-        ]);
-        csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
-      }
-
-      downloadCsv(csvContent, `${currentRecapViewRole}_Jobs_Progress_${currentFilter}_${new Date().toISOString().slice(0, 10)}.csv`);
     });
 
     let parsedBulkUsers = [];
