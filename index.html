@@ -1804,13 +1804,35 @@
       e.preventDefault();
       const today = inputDate.value;
 
+      const targetUser = String(currentUser.username || "").toLowerCase().trim();
+      const targetName = String(currentUser.name || "").toLowerCase().trim();
+      const targetId = String(currentUser.idKaryawan || "").toLowerCase().trim();
+
       let baseRecord = db.progress.find(p => {
-        const uMatch = p.username && currentUser && p.username.toLowerCase() === currentUser.username.toLowerCase();
-        const dStr = String(p.date || "").trim().slice(0, 10);
-        return uMatch && dStr === today;
+        const pUser = String(p.username || "").toLowerCase().trim();
+        const pName = String(p.name || p.nama || "").toLowerCase().trim();
+        const pId = String(p.idKaryawan || "").toLowerCase().trim();
+
+        // Normalisasi tanggal spreadsheet agar cocok dengan format YYYY-MM-DD
+        const pDateRaw = String(p.date || "").trim();
+        let pDateStr = pDateRaw.slice(0, 10);
+        if (pDateRaw.includes("-") && pDateRaw.length <= 11) {
+          const parsed = parseRecordDate(pDateRaw);
+          if (!isNaN(parsed.getTime())) {
+            pDateStr = `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
+          }
+        }
+
+        const isUserMatch = (pUser && targetUser && pUser === targetUser) || 
+                            (pName && targetName && pName === targetName) || 
+                            (pId && targetId && pId === targetId);
+
+        return isUserMatch && pDateStr === today;
       });
 
-      if (!baseRecord) {
+      // Cek apakah data presensi ditemukan dan jam masuk sudah tercatat
+      const masukTime = baseRecord ? (baseRecord.timeMasuk || baseRecord.time || baseRecord.waktu) : null;
+      if (!baseRecord || !masukTime || masukTime === "-") {
         Swal.fire("Peringatan", "Anda belum melakukan Absen Masuk untuk tanggal ini.", "warning");
         return;
       }
