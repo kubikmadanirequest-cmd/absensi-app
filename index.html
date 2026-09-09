@@ -225,7 +225,7 @@
       padding: 0.35rem 0.65rem;
       border-radius: 20px;
     }
-    .badge-staff { background-color: #e0f2fe; color: #0369a1; }
+    .badge-Office { background-color: #e0f2fe; color: #0369a1; }
     .badge-tech { background-color: #fef3c7; color: #b45309; }
     .badge-rpm { background-color: #f3e8ff; color: #7e22ce; }
     .badge-pm { background-color: #dbeafe; color: #1d4ed8; }
@@ -352,7 +352,7 @@
           <div class="fw-semibold text-dark small" id="navUserName">Nama User</div>
           <div class="text-muted" style="font-size: 0.75rem;" id="navUserRole">Role User</div>
         </div>
-        <span class="badge-role" id="navRoleBadge">Staff</span>
+        <span class="badge-role" id="navRoleBadge">Office</span>
         <button class="btn btn-outline-primary btn-sm rounded-pill ms-1" id="btnHeaderSync" title="Sinkronkan Data Terbaru">
           <i class="bi bi-arrow-clockwise"></i> <span class="d-none d-md-inline">Sinkron</span>
         </button>
@@ -599,8 +599,8 @@
 
               <div class="d-flex align-items-center gap-2 flex-wrap">
                 <div class="btn-group btn-group-sm" role="group" id="recapRoleSelectorGroup">
-                  <button type="button" class="btn btn-outline-dark active fw-semibold" id="btnViewStaffFormat">
-                    <i class="bi bi-person-workspace me-1"></i> Staff Format
+                  <button type="button" class="btn btn-outline-dark active fw-semibold" id="btnViewOfficeFormat">
+                    <i class="bi bi-person-workspace me-1"></i> Office Format
                   </button>
                   <button type="button" class="btn btn-outline-dark fw-semibold" id="btnViewTechFormat">
                     <i class="bi bi-tools me-1"></i> Non_Office Format
@@ -634,7 +634,7 @@
                   <div class="col-sm-6 col-md-3"><strong>Project Name :</strong> <span id="recapMetaProject">-</span></div>
                   <div class="col-sm-6 col-md-3"><strong>Project Code :</strong> <span id="recapMetaCode">-</span></div>
                   <div class="col-sm-6 col-md-3"><strong>Periode :</strong> <span id="recapMetaPeriode">-</span></div>
-                  <div class="col-sm-6 col-md-3"><strong>Divisi :</strong> <span class="badge bg-dark" id="recapMetaRole">Staff</span></div>
+                  <div class="col-sm-6 col-md-3"><strong>Divisi :</strong> <span class="badge bg-dark" id="recapMetaRole">Office</span></div>
                 </div>
               </div>
             </div>
@@ -810,7 +810,7 @@
                 <label class="form-label small fw-semibold">Role</label>
                 <input type="text" class="form-control form-control-sm" id="newRole" list="roleSuggestions" placeholder="Pilih / ketik role..." required>
                 <datalist id="roleSuggestions">
-                  <option value="Staff"></option>
+                  <option value="Office"></option>
                   <option value="Non_Office"></option>
                   <option value="RPM"></option>
                   <option value="PM"></option>
@@ -893,7 +893,7 @@
               <div class="col-6">
                 <label class="form-label small fw-semibold">Role</label>
                 <select class="form-select form-select-sm" id="editRole" required>
-                  <option value="Staff">Staff</option>
+                  <option value="Office">Office</option>
                   <option value="Non_Office">Non_Office</option>
                   <option value="RPM">RPM</option>
                   <option value="PM">PM</option>
@@ -986,7 +986,7 @@
 
     let currentUser = null;
     let currentFilter = "week";
-    let currentRecapViewRole = "Staff";
+    let currentRecapViewRole = "Office";
     let mediaStream = null;
     let activeCameraType = "masuk";
     let currentFacingMode = "user";
@@ -1008,7 +1008,7 @@
       { username: "pd.bambang", password: "pd123", name: "Ir. Bambang Prakoso", idKaryawan: "PD-1001", role: "PD", projectName: "Telkom infra", projectCode: "RO", periode: "Agustus - Desember 26", noWa: "08128888222" },
       { username: "pd.zte", password: "pd123", name: "Gunawan Santoso, MBA", idKaryawan: "PD-2001", role: "PD", projectName: "ZTE", projectCode: "ZTE-RO", periode: "Agustus - Desember 26", noWa: "08128888444" },
       { username: "pd.huawei", password: "pd123", name: "H. Ridwan Kamil, MM", idKaryawan: "PD-3001", role: "PD", projectName: "Huawei", projectCode: "HWI", periode: "Agustus - Desember 26", noWa: "08128888555" },
-      { username: "denizar", password: "staff123", name: "Denizar", idKaryawan: "2601020033", role: "Staff", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08137777333" },
+      { username: "denizar", password: "Office123", name: "Denizar", idKaryawan: "2601020033", role: "Office", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08137777333" },
       { username: "dewin", password: "tech123", name: "Dewin Saputra", idKaryawan: "Rigger", role: "Non_Office", projectName: "RO Kalimantan", projectCode: "-", periode: "Agustus 2026", noWa: "081399887766" },
       { username: "teguh", password: "tech123", name: "Teguh Santoso", idKaryawan: "2601020088", role: "Non_Office", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08136666444" },
       { username: "fajar.zte", password: "tech123", name: "Fajar Pratama", idKaryawan: "2601020099", role: "Non_Office", projectName: "ZTE", projectCode: "ZTE-RO", periode: "agustus - desember 26", noWa: "08135555777" },
@@ -1021,7 +1021,7 @@
         username: "denizar",
         name: "Denizar",
         idKaryawan: "2601020033",
-        role: "Staff",
+        role: "Office",
         projectName: "Telkom infra",
         projectCode: "RO",
         siteId: "-",
@@ -1034,7 +1034,7 @@
         hasJobsProgress: true,
         activityDesc: "Membuat proposal ke Telkominfra",
         result: "done",
-        staffRemarks: "sip",
+        OfficeRemarks: "sip",
         timePulang: "17:35:40",
         alamatPulang: "Jl. Gatot Subroto No. 52, Jakarta Selatan",
         photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Selfie+Pulang+Denizar",
@@ -1048,7 +1048,7 @@
         username: "denizar",
         name: "Denizar",
         idKaryawan: "2601020033",
-        role: "Staff",
+        role: "Office",
         projectName: "Telkom infra",
         projectCode: "RO",
         siteId: "-",
@@ -1061,7 +1061,7 @@
         hasJobsProgress: true,
         activityDesc: "memperbaiki aplikasi absensi",
         result: "80%",
-        staffRemarks: "bisa dipercepat",
+        OfficeRemarks: "bisa dipercepat",
         timePulang: "17:15:10",
         alamatPulang: "Jl. Kebon Sirih No. 10, Jakarta Pusat",
         photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Selfie+Pulang+Selasa",
@@ -1075,7 +1075,7 @@
         username: "denizar",
         name: "Denizar",
         idKaryawan: "2601020033",
-        role: "Staff",
+        role: "Office",
         projectName: "Telkom infra",
         projectCode: "RO",
         siteId: "-",
@@ -1088,7 +1088,7 @@
         hasJobsProgress: true,
         activityDesc: "meeting dengan Tim",
         result: "done",
-        staffRemarks: "sip",
+        OfficeRemarks: "sip",
         timePulang: "17:00:00",
         alamatPulang: "-",
         photoPulang: "-",
@@ -1115,7 +1115,7 @@
         hasJobsProgress: true,
         activityDesc: "Penggantian antena sektoral 3 sektor dan testing VSWR",
         result: "done",
-        staffRemarks: "VSWR normal di bawah 1.3",
+        OfficeRemarks: "VSWR normal di bawah 1.3",
         timePulang: "17:30:00",
         alamatPulang: "Site HWI-JKT09 Kalibata",
         photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+HWI-JKT09",
@@ -1143,7 +1143,7 @@
         hasJobsProgress: true,
         activityDesc: "Single Site Verification (SSV) 5G NSA",
         result: "Done",
-        staffRemarks: "Throughput download mencapai 450Mbps",
+        OfficeRemarks: "Throughput download mencapai 450Mbps",
         timePulang: "17:45:00",
         alamatPulang: "Cluster Bandung Timur",
         photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+ZTE-BDG02",
@@ -1171,7 +1171,7 @@
         hasJobsProgress: true,
         activityDesc: "Physical Tuning & Drive Test",
         result: "Done",
-        staffRemarks: "-",
+        OfficeRemarks: "-",
         timePulang: "17:30:00",
         alamatPulang: "Site NNK108 Kalimantan",
         photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+NNK108",
@@ -1199,7 +1199,7 @@
         hasJobsProgress: true,
         activityDesc: "Physical Tuning & Drive Test",
         result: "Done",
-        staffRemarks: "-",
+        OfficeRemarks: "-",
         timePulang: "17:45:00",
         alamatPulang: "Site NNK066 Kalimantan",
         photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+NNK066",
@@ -1227,7 +1227,7 @@
         hasJobsProgress: true,
         activityDesc: "Physical Tuning",
         result: "Done",
-        staffRemarks: "-",
+        OfficeRemarks: "-",
         timePulang: "18:00:00",
         alamatPulang: "Site TRK018 Kalimantan",
         photoPulang: "-",
@@ -1321,7 +1321,7 @@
     const btnRefreshGpsPulang = document.getElementById("btnRefreshGpsPulang");
     const btnSubmitAbsenPulang = document.getElementById("btnSubmitAbsenPulang");
 
-    const btnViewStaffFormat = document.getElementById("btnViewStaffFormat");
+    const btnViewOfficeFormat = document.getElementById("btnViewOfficeFormat");
     const btnViewTechFormat = document.getElementById("btnViewTechFormat");
 
     if (!localStorage.getItem("prosync_gas_api")) {
@@ -1439,17 +1439,17 @@
       else if (currentUser.role === "RPM") navRoleBadge.classList.add("badge-rpm");
       else if (currentUser.role === "PM") navRoleBadge.classList.add("badge-pm");
       else if (currentUser.role === "PD") navRoleBadge.classList.add("badge-pd");
-      else if (currentUser.role === "Staff") navRoleBadge.classList.add("badge-staff");
+      else if (currentUser.role === "Office") navRoleBadge.classList.add("badge-Office");
       else navRoleBadge.classList.add("badge-tech");
       navRoleBadge.textContent = currentUser.role;
 
       if (currentUser.role === "Non_Office") {
         currentRecapViewRole = "Non_Office";
         btnViewTechFormat?.classList.add("active");
-        btnViewStaffFormat?.classList.remove("active");
+        btnViewOfficeFormat?.classList.remove("active");
       } else {
-        currentRecapViewRole = "Staff";
-        btnViewStaffFormat?.classList.add("active");
+        currentRecapViewRole = "Office";
+        btnViewOfficeFormat?.classList.add("active");
         btnViewTechFormat?.classList.remove("active");
       }
 
@@ -1672,7 +1672,7 @@
           hasJobsProgress: false,
           activityDesc: "-",
           result: "-",
-          staffRemarks: "-",
+          OfficeRemarks: "-",
           siteId: "-",
           sow: "-",
           timePulang: "-",
@@ -1714,7 +1714,7 @@
     });
 
     let activityItems = [
-      { siteId: "", sow: "", activityDesc: "", result: "", staffRemarks: "" }
+      { siteId: "", sow: "", activityDesc: "", result: "", OfficeRemarks: "" }
     ];
 
     function renderActivityInputRows() {
@@ -1753,7 +1753,7 @@
                 </div>
                 <div class="col-md-8">
                   <label class="form-label small fw-semibold text-secondary mb-1">Remarks (Catatan)</label>
-                  <input type="text" class="form-control form-control-sm input-remarks" data-index="${idx}" value="${escapeHtml(item.staffRemarks || '')}" placeholder="Catatan pekerjaan opsional...">
+                  <input type="text" class="form-control form-control-sm input-remarks" data-index="${idx}" value="${escapeHtml(item.OfficeRemarks || '')}" placeholder="Catatan pekerjaan opsional...">
                 </div>
               </div>
             </div>
@@ -1762,7 +1762,7 @@
           return `
             <div class="p-3 rounded-3 border bg-light position-relative">
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="badge bg-secondary text-white">Kegiatan #${idx + 1} (Staff)</span>
+                <span class="badge bg-secondary text-white">Kegiatan #${idx + 1} (Office)</span>
                 ${deleteBtn}
               </div>
               <div class="row g-2">
@@ -1776,7 +1776,7 @@
                 </div>
                 <div class="col-12">
                   <label class="form-label small fw-semibold text-secondary mb-1">Remarks (Catatan)</label>
-                  <input type="text" class="form-control form-control-sm input-remarks" data-index="${idx}" value="${escapeHtml(item.staffRemarks || '')}" placeholder="Catatan pekerjaan opsional...">
+                  <input type="text" class="form-control form-control-sm input-remarks" data-index="${idx}" value="${escapeHtml(item.OfficeRemarks || '')}" placeholder="Catatan pekerjaan opsional...">
                 </div>
               </div>
             </div>
@@ -1797,12 +1797,12 @@
         el.addEventListener("input", e => activityItems[e.target.dataset.index].result = e.target.value);
       });
       container.querySelectorAll(".input-remarks").forEach(el => {
-        el.addEventListener("input", e => activityItems[e.target.dataset.index].staffRemarks = e.target.value);
+        el.addEventListener("input", e => activityItems[e.target.dataset.index].OfficeRemarks = e.target.value);
       });
     }
 
     document.getElementById("btnAddActivityRow")?.addEventListener("click", () => {
-      activityItems.push({ siteId: "", sow: "", activityDesc: "", result: "", staffRemarks: "" });
+      activityItems.push({ siteId: "", sow: "", activityDesc: "", result: "", OfficeRemarks: "" });
       renderActivityInputRows();
     });
 
@@ -1856,7 +1856,7 @@
       baseRecord.hasJobsProgress = true;
       baseRecord.activityDesc = firstItem.activityDesc.trim();
       baseRecord.result = firstItem.result.trim();
-      baseRecord.staffRemarks = firstItem.staffRemarks.trim() || "-";
+      baseRecord.OfficeRemarks = firstItem.OfficeRemarks.trim() || "-";
 
       if (currentUser.role === "Non_Office") {
         baseRecord.siteId = firstItem.siteId.trim() || "-";
@@ -1873,7 +1873,7 @@
             sow: (currentUser.role === "Non_Office") ? (item.sow.trim() || "-") : "-",
             activityDesc: item.activityDesc.trim(),
             result: item.result.trim(),
-            staffRemarks: item.staffRemarks.trim() || "-",
+            OfficeRemarks: item.OfficeRemarks.trim() || "-",
             approval1: "pending",
             pmRemark: "-",
             approval2: "pending",
@@ -2094,7 +2094,7 @@
             sow: record.sow && record.sow !== '-' ? record.sow : '',
             activityDesc: record.activityDesc && record.activityDesc !== '-' ? record.activityDesc : '',
             result: record.result && record.result !== '-' ? record.result : '',
-            staffRemarks: record.staffRemarks && record.staffRemarks !== '-' ? record.staffRemarks : ''
+            OfficeRemarks: record.OfficeRemarks && record.OfficeRemarks !== '-' ? record.OfficeRemarks : ''
           }];
           renderActivityInputRows();
 
@@ -2127,7 +2127,7 @@
           lockNotice.classList.remove("d-none");
           pulangContent.classList.add("opacity-50", "pe-none");
 
-          activityItems = [{ siteId: "", sow: "", activityDesc: "", result: "", staffRemarks: "" }];
+          activityItems = [{ siteId: "", sow: "", activityDesc: "", result: "", OfficeRemarks: "" }];
           renderActivityInputRows();
         }
       } else {
@@ -2260,12 +2260,12 @@
 
       let list = [...db.progress];
 
-      const userRole = currentUser ? currentUser.role : "Staff";
+      const userRole = currentUser ? currentUser.role : "Office";
       const userProject = (currentUser && currentUser.projectName ? currentUser.projectName : "").trim().toLowerCase();
       const projectFilterWrapper = document.getElementById("wrapperFilterProject");
       const selectProject = document.getElementById("selectRecapProjectFilter");
 
-      if (userRole === "Staff" || userRole === "Non_Office") {
+      if (userRole === "Office" || userRole === "Non_Office") {
         list = list.filter(p => p.username === currentUser.username);
         currentRecapViewRole = userRole;
         if (projectFilterWrapper) projectFilterWrapper.classList.add("d-none");
@@ -2279,7 +2279,7 @@
         const selectedProject = selectProject ? selectProject.value.toLowerCase().trim() : "all";
 
         list = list.filter(p => {
-          // 1. Pastikan role sesuai tab yang aktif (Staff / Non_Office)
+          // 1. Pastikan role sesuai tab yang aktif (Office / Non_Office)
           if (p.role !== currentRecapViewRole) return false;
 
           // Cari data user pemilik absensi di master db.users untuk validasi project yang akurat
@@ -2339,7 +2339,7 @@
       }
 
       // Metadata Top Card (Tidak lagi terkunci nama teknisi jika dibuka oleh PM/RPM/PD)
-      if (userRole === "Staff" || userRole === "Non_Office") {
+      if (userRole === "Office" || userRole === "Non_Office") {
         document.getElementById("recapMetaName").textContent = currentUser.name;
         document.getElementById("recapMetaId").textContent = currentUser.idKaryawan || "-";
         document.getElementById("recapMetaProject").textContent = currentUser.projectName || "-";
@@ -2358,7 +2358,7 @@
       list.sort((a, b) => new Date(b.date) - new Date(a.date));
       document.getElementById("recapTotalCount").textContent = `Total: ${list.length} Catatan`;
 
-      if (currentRecapViewRole === "Staff") {
+      if (currentRecapViewRole === "Office") {
         thead.innerHTML = `
           <tr class="table-light">
             <th style="width: 45px;">No</th>
@@ -2397,7 +2397,7 @@
       }
 
       if (list.length === 0) {
-        const colSpan = (currentRecapViewRole === "Staff") ? 10 : 13;
+        const colSpan = (currentRecapViewRole === "Office") ? 10 : 13;
         tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-4 text-muted">Belum ada catatan pekerjaan untuk ${currentRecapViewRole} pada filter ini.</td></tr>`;
         return;
       }
@@ -2447,13 +2447,13 @@
         const photoPulangBtn = hasPulangPhoto ?
           `<button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" onclick="previewItemPhoto('${safeRowId}', 'pulang')"><i class="bi bi-box-arrow-left"></i> Pulang</button>` : '';
 
-        if (currentRecapViewRole === "Staff") {
+        if (currentRecapViewRole === "Office") {
           tr.innerHTML = `
             <td class="fw-bold">${index + 1}</td>
             <td>${formattedDate}</td>
             <td class="text-start">${escapeHtml(row.activityDesc || '-')}</td>
             <td class="fw-semibold text-primary">${escapeHtml(row.result || '-')}</td>
-            <td class="text-start small text-muted">${escapeHtml(row.staffRemarks || '-')}</td>
+            <td class="text-start small text-muted">${escapeHtml(row.OfficeRemarks || '-')}</td>
             <td>${app1Display}</td>
             <td class="text-start">${pmRemarkDisplay}</td>
             <td>${app2Display}</td>
@@ -2472,7 +2472,7 @@
             <td class="text-start">${escapeHtml(row.sow || '-')}</td>
             <td class="text-start">${escapeHtml(row.activityDesc || '-')}</td>
             <td class="fw-semibold text-primary">${escapeHtml(row.result || '-')}</td>
-            <td class="text-start small text-muted">${escapeHtml(row.staffRemarks || '-')}</td>
+            <td class="text-start small text-muted">${escapeHtml(row.OfficeRemarks || '-')}</td>
             <td>${app1Display}</td>
             <td class="text-start">${pmRemarkDisplay}</td>
             <td>${app2Display}</td>
@@ -2489,9 +2489,9 @@
       });
     }
 
-    btnViewStaffFormat.addEventListener("click", () => {
-      currentRecapViewRole = "Staff";
-      btnViewStaffFormat.classList.add("active");
+    btnViewOfficeFormat.addEventListener("click", () => {
+      currentRecapViewRole = "Office";
+      btnViewOfficeFormat.classList.add("active");
       btnViewTechFormat.classList.remove("active");
       renderRecapTable();
     });
@@ -2499,7 +2499,7 @@
     btnViewTechFormat.addEventListener("click", () => {
       currentRecapViewRole = "Non_Office";
       btnViewTechFormat.classList.add("active");
-      btnViewStaffFormat.classList.remove("active");
+      btnViewOfficeFormat.classList.remove("active");
       renderRecapTable();
     });
 
@@ -2550,13 +2550,13 @@
     document.getElementById("btnExportJobsCsv").addEventListener("click", () => {
       try {
         let list = [...db.progress];
-        const userRole = currentUser ? currentUser.role : "Staff";
+        const userRole = currentUser ? currentUser.role : "Office";
         const userProject = (currentUser && currentUser.projectName ? currentUser.projectName : "").trim().toLowerCase();
         const selectProject = document.getElementById("selectRecapProjectFilter");
         const selectedProject = selectProject ? selectProject.value.toLowerCase() : "all";
 
         // 1. Filter Role & Akun sesuai tampilan tabel saat ini
-        if (userRole === "Staff" || userRole === "Non_Office") {
+        if (userRole === "Office" || userRole === "Non_Office") {
           const targetU = String(currentUser.username || "").toLowerCase().trim();
           const targetN = String(currentUser.name || "").toLowerCase().trim();
           const targetI = String(currentUser.idKaryawan || "").toLowerCase().trim();
@@ -2593,7 +2593,7 @@
 
         // 3. Format CSV yang Aman (Tidak akan crash jika ada angka atau tanda kutip)
         let csvContent = "";
-        if (currentRecapViewRole === "Staff") {
+        if (currentRecapViewRole === "Office") {
           const headers = ["No", "Date", "Activity Description", "Result", "Remarks", "Approval 1 (RPM/PM)", "RPM/PM Remark", "Approval 2", "PD Remark"];
           const rows = list.map((item, i) => {
             const parsedD = parseRecordDate(item.date);
@@ -2606,7 +2606,7 @@
               safeCsv(dateStr),
               safeCsv(item.activityDesc || "-"),
               safeCsv(item.result || "-"),
-              safeCsv(item.staffRemarks || "-"),
+              safeCsv(item.OfficeRemarks || "-"),
               safeCsv(item.approval1 || "-"),
               safeCsv(item.pmRemark || "-"),
               safeCsv(item.approval2 || "-"),
@@ -2629,7 +2629,7 @@
               safeCsv(item.sow || "-"),
               safeCsv(item.activityDesc || "-"),
               safeCsv(item.result || "-"),
-              safeCsv(item.staffRemarks || "-"),
+              safeCsv(item.OfficeRemarks || "-"),
               safeCsv(item.approval1 || "-"),
               safeCsv(item.pmRemark || "-"),
               safeCsv(item.approval2 || "-"),
@@ -2658,7 +2658,7 @@
     btnDownloadTemplateCsv.addEventListener("click", () => {
       const templateContent = "username,password,name,role,idKaryawan,projectName,projectCode,periode,noWa\r\n" +
         "rudi.zte,tech123,Rudi ZTE,Non_Office,2601020055,ZTE,ZTE-RO,Agustus - Desember 26,081233334444\r\n" +
-        "siti.hw,staff123,Siti Huawei,Staff,2601020066,Huawei,HWI,Agustus - Desember 26,081255556666\r\n" +
+        "siti.hw,Office123,Siti Huawei,Office,2601020066,Huawei,HWI,Agustus - Desember 26,081255556666\r\n" +
         "budi.tlk,tech123,Budi Santoso,Non_Office,2601020077,Telkom infra,RO,Agustus - Desember 26,081277778888";
       downloadCsv(templateContent, "Template_Upload_Karyawan_ProSync.csv");
     });
@@ -2790,10 +2790,10 @@
       tbody.innerHTML = "";
 
       let list = [...db.progress];
-      const userRole = currentUser ? currentUser.role : "Staff";
+      const userRole = currentUser ? currentUser.role : "Office";
       const userProject = currentUser && currentUser.projectName ? currentUser.projectName.trim().toLowerCase() : "";
 
-      if (userRole === "Staff" || userRole === "Non_Office") {
+      if (userRole === "Office" || userRole === "Non_Office") {
         list = list.filter(p => p.username === currentUser.username);
       } else if (userRole === "PM" || userRole === "RPM" || userRole === "PD") {
         list = list.filter(p => (p.projectName || "").trim().toLowerCase() === userProject);
@@ -2809,7 +2809,7 @@
       list.forEach((row, i) => {
         const tr = document.createElement("tr");
 
-        let rowRole = row.role || "Staff";
+        let rowRole = row.role || "Office";
         let rowPhotoMasuk = row.photoMasuk;
         let rowPhotoPulang = row.photoPulang;
 
@@ -2867,7 +2867,7 @@
 
     document.getElementById("btnExportPresensiCsv").addEventListener("click", () => {
       let list = [...db.progress];
-      if (currentUser && (currentUser.role === "Staff" || currentUser.role === "Non_Office")) {
+      if (currentUser && (currentUser.role === "Office" || currentUser.role === "Non_Office")) {
         list = list.filter(p => p.username === currentUser.username);
       }
       const headers = ["No", "Tanggal", "Nama", "ID Karyawan", "Role", "Project", "Jam Masuk", "Alamat Masuk", "Jam Pulang", "Alamat Pulang", "Activity", "Result", "Approval 1 (RPM/PM)", "Approval 2"];
