@@ -894,6 +894,14 @@
                 <label class="form-label small fw-semibold">Nama Lengkap</label>
                 <input type="text" class="form-control form-control-sm" id="editName" required>
               </div>
+
+              <!-- FIELD JABATAN (BARU) -->
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Jabatan</label>
+                <input type="text" class="form-control form-control-sm" id="editJabatan" placeholder="Contoh: Rigger, Engineer, Admin...">
+              </div>
+
+              <!-- ROLE (TETAP SAMA) -->
               <div class="col-6">
                 <label class="form-label small fw-semibold">Role</label>
                 <select class="form-select form-select-sm" id="editRole" required>
@@ -905,25 +913,45 @@
                   <option value="Admin System">Admin System</option>
                 </select>
               </div>
+
               <div class="col-6">
                 <label class="form-label small fw-semibold">ID Karyawan</label>
                 <input type="text" class="form-control form-control-sm" id="editIdKaryawan" required>
               </div>
-              <div class="col-6">
-                <label class="form-label small fw-semibold">Project Name</label>
-                <input type="text" class="form-control form-control-sm" id="editProjectName">
-              </div>
-              <div class="col-6">
-                <label class="form-label small fw-semibold">Project Code</label>
-                <input type="text" class="form-control form-control-sm" id="editProjectCode">
-              </div>
-              <div class="col-6">
-                <label class="form-label small fw-semibold">Periode</label>
-                <input type="text" class="form-control form-control-sm" id="editPeriode">
-              </div>
+
               <div class="col-6">
                 <label class="form-label small fw-semibold">No WhatsApp</label>
                 <input type="text" class="form-control form-control-sm" id="editWa">
+              </div>
+
+              <!-- PROJECT NAME (KEMBALI KE DROPDOWN DENGAN ID TETAP SAMA) -->
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Project Name</label>
+                <select class="form-select form-select-sm" id="editProjectName">
+                  <option value="">-- Pilih Proyek --</option>
+                  <option value="Telkom infra">Telkom infra</option>
+                  <option value="Huawei">Huawei</option>
+                  <option value="ZTE">ZTE</option>
+                  <option value="RO Kalimantan">RO Kalimantan</option>
+                  <option value="Management">Management</option>
+                </select>
+              </div>
+
+              <!-- PROJECT CODE (KEMBALI KE DROPDOWN DENGAN ID TETAP SAMA) -->
+              <div class="col-6">
+                <label class="form-label small fw-semibold">Project Code</label>
+                <select class="form-select form-select-sm" id="editProjectCode">
+                  <option value="-">-</option>
+                  <option value="TI">TI</option>
+                  <option value="HWI">HWI</option>
+                  <option value="ZTE">ZTE</option>
+                  <option value="MGT">MGT</option>
+                </select>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Periode</label>
+                <input type="text" class="form-control form-control-sm" id="editPeriode">
               </div>
             </div>
           </div>
