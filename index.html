@@ -3114,6 +3114,9 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
       document.getElementById("editUsername").value = user.username;
       document.getElementById("editPassword").value = user.password;
       document.getElementById("editName").value = user.name;
+      if (document.getElementById("editJabatan")) {
+      document.getElementById("editJabatan").value = user.jabatan || "";
+    }
       document.getElementById("editRole").value = user.role;
       document.getElementById("editIdKaryawan").value = user.idKaryawan || "";
       document.getElementById("editProjectName").value = user.projectName || "";
@@ -3140,6 +3143,9 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
       user.username = newUname;
       user.password = document.getElementById("editPassword").value;
       user.name = document.getElementById("editName").value.trim();
+      if (document.getElementById("editJabatan")) {
+      user.jabatan = document.getElementById("editJabatan").value.trim();
+    }
       user.role = document.getElementById("editRole").value;
       user.idKaryawan = document.getElementById("editIdKaryawan").value.trim();
       user.projectName = document.getElementById("editProjectName").value.trim();
