@@ -807,6 +807,10 @@
                 <input type="text" class="form-control form-control-sm" id="newName" required>
               </div>
               <div class="col-6">
+  <label class="form-label small fw-semibold">Jabatan</label>
+  <input type="text" class="form-control form-control-sm" id="newJabatan" placeholder="Contoh: Rigger, Engineer, Admin...">
+</div>
+              <div class="col-6">
                 <label class="form-label small fw-semibold">Role</label>
                 <input type="text" class="form-control form-control-sm" id="newRole" list="roleSuggestions" placeholder="Pilih / ketik role..." required>
                 <datalist id="roleSuggestions">
@@ -3009,7 +3013,10 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
           <td>${i + 1}</td>
           <td><code>${escapeHtml(u.username)}</code></td>
           <td><span class="text-muted">••••••••</span></td>
-          <td class="text-start">${escapeHtml(u.name)}</td>
+          <td class="text-start">
+              <div class="fw-bold">${escapeHtml(u.name)}</div>
+              <small class="text-muted">${escapeHtml(u.jabatan || "-")}</small>
+            </td>
           <td><span class="badge bg-secondary">${u.role}</span></td>
           <td>${escapeHtml(u.idKaryawan || '-')}</td>
           <td><small>${escapeHtml(u.projectName || '-')}</small></td>
@@ -3058,6 +3065,7 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
         username: document.getElementById("newUsername").value.trim().toLowerCase(),
         password: document.getElementById("newPassword").value,
         name: document.getElementById("newName").value.trim(),
+        jabatan: document.getElementById("newJabatan") ? document.getElementById("newJabatan").value.trim() : "-", // <-- Tambahkan baris ini
         role: document.getElementById("newRole").value,
         idKaryawan: document.getElementById("newIdKaryawan").value.trim() || "-",
         noWa: document.getElementById("newWa").value.trim() || "-",
