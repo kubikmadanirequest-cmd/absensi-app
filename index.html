@@ -603,7 +603,7 @@
                     <i class="bi bi-person-workspace me-1"></i> Staff Format
                   </button>
                   <button type="button" class="btn btn-outline-dark fw-semibold" id="btnViewTechFormat">
-                    <i class="bi bi-tools me-1"></i> Technician Format
+                    <i class="bi bi-tools me-1"></i> Non_Office Format
                   </button>
                 </div>
 
@@ -811,7 +811,7 @@
                 <input type="text" class="form-control form-control-sm" id="newRole" list="roleSuggestions" placeholder="Pilih / ketik role..." required>
                 <datalist id="roleSuggestions">
                   <option value="Staff"></option>
-                  <option value="Technician"></option>
+                  <option value="Non_Office"></option>
                   <option value="RPM"></option>
                   <option value="PM"></option>
                   <option value="PD"></option>
@@ -894,7 +894,7 @@
                 <label class="form-label small fw-semibold">Role</label>
                 <select class="form-select form-select-sm" id="editRole" required>
                   <option value="Staff">Staff</option>
-                  <option value="Technician">Technician</option>
+                  <option value="Non_Office">Non_Office</option>
                   <option value="RPM">RPM</option>
                   <option value="PM">PM</option>
                   <option value="PD">PD</option>
@@ -1009,10 +1009,10 @@
       { username: "pd.zte", password: "pd123", name: "Gunawan Santoso, MBA", idKaryawan: "PD-2001", role: "PD", projectName: "ZTE", projectCode: "ZTE-RO", periode: "Agustus - Desember 26", noWa: "08128888444" },
       { username: "pd.huawei", password: "pd123", name: "H. Ridwan Kamil, MM", idKaryawan: "PD-3001", role: "PD", projectName: "Huawei", projectCode: "HWI", periode: "Agustus - Desember 26", noWa: "08128888555" },
       { username: "denizar", password: "staff123", name: "Denizar", idKaryawan: "2601020033", role: "Staff", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08137777333" },
-      { username: "dewin", password: "tech123", name: "Dewin Saputra", idKaryawan: "Rigger", role: "Technician", projectName: "RO Kalimantan", projectCode: "-", periode: "Agustus 2026", noWa: "081399887766" },
-      { username: "teguh", password: "tech123", name: "Teguh Santoso", idKaryawan: "2601020088", role: "Technician", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08136666444" },
-      { username: "fajar.zte", password: "tech123", name: "Fajar Pratama", idKaryawan: "2601020099", role: "Technician", projectName: "ZTE", projectCode: "ZTE-RO", periode: "agustus - desember 26", noWa: "08135555777" },
-      { username: "ahmad.hw", password: "tech123", name: "Ahmad Rizky", idKaryawan: "2601020044", role: "Technician", projectName: "Huawei", projectCode: "HWI", periode: "agustus - desember 26", noWa: "08138888999" }
+      { username: "dewin", password: "tech123", name: "Dewin Saputra", idKaryawan: "Rigger", role: "Non_Office", projectName: "RO Kalimantan", projectCode: "-", periode: "Agustus 2026", noWa: "081399887766" },
+      { username: "teguh", password: "tech123", name: "Teguh Santoso", idKaryawan: "2601020088", role: "Non_Office", projectName: "Telkom infra", projectCode: "RO", periode: "agustus - desember 26", noWa: "08136666444" },
+      { username: "fajar.zte", password: "tech123", name: "Fajar Pratama", idKaryawan: "2601020099", role: "Non_Office", projectName: "ZTE", projectCode: "ZTE-RO", periode: "agustus - desember 26", noWa: "08135555777" },
+      { username: "ahmad.hw", password: "tech123", name: "Ahmad Rizky", idKaryawan: "2601020044", role: "Non_Office", projectName: "Huawei", projectCode: "HWI", periode: "agustus - desember 26", noWa: "08138888999" }
     ];
 
     const defaultProgress = [
@@ -1102,7 +1102,7 @@
         username: "ahmad.hw",
         name: "Ahmad Rizky",
         idKaryawan: "2601020044",
-        role: "Technician",
+        role: "Non_Office",
         projectName: "Huawei",
         projectCode: "HWI",
         siteId: "HWI-JKT09",
@@ -1130,7 +1130,7 @@
         username: "fajar.zte",
         name: "Fajar Pratama",
         idKaryawan: "2601020099",
-        role: "Technician",
+        role: "Non_Office",
         projectName: "ZTE",
         projectCode: "ZTE-RO",
         siteId: "ZTE-BDG02",
@@ -1158,7 +1158,7 @@
         username: "dewin",
         name: "Dewin Saputra",
         idKaryawan: "Rigger",
-        role: "Technician",
+        role: "Non_Office",
         projectName: "RO Kalimantan",
         projectCode: "-",
         siteId: "NNK108,NNK060",
@@ -1186,7 +1186,7 @@
         username: "dewin",
         name: "Dewin Saputra",
         idKaryawan: "Rigger",
-        role: "Technician",
+        role: "Non_Office",
         projectName: "RO Kalimantan",
         projectCode: "-",
         siteId: "NNK066",
@@ -1214,7 +1214,7 @@
         username: "dewin",
         name: "Dewin Saputra",
         idKaryawan: "Rigger",
-        role: "Technician",
+        role: "Non_Office",
         projectName: "RO Kalimantan",
         projectCode: "-",
         siteId: "TRK018,TRK078,",
@@ -1259,7 +1259,7 @@
             return parsed.map(p => {
               if (p.role && p.role.startsWith("data:image")) {
                 p.photoMasuk = p.role;
-                p.role = "Technician";
+                p.role = "Non_Office";
               }
               if (p.name && p.name.includes(",") && p.name.length > 25) {
                 p.alamatMasuk = p.name;
@@ -1443,8 +1443,8 @@
       else navRoleBadge.classList.add("badge-tech");
       navRoleBadge.textContent = currentUser.role;
 
-      if (currentUser.role === "Technician") {
-        currentRecapViewRole = "Technician";
+      if (currentUser.role === "Non_Office") {
+        currentRecapViewRole = "Non_Office";
         btnViewTechFormat?.classList.add("active");
         btnViewStaffFormat?.classList.remove("active");
       } else {
@@ -1720,7 +1720,7 @@
     function renderActivityInputRows() {
       const container = document.getElementById("jobsActivitiesContainer");
       if (!container) return;
-      const isTech = currentUser && currentUser.role === "Technician";
+      const isTech = currentUser && currentUser.role === "Non_Office";
 
       container.innerHTML = activityItems.map((item, idx) => {
         const deleteBtn = activityItems.length > 1 
@@ -1731,7 +1731,7 @@
           return `
             <div class="p-3 rounded-3 border bg-light position-relative">
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="badge bg-primary text-white">Kegiatan #${idx + 1} (Technician)</span>
+                <span class="badge bg-primary text-white">Kegiatan #${idx + 1} (Non_Office)</span>
                 ${deleteBtn}
               </div>
               <div class="row g-2">
@@ -1858,7 +1858,7 @@
       baseRecord.result = firstItem.result.trim();
       baseRecord.staffRemarks = firstItem.staffRemarks.trim() || "-";
 
-      if (currentUser.role === "Technician") {
+      if (currentUser.role === "Non_Office") {
         baseRecord.siteId = firstItem.siteId.trim() || "-";
         baseRecord.sow = firstItem.sow.trim() || "-";
       }
@@ -1869,8 +1869,8 @@
           const extraRecord = {
             ...baseRecord,
             id: "PROG-" + Date.now() + "-" + i,
-            siteId: (currentUser.role === "Technician") ? (item.siteId.trim() || "-") : "-",
-            sow: (currentUser.role === "Technician") ? (item.sow.trim() || "-") : "-",
+            siteId: (currentUser.role === "Non_Office") ? (item.siteId.trim() || "-") : "-",
+            sow: (currentUser.role === "Non_Office") ? (item.sow.trim() || "-") : "-",
             activityDesc: item.activityDesc.trim(),
             result: item.result.trim(),
             staffRemarks: item.staffRemarks.trim() || "-",
@@ -2265,7 +2265,7 @@
       const projectFilterWrapper = document.getElementById("wrapperFilterProject");
       const selectProject = document.getElementById("selectRecapProjectFilter");
 
-      if (userRole === "Staff" || userRole === "Technician") {
+      if (userRole === "Staff" || userRole === "Non_Office") {
         list = list.filter(p => p.username === currentUser.username);
         currentRecapViewRole = userRole;
         if (projectFilterWrapper) projectFilterWrapper.classList.add("d-none");
@@ -2279,7 +2279,7 @@
         const selectedProject = selectProject ? selectProject.value.toLowerCase().trim() : "all";
 
         list = list.filter(p => {
-          // 1. Pastikan role sesuai tab yang aktif (Staff / Technician)
+          // 1. Pastikan role sesuai tab yang aktif (Staff / Non_Office)
           if (p.role !== currentRecapViewRole) return false;
 
           // Cari data user pemilik absensi di master db.users untuk validasi project yang akurat
@@ -2339,7 +2339,7 @@
       }
 
       // Metadata Top Card (Tidak lagi terkunci nama teknisi jika dibuka oleh PM/RPM/PD)
-      if (userRole === "Staff" || userRole === "Technician") {
+      if (userRole === "Staff" || userRole === "Non_Office") {
         document.getElementById("recapMetaName").textContent = currentUser.name;
         document.getElementById("recapMetaId").textContent = currentUser.idKaryawan || "-";
         document.getElementById("recapMetaProject").textContent = currentUser.projectName || "-";
@@ -2497,7 +2497,7 @@
     });
 
     btnViewTechFormat.addEventListener("click", () => {
-      currentRecapViewRole = "Technician";
+      currentRecapViewRole = "Non_Office";
       btnViewTechFormat.classList.add("active");
       btnViewStaffFormat.classList.remove("active");
       renderRecapTable();
@@ -2556,7 +2556,7 @@
         const selectedProject = selectProject ? selectProject.value.toLowerCase() : "all";
 
         // 1. Filter Role & Akun sesuai tampilan tabel saat ini
-        if (userRole === "Staff" || userRole === "Technician") {
+        if (userRole === "Staff" || userRole === "Non_Office") {
           const targetU = String(currentUser.username || "").toLowerCase().trim();
           const targetN = String(currentUser.name || "").toLowerCase().trim();
           const targetI = String(currentUser.idKaryawan || "").toLowerCase().trim();
@@ -2657,9 +2657,9 @@
 
     btnDownloadTemplateCsv.addEventListener("click", () => {
       const templateContent = "username,password,name,role,idKaryawan,projectName,projectCode,periode,noWa\r\n" +
-        "rudi.zte,tech123,Rudi ZTE,Technician,2601020055,ZTE,ZTE-RO,Agustus - Desember 26,081233334444\r\n" +
+        "rudi.zte,tech123,Rudi ZTE,Non_Office,2601020055,ZTE,ZTE-RO,Agustus - Desember 26,081233334444\r\n" +
         "siti.hw,staff123,Siti Huawei,Staff,2601020066,Huawei,HWI,Agustus - Desember 26,081255556666\r\n" +
-        "budi.tlk,tech123,Budi Santoso,Technician,2601020077,Telkom infra,RO,Agustus - Desember 26,081277778888";
+        "budi.tlk,tech123,Budi Santoso,Non_Office,2601020077,Telkom infra,RO,Agustus - Desember 26,081277778888";
       downloadCsv(templateContent, "Template_Upload_Karyawan_ProSync.csv");
     });
 
@@ -2691,7 +2691,7 @@
               username: (cols[0] || "").toLowerCase(),
               password: cols[1] || "123456",
               name: cols[2] || "Karyawan Baru",
-              role: cols[3] || "Technician",
+              role: cols[3] || "Non_Office",
               idKaryawan: cols[4] || "-",
               projectName: cols[5] || "Telkom infra",
               projectCode: cols[6] || "RO",
@@ -2793,7 +2793,7 @@
       const userRole = currentUser ? currentUser.role : "Staff";
       const userProject = currentUser && currentUser.projectName ? currentUser.projectName.trim().toLowerCase() : "";
 
-      if (userRole === "Staff" || userRole === "Technician") {
+      if (userRole === "Staff" || userRole === "Non_Office") {
         list = list.filter(p => p.username === currentUser.username);
       } else if (userRole === "PM" || userRole === "RPM" || userRole === "PD") {
         list = list.filter(p => (p.projectName || "").trim().toLowerCase() === userProject);
@@ -2815,7 +2815,7 @@
 
         if (rowRole.startsWith("data:image")) {
           rowPhotoMasuk = rowRole;
-          rowRole = "Technician";
+          rowRole = "Non_Office";
         }
 
         let rowName = row.name || "-";
@@ -2867,7 +2867,7 @@
 
     document.getElementById("btnExportPresensiCsv").addEventListener("click", () => {
       let list = [...db.progress];
-      if (currentUser && (currentUser.role === "Staff" || currentUser.role === "Technician")) {
+      if (currentUser && (currentUser.role === "Staff" || currentUser.role === "Non_Office")) {
         list = list.filter(p => p.username === currentUser.username);
       }
       const headers = ["No", "Tanggal", "Nama", "ID Karyawan", "Role", "Project", "Jam Masuk", "Alamat Masuk", "Jam Pulang", "Alamat Pulang", "Activity", "Result", "Approval 1 (RPM/PM)", "Approval 2"];
@@ -3227,7 +3227,7 @@
           db.progress = json.progress.map(p => {
             if (p.role && p.role.startsWith("data:image")) {
               p.photoMasuk = p.role;
-              p.role = "Technician";
+              p.role = "Non_Office";
             }
             if (p.name && p.name.includes(",") && p.name.length > 25) {
               p.alamatMasuk = p.name;
