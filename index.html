@@ -2315,7 +2315,8 @@
           ? (currentUser.projectName || "Huawei") 
           : ((selectedProject && selectedProject !== "all") ? selectProject.options[selectProject.selectedIndex].text : "Semua Proyek");
 
-        document.getElementById("recapHeadingTitle").textContent = `${currentRecapViewRole}s - Jobs Progress (${activeProjectName})`;
+        const labelFormat = (currentRecapViewRole === "Staff" || currentRecapViewRole === "Office") ? "Office" : "Non_Office";
+document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Jobs Progress (${activeProjectName})`;
         document.getElementById("recapSubHeadingText").textContent = `Akses Khusus ${userRole} untuk Proyek: ${activeProjectName}`;
       } else {
         if (projectFilterWrapper) projectFilterWrapper.classList.remove("d-none");
@@ -2334,12 +2335,13 @@
           ? selectProject.options[selectProject.selectedIndex].text 
           : "Seluruh Proyek";
 
-        document.getElementById("recapHeadingTitle").textContent = `${currentRecapViewRole}s - Jobs Progress (${activeProjectName})`;
+        const labelFormat = (currentRecapViewRole === "Staff" || currentRecapViewRole === "Office") ? "Office" : "Non_Office";
+document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Jobs Progress (${activeProjectName})`;
         document.getElementById("recapSubHeadingText").textContent = `Mode Admin System - ${activeProjectName}`;
       }
 
       // Metadata Top Card (Tidak lagi terkunci nama teknisi jika dibuka oleh PM/RPM/PD)
-      if (userRole === "Office" || userRole === "Non_Office") {
+      if (userRole === "Staff" || userRole === "Technician") {
         document.getElementById("recapMetaName").textContent = currentUser.name;
         document.getElementById("recapMetaId").textContent = currentUser.idKaryawan || "-";
         document.getElementById("recapMetaProject").textContent = currentUser.projectName || "-";
@@ -2352,7 +2354,7 @@
         document.getElementById("recapMetaCode").textContent = currentUser.projectCode || "ALL";
         document.getElementById("recapMetaPeriode").textContent = currentUser.periode || "2026";
       }
-      document.getElementById("recapMetaRole").textContent = currentRecapViewRole;
+      document.getElementById("recapMetaRole").textContent = (currentRecapViewRole === "Staff" || currentRecapViewRole === "Office") ? "Office" : "Non_Office";
 
       list = filterByTime(list);
       list.sort((a, b) => new Date(b.date) - new Date(a.date));
