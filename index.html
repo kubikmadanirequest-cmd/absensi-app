@@ -1471,12 +1471,11 @@
     navRoleBadge.className = "badge-role me-2";
 
       if (currentUser.role === "Admin System" || currentUser.role === "Admin") navRoleBadge.classList.add("badge-as");
-      else if (currentUser.role === "RPM") navRoleBadge.classList.add("badge-rpm");
-      else if (currentUser.role === "PM") navRoleBadge.classList.add("badge-pm");
-      else if (currentUser.role === "PD") navRoleBadge.classList.add("badge-pd");
-      else if (currentUser.role === "Office") navRoleBadge.classList.add("badge-Office");
-      else navRoleBadge.classList.add("badge-tech");
-      navRoleBadge.textContent = currentUser.role;
+    else if (currentUser.role === "RPM") navRoleBadge.classList.add("badge-rpm");
+    else if (currentUser.role === "PM") navRoleBadge.classList.add("badge-pm");
+    else if (currentUser.role === "PD") navRoleBadge.classList.add("badge-pd");
+    else if (currentUser.role === "Office") navRoleBadge.classList.add("badge-office");
+    else navRoleBadge.classList.add("badge-tech");
 
       if (currentUser.role === "Non_Office") {
         currentRecapViewRole = "Non_Office";
