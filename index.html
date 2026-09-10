@@ -2323,18 +2323,28 @@
             (u.idKaryawan && p.idKaryawan && String(u.idKaryawan).trim() === String(p.idKaryawan).trim())
           );
 
-          // Ambil nama project dari record absensi, jika kosong ambil dari profil user aslinya
+          // Ambil nama project dan kode regional dari record absensi (atau profil user aslinya)
           const itemProj = String(p.projectName || (ownerUser ? ownerUser.projectName : "") || "").toLowerCase().trim();
+          const itemCode = String(p.projectCode || (ownerUser ? ownerUser.projectCode : "") || "").toLowerCase().trim();
+          
+          const userCode = (currentUser && currentUser.projectCode ? currentUser.projectCode : "").toLowerCase().trim();
 
-          // 2. KUNCI KETAT PM & RPM: Hanya boleh melihat yang project-nya sama persis
+          // 2. KUNCI KETAT PM & RPM: Harus cocok Project Name DAN Project Code (Regional)
           if (userRole === "PM" || userRole === "RPM") {
-            if (!userProject || userProject === "-" || userProject === "all") return true;
+            // Jika RPM/PM diset 'all' atau 'management', izinkan melihat semua
+            if (!userProject || userProject === "-" || userProject === "all" || userProject === "management") return true;
 
-            // Jika project data kosong/strip, jangan tampilkan di PM
+            // Jika data project teknisi kosong, sembunyikan dari RPM
             if (!itemProj || itemProj === "-") return false;
 
-            // Pencocokan ketat: nama project harus identik
-            return itemProj === userProject;
+            // 1. Cek kesamaan Project Name (misal: "telkom infra")
+            const isProjectMatch = (itemProj === userProject);
+
+            // 2. Cek kesamaan Regional / Project Code (misal: "ro kalimantan")
+            // Jika akun RPM tidak diisi kode regionalnya, dia memantau seluruh regional proyek tsb
+            const isCodeMatch = (!userCode || userCode === "-" || userCode === "all") ? true : (itemCode === userCode);
+
+            return isProjectMatch && isCodeMatch;
           }
 
           // 3. Untuk PD / Admin: Gunakan filter dropdown
