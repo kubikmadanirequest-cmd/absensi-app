@@ -1463,7 +1463,9 @@
       mainNavbar.classList.remove("d-none");
       reportNavTabs.classList.remove("d-none");
 
-      const userJabatan = (currentUser.jabatan && currentUser.jabatan !== "-") ? currentUser.jabatan : currentUser.role;
+      const masterUser = (db.users || []).find(u => u.username && currentUser && u.username.toLowerCase() === currentUser.username.toLowerCase());
+const foundJabatan = (currentUser && currentUser.jabatan) || (masterUser && masterUser.jabatan) || "";
+const userJabatan = (foundJabatan && foundJabatan !== "-" && foundJabatan.trim() !== "") ? foundJabatan : currentUser.role;
 
     navUserName.textContent = currentUser.name;
     navUserRole.textContent = `${currentUser.role} (${currentUser.username})`;
