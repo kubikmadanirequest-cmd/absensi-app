@@ -1990,9 +1990,10 @@ async function startCamera(videoElement, statusElement) {
       baseRecord.OfficeRemarks = firstItem.OfficeRemarks.trim() || "-";
 
       if (currentUser.role === "Non_Office") {
-        baseRecord.siteId = firstItem.siteId.trim() || "-";
-        baseRecord.sow = firstItem.sow.trim() || "-";
-      }
+      baseRecord.siteId = String(firstItem.siteId || "").trim() || "-";
+      baseRecord.sow = String(firstItem.sow || "").trim() || "-";
+      baseRecord.itemCode = String(firstItem.itemCode || "").trim() || "-";
+    }
 
       for (let i = 1; i < activityItems.length; i++) {
         const item = activityItems[i];
@@ -2000,8 +2001,9 @@ async function startCamera(videoElement, statusElement) {
           const extraRecord = {
             ...baseRecord,
             id: "PROG-" + Date.now() + "-" + i,
-            siteId: (currentUser.role === "Non_Office") ? (item.siteId.trim() || "-") : "-",
-            sow: (currentUser.role === "Non_Office") ? (item.sow.trim() || "-") : "-",
+            siteId: (currentUser.role === "Non_Office") ? (String(item.siteId || "").trim() || "-") : "-",
+            sow: (currentUser.role === "Non_Office") ? (String(item.sow || "").trim() || "-") : "-",
+            itemCode: (currentUser.role === "Non_Office") ? (String(item.itemCode || "").trim() || "-") : "-",
             activityDesc: item.activityDesc.trim(),
             result: item.result.trim(),
             OfficeRemarks: item.OfficeRemarks.trim() || "-",
