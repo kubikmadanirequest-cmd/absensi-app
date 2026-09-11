@@ -1995,8 +1995,11 @@ async function startCamera(videoElement, statusElement) {
       baseRecord.itemCode = String(firstItem.itemCode || "").trim() || "-";
     }
 
-      for (let i = 1; i < activityItems.length; i++) {
-        const item = activityItems[i];
+    if (!db.progress) db.progress = [];
+    db.progress.unshift(baseRecord);
+
+    for (let i = 1; i < activityItems.length; i++) {
+      const item = activityItems[i];
         if (item.activityDesc && item.activityDesc.trim() !== "") {
           const extraRecord = {
             ...baseRecord,
@@ -2027,7 +2030,10 @@ async function startCamera(videoElement, statusElement) {
         }
       }
 
-      saveDbToLocalStorage();
+     saveDbToLocalStorage();
+        if (typeof renderProgressTable === "function") renderProgressTable();
+        if (typeof renderJobsTable === "function") renderJobsTable();
+        if (typeof filterJobsProgress === "function") filterJobsProgress();
 
       const apiUrl = getApiUrl();
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
@@ -2046,8 +2052,11 @@ async function startCamera(videoElement, statusElement) {
         refreshDailyAttendanceStatus();
         renderRecapTable();
         renderPresensiLogTable();
+        if (typeof renderJobsProgressTable === "function") renderJobsProgressTable();
+        if (typeof renderTechnicianProgressTable === "function") renderTechnicianProgressTable();
+        if (typeof renderProgressTable === "function") renderProgressTable();
       }, 400);
-    });
+        });
 
     btnRefreshGpsPulang.addEventListener("click", () => {
       requestGpsAddress(txtAddressPulang, addr => detectedAddressPulang = addr);
