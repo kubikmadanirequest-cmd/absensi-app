@@ -3156,20 +3156,22 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
       const user = db.users.find(u => u.username.toLowerCase() === uname.toLowerCase());
       if (!user) return;
 
-      document.getElementById("editOriginalUsername").value = user.username;
-      document.getElementById("editUsername").value = user.username;
-      document.getElementById("editPassword").value = user.password;
-      document.getElementById("editName").value = user.name;
-      if (document.getElementById("editJabatan")) {
-      document.getElementById("editJabatan").value = user.jabatan || "";
-    }
-      document.getElementById("editRole").value = user.role;
-      document.getElementById("editIdKaryawan").value = user.idKaryawan || "";
-      document.getElementById("editProjectName").value = user.projectName || "";
-      document.getElementById("editProjectCode").value = user.projectCode || "";
-      document.getElementById("editPeriode").value = user.periode || "";
-      document.getElementById("editWa").value = user.noWa || "";
+      const setVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val || "";
+    };
 
+    setVal("editOriginalUsername", user.username);
+    setVal("editUsername", user.username);
+    setVal("editPassword", user.password);
+    setVal("editName", user.name);
+    setVal("editJabatan", user.jabatan);
+    setVal("editRole", user.role);
+    setVal("editIdKaryawan", user.idKaryawan);
+    setVal("editProjectName", user.projectName);
+    setVal("editProjectCode", user.projectCode);
+    setVal("editPeriode", user.periode);
+    setVal("editWa", user.noWa);
       new bootstrap.Modal(document.getElementById("modalEditUser")).show();
     };
 
