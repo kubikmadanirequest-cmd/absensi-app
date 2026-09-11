@@ -1931,7 +1931,7 @@ async function startCamera(videoElement, statusElement) {
     container.querySelectorAll(".input-remarks").forEach(el => {
       el.addEventListener("input", e => activityItems[e.target.dataset.index].OfficeRemarks = e.target.value);
     });
-
+    }
     document.getElementById("btnAddActivityRow")?.addEventListener("click", () => {
       activityItems.push({ siteId: "", sow: "", activityDesc: "", result: "", OfficeRemarks: "" });
       renderActivityInputRows();
