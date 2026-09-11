@@ -994,7 +994,7 @@
       </div>
     </div>
   </div>
-
+  <datalist id="datalistMasterSow"></datalist>
   <!-- Bootstrap 5 Bundle JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -1817,24 +1817,21 @@ function handleSowSelection(inputElem) {
                 <div class="col-md-3">
                   <label class="form-label small fw-semibold text-secondary mb-1">Site ID</label>
                   <input type="text" class="form-control form-control-sm input-site-id" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108, NNK060" required>
-                </div>
-                <div class="col-md-5">
-                <label class="form-label small fw-semibold">Sow (Scope of Work)</label>
-                <!-- Diberi atribut list agar autocomplete langsung aktif saat diketik -->
-                <input type="text" class="form-control form-control-sm input-sow" 
-                       list="datalistMasterSow" 
-                       placeholder="Ketik kata kunci SOW..." 
-                       oninput="handleSowSelection(this)">
-              </div>
-              
-              <div class="col-md-3">
-                <label class="form-label small fw-semibold">Item Code</label>
-                <!-- Terisi otomatis seperti XLOOKUP -->
-                <input type="text" class="form-control form-control-sm input-item-code" readonly placeholder="Otomatis terisi">
-              </div>
+                <!-- BARIS ATAS: SOW (col-md-6) & Item Code (col-md-3) -->
+                    <div class="col-md-6">
+                      <label class="form-label small fw-semibold text-secondary mb-1">Sow (Scope of Work)</label>
+                      <input type="text" class="form-control form-control-sm input-sow" data-index="${idx}" value="${escapeHtml(item.sow || '')}" list="datalistMasterSow" placeholder="Ketik kata kunci SOW..." oninput="handleSowSelection(this)" required>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label small fw-semibold text-secondary mb-1">Item Code</label>
+                      <input type="text" class="form-control form-control-sm input-item-code" data-index="${idx}" value="${escapeHtml(item.itemCode || '')}" readonly placeholder="Otomatis terisi" style="background-color: #f8fafc;">
+                    </div>
 
-              <!-- Wadah penampung autocomplete datalist -->
-              <datalist id="datalistMasterSow"></datalist>
+                    <!-- BARIS TENGAH: Task or Activity (col-12 agar leluasa) -->
+                    <div class="col-12 mt-2">
+                      <label class="form-label small fw-semibold text-secondary mb-1">Task or Activity</label>
+                      <input type="text" class="form-control form-control-sm input-activity" data-index="${idx}" value="${escapeHtml(item.activityDesc || '')}" placeholder="Rincian tugas yang dilakukan..." required>
+                    </div>
                 <div class="col-md-4">
                   <label class="form-label small fw-semibold text-secondary mb-1">Result</label>
                   <input type="text" class="form-control form-control-sm input-result" data-index="${idx}" value="${escapeHtml(item.result || '')}" placeholder="Contoh: Done / 80%" required>
