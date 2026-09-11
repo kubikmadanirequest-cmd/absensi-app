@@ -1522,7 +1522,43 @@ const userJabatan = (foundJabatan && foundJabatan !== "-" && foundJabatan.trim()
       renderRecapTable();
       renderPresensiLogTable();
     }
+// 1. Fungsi mengisi opsi datalist sesuai Project teknisi yang login
+function populateSowDatalist() {
+  const datalist = document.getElementById("datalistMasterSow");
+  if (!datalist || !db.masterSow) return;
 
+  datalist.innerHTML = "";
+  const userProject = (currentUser.projectName || "").trim().toLowerCase();
+
+  // Filter SOW hanya yang sesuai Project Name user login (Huawei / ZTE / dsb)
+  const filteredSow = db.masterSow.filter(item => {
+    return item.projectName.toLowerCase() === userProject || item.projectName === "All";
+  });
+
+  filteredSow.forEach(item => {
+    const opt = document.createElement("option");
+    opt.value = item.sow; // Teks yang akan masuk ke input saat diklik
+    datalist.appendChild(opt);
+  });
+}
+
+// 2. Fungsi XLOOKUP Otomatis: Mengisi Item Code saat SOW dipilih/diketik
+function handleSowSelection(inputElem) {
+  const rowContainer = inputElem.closest(".row") || inputElem.parentElement.parentElement;
+  const itemCodeInput = rowContainer.querySelector(".input-item-code");
+  if (!itemCodeInput || !db.masterSow) return;
+
+  const selectedText = inputElem.value.trim().toLowerCase();
+  
+  // Cari di database master (prinsip XLOOKUP)
+  const match = db.masterSow.find(item => item.sow.toLowerCase() === selectedText);
+
+  if (match) {
+    itemCodeInput.value = match.itemCode;
+  } else {
+    itemCodeInput.value = "";
+  }
+}
    async function startCamera(videoElement, statusElement) {
       stopActiveCamera();
       if (!statusElement) return;
@@ -1782,14 +1818,23 @@ const userJabatan = (foundJabatan && foundJabatan !== "-" && foundJabatan.trim()
                   <label class="form-label small fw-semibold text-secondary mb-1">Site ID</label>
                   <input type="text" class="form-control form-control-sm input-site-id" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108, NNK060" required>
                 </div>
-                <div class="col-md-3">
-                  <label class="form-label small fw-semibold text-secondary mb-1">Sow (Scope of Work)</label>
-                  <input type="text" class="form-control form-control-sm input-sow" data-index="${idx}" value="${escapeHtml(item.sow || '')}" placeholder="Contoh: Complaint / Red Coverage" required>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label small fw-semibold text-secondary mb-1">Task or Activity</label>
-                  <input type="text" class="form-control form-control-sm input-activity" data-index="${idx}" value="${escapeHtml(item.activityDesc || '')}" placeholder="Rincian tugas yang dilakukan..." required>
-                </div>
+                <div class="col-md-5">
+                <label class="form-label small fw-semibold">Sow (Scope of Work)</label>
+                <!-- Diberi atribut list agar autocomplete langsung aktif saat diketik -->
+                <input type="text" class="form-control form-control-sm input-sow" 
+                       list="datalistMasterSow" 
+                       placeholder="Ketik kata kunci SOW..." 
+                       oninput="handleSowSelection(this)">
+              </div>
+              
+              <div class="col-md-3">
+                <label class="form-label small fw-semibold">Item Code</label>
+                <!-- Terisi otomatis seperti XLOOKUP -->
+                <input type="text" class="form-control form-control-sm input-item-code" readonly placeholder="Otomatis terisi">
+              </div>
+
+              <!-- Wadah penampung autocomplete datalist -->
+              <datalist id="datalistMasterSow"></datalist>
                 <div class="col-md-4">
                   <label class="form-label small fw-semibold text-secondary mb-1">Result</label>
                   <input type="text" class="form-control form-control-sm input-result" data-index="${idx}" value="${escapeHtml(item.result || '')}" placeholder="Contoh: Done / 80%" required>
