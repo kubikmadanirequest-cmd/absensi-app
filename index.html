@@ -1547,17 +1547,30 @@ function populateSowDatalist() {
 function handleSowSelection(inputElem) {
   const rowContainer = inputElem.closest(".row") || inputElem.parentElement.parentElement;
   if (!rowContainer) return;
-  const itemCodeInput = rowContainer.querySelector(".input-item-code");
-  if (!itemCodeInput || !db || !db.masterSow) return;
 
+  const itemCodeInput = rowContainer.querySelector(".input-item-code");
+  const idx = inputElem.dataset.index;
   const selectedText = inputElem.value.trim().toLowerCase();
 
-  const match = db.masterSow.find(item => (item.sowDetail || item.sow || "").toLowerCase() === selectedText);
+  // Simpan SOW yang diketik/dipilih ke memori data
+  if (typeof activityItems !== "undefined" && activityItems[idx]) {
+    activityItems[idx].sow = inputElem.value;
+  }
+
+  const masterList = (db && (db.masterSow || db.Master_SOW)) ? (db.masterSow || db.Master_SOW) : [];
+  const match = masterList.find(item => (item.sowDetail || item.sow || "").toLowerCase() === selectedText);
 
   if (match) {
-    itemCodeInput.value = match.itemCode || "";
+    const code = match.itemCode || "";
+    if (itemCodeInput) itemCodeInput.value = code;
+    if (typeof activityItems !== "undefined" && activityItems[idx]) {
+      activityItems[idx].itemCode = code;
+    }
   } else {
-    itemCodeInput.value = "";
+    if (itemCodeInput) itemCodeInput.value = "";
+    if (typeof activityItems !== "undefined" && activityItems[idx]) {
+      activityItems[idx].itemCode = "";
+    }
   }
 }
 
@@ -1882,21 +1895,42 @@ async function startCamera(videoElement, statusElement) {
       }).join("");
 
       container.querySelectorAll(".input-site-id").forEach(el => {
-        el.addEventListener("input", e => activityItems[e.target.dataset.index].siteId = e.target.value);
-      });
-      container.querySelectorAll(".input-sow").forEach(el => {
-        el.addEventListener("input", e => activityItems[e.target.dataset.index].sow = e.target.value);
-      });
-      container.querySelectorAll(".input-activity").forEach(el => {
-        el.addEventListener("input", e => activityItems[e.target.dataset.index].activityDesc = e.target.value);
-      });
-      container.querySelectorAll(".input-result").forEach(el => {
-        el.addEventListener("input", e => activityItems[e.target.dataset.index].result = e.target.value);
-      });
-      container.querySelectorAll(".input-remarks").forEach(el => {
-        el.addEventListener("input", e => activityItems[e.target.dataset.index].OfficeRemarks = e.target.value);
-      });
-    }
+      el.addEventListener("input", e => activityItems[e.target.dataset.index].siteId = e.target.value);
+    });
+
+    container.querySelectorAll(".input-sow").forEach(el => {
+      const updateSow = e => {
+        const idx = e.target.dataset.index;
+        if (activityItems[idx]) {
+          activityItems[idx].sow = e.target.value;
+        }
+      };
+      el.addEventListener("input", updateSow);
+      el.addEventListener("change", updateSow); // Tangkap saat diklik dari autocomplete
+    });
+
+    container.querySelectorAll(".input-item-code").forEach(el => {
+      const updateCode = e => {
+        const idx = e.target.dataset.index;
+        if (activityItems[idx]) {
+          activityItems[idx].itemCode = e.target.value;
+        }
+      };
+      el.addEventListener("input", updateCode);
+      el.addEventListener("change", updateCode);
+    });
+
+    container.querySelectorAll(".input-activity").forEach(el => {
+      el.addEventListener("input", e => activityItems[e.target.dataset.index].activityDesc = e.target.value);
+    });
+
+    container.querySelectorAll(".input-result").forEach(el => {
+      el.addEventListener("input", e => activityItems[e.target.dataset.index].result = e.target.value);
+    });
+
+    container.querySelectorAll(".input-remarks").forEach(el => {
+      el.addEventListener("input", e => activityItems[e.target.dataset.index].OfficeRemarks = e.target.value);
+    });
 
     document.getElementById("btnAddActivityRow")?.addEventListener("click", () => {
       activityItems.push({ siteId: "", sow: "", activityDesc: "", result: "", OfficeRemarks: "" });
