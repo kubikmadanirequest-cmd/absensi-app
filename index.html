@@ -994,7 +994,6 @@
       </div>
     </div>
   </div>
-  <datalist id="datalistMasterSow"></datalist>
   <!-- Bootstrap 5 Bundle JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -1470,6 +1469,8 @@
       mainNavbar.classList.remove("d-none");
       reportNavTabs.classList.remove("d-none");
 
+      populateSowDatalist();
+
       const masterUser = (db.users || []).find(u => u.username && currentUser && u.username.toLowerCase() === currentUser.username.toLowerCase());
 const foundJabatan = (currentUser && currentUser.jabatan) || (masterUser && masterUser.jabatan) || "";
 const userJabatan = (foundJabatan && foundJabatan !== "-" && foundJabatan.trim() !== "") ? foundJabatan : currentUser.role;
@@ -1549,15 +1550,16 @@ function handleSowSelection(inputElem) {
   if (!itemCodeInput || !db.masterSow) return;
 
   const selectedText = inputElem.value.trim().toLowerCase();
-  
+
   // Cari di database master (prinsip XLOOKUP)
-  const match = db.masterSow.find(item => item.sow.toLowerCase() === selectedText);
+  const match = db.masterSow.find(item => (item.sowDetail || item.sow || "").toLowerCase() === selectedText);
 
   if (match) {
-    itemCodeInput.value = match.itemCode;
+    itemCodeInput.value = match.itemCode || "";
   } else {
     itemCodeInput.value = "";
   }
+}
 }
    async function startCamera(videoElement, statusElement) {
       stopActiveCamera();
@@ -1817,20 +1819,34 @@ function handleSowSelection(inputElem) {
                 <div class="col-md-3">
                   <label class="form-label small fw-semibold text-secondary mb-1">Site ID</label>
                   <input type="text" class="form-control form-control-sm input-site-id" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108, NNK060" required>
-                <!-- BARIS ATAS: SOW (col-md-6) & Item Code (col-md-3) -->
-                    <div class="col-md-6">
-                      <label class="form-label small fw-semibold text-secondary mb-1">Sow (Scope of Work)</label>
-                      <input type="text" class="form-control form-control-sm input-sow" data-index="${idx}" value="${escapeHtml(item.sow || '')}" list="datalistMasterSow" placeholder="Ketik kata kunci SOW..." oninput="handleSowSelection(this)" required>
-                    </div>
-                    <div class="col-md-3">
-                      <label class="form-label small fw-semibold text-secondary mb-1">Item Code</label>
-                      <input type="text" class="form-control form-control-sm input-item-code" data-index="${idx}" value="${escapeHtml(item.itemCode || '')}" readonly placeholder="Otomatis terisi" style="background-color: #f8fafc;">
-                    </div>
+               <div class="row g-2">
+                      <!-- Baris 1: Site ID, Sow, Item Code, Task or Activity -->
+                      <div class="col-md-2">
+                        <label class="form-label small fw-semibold text-secondary mb-1">Site ID</label>
+                        <input type="text" class="form-control form-control-sm input-site-id" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108, NNK060" required>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label small fw-semibold text-secondary mb-1">Sow (Scope of Work)</label>
+                        <input type="text" class="form-control form-control-sm input-sow" data-index="${idx}" value="${escapeHtml(item.sow || '')}" list="datalistMasterSow" placeholder="Ketik kata kunci SOW..." oninput="handleSowSelection(this)" required>
+                      </div>
+                      <div class="col-md-2">
+                        <label class="form-label small fw-semibold text-secondary mb-1">Item Code</label>
+                        <input type="text" class="form-control form-control-sm input-item-code" data-index="${idx}" value="${escapeHtml(item.itemCode || '')}" readonly placeholder="Otomatis" style="background-color: #f8fafc;">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label small fw-semibold text-secondary mb-1">Task or Activity</label>
+                        <input type="text" class="form-control form-control-sm input-activity" data-index="${idx}" value="${escapeHtml(item.activityDesc || '')}" placeholder="Rincian tugas yang dilakukan..." required>
+                      </div>
 
-                    <!-- BARIS TENGAH: Task or Activity (col-12 agar leluasa) -->
-                    <div class="col-12 mt-2">
-                      <label class="form-label small fw-semibold text-secondary mb-1">Task or Activity</label>
-                      <input type="text" class="form-control form-control-sm input-activity" data-index="${idx}" value="${escapeHtml(item.activityDesc || '')}" placeholder="Rincian tugas yang dilakukan..." required>
+                      <!-- Baris 2: Result & Remarks -->
+                      <div class="col-md-4 mt-2">
+                        <label class="form-label small fw-semibold text-secondary mb-1">Result</label>
+                        <input type="text" class="form-control form-control-sm input-result" data-index="${idx}" value="${escapeHtml(item.result || '')}" placeholder="Contoh: Done / 80%" required>
+                      </div>
+                      <div class="col-md-8 mt-2">
+                        <label class="form-label small fw-semibold text-secondary mb-1">Remarks (Catatan)</label>
+                        <input type="text" class="form-control form-control-sm input-remarks" data-index="${idx}" value="${escapeHtml(item.staffRemarks || '')}" placeholder="Catatan pekerjaan opsional...">
+                      </div>
                     </div>
                 <div class="col-md-4">
                   <label class="form-label small fw-semibold text-secondary mb-1">Result</label>
@@ -3351,5 +3367,6 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
       } catch (e) { console.warn("GAS sync error:", e); }
     }
   </script>
+  <datalist id="datalistMasterSow"></datalist>
 </body>
 </html>
