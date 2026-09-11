@@ -1546,12 +1546,12 @@ function populateSowDatalist() {
 // 2. Fungsi XLOOKUP Otomatis: Mengisi Item Code saat SOW dipilih/diketik
 function handleSowSelection(inputElem) {
   const rowContainer = inputElem.closest(".row") || inputElem.parentElement.parentElement;
+  if (!rowContainer) return;
   const itemCodeInput = rowContainer.querySelector(".input-item-code");
-  if (!itemCodeInput || !db.masterSow) return;
+  if (!itemCodeInput || !db || !db.masterSow) return;
 
   const selectedText = inputElem.value.trim().toLowerCase();
 
-  // Cari di database master (prinsip XLOOKUP)
   const match = db.masterSow.find(item => (item.sowDetail || item.sow || "").toLowerCase() === selectedText);
 
   if (match) {
@@ -1560,8 +1560,8 @@ function handleSowSelection(inputElem) {
     itemCodeInput.value = "";
   }
 }
-}
-   async function startCamera(videoElement, statusElement) {
+
+async function startCamera(videoElement, statusElement) {
       stopActiveCamera();
       if (!statusElement) return;
       statusElement.innerHTML = `<span class="spinner-border spinner-border-sm text-warning"></span> Mengaktifkan kamera...`;
