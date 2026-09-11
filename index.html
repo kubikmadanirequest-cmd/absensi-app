@@ -1815,19 +1815,15 @@ async function startCamera(videoElement, statusElement) {
                 <span class="badge bg-primary text-white">Kegiatan #${idx + 1} (Non_Office)</span>
                 ${deleteBtn}
               </div>
-              <div class="row g-2">
-                <div class="col-md-3">
-                  <label class="form-label small fw-semibold text-secondary mb-1">Site ID</label>
-                  <input type="text" class="form-control form-control-sm input-site-id" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108, NNK060" required>
-               <div class="row g-2">
-                      <!-- Baris 1: Site ID, Sow, Item Code, Task or Activity -->
+              <div class="row g-2 mb-3">
+                      <!-- Baris 1: Site ID (2), SOW Luas (4), Item Code (2), Task or Activity Luas (4) -->
                       <div class="col-md-2">
                         <label class="form-label small fw-semibold text-secondary mb-1">Site ID</label>
-                        <input type="text" class="form-control form-control-sm input-site-id" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108, NNK060" required>
+                        <input type="text" class="form-control form-control-sm input-site-id" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108" required>
                       </div>
                       <div class="col-md-4">
                         <label class="form-label small fw-semibold text-secondary mb-1">Sow (Scope of Work)</label>
-                        <input type="text" class="form-control form-control-sm input-sow" data-index="${idx}" value="${escapeHtml(item.sow || '')}" list="datalistMasterSow" placeholder="Ketik kata kunci SOW..." oninput="handleSowSelection(this)" required>
+                        <input type="text" class="form-control form-control-sm input-sow" data-index="${idx}" value="${escapeHtml(item.sow || '')}" list="datalistMasterSow" placeholder="Ketik SOW..." oninput="handleSowSelection(this)" required>
                       </div>
                       <div class="col-md-2">
                         <label class="form-label small fw-semibold text-secondary mb-1">Item Code</label>
@@ -1838,7 +1834,7 @@ async function startCamera(videoElement, statusElement) {
                         <input type="text" class="form-control form-control-sm input-activity" data-index="${idx}" value="${escapeHtml(item.activityDesc || '')}" placeholder="Rincian tugas yang dilakukan..." required>
                       </div>
 
-                      <!-- Baris 2: Result & Remarks -->
+                      <!-- Baris 2: Result (4) & Remarks Luas (8) -->
                       <div class="col-md-4 mt-2">
                         <label class="form-label small fw-semibold text-secondary mb-1">Result</label>
                         <input type="text" class="form-control form-control-sm input-result" data-index="${idx}" value="${escapeHtml(item.result || '')}" placeholder="Contoh: Done / 80%" required>
