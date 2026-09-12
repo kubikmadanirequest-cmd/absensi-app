@@ -1857,16 +1857,7 @@ async function startCamera(videoElement, statusElement) {
                         <input type="text" class="form-control form-control-sm input-remarks" data-index="${idx}" value="${escapeHtml(item.staffRemarks || '')}" placeholder="Catatan pekerjaan opsional...">
                       </div>
                     </div>
-                <div class="col-md-4">
-                  <label class="form-label small fw-semibold text-secondary mb-1">Result</label>
-                  <input type="text" class="form-control form-control-sm input-result" data-index="${idx}" value="${escapeHtml(item.result || '')}" placeholder="Contoh: Done / 80%" required>
-                </div>
-                <div class="col-md-8">
-                  <label class="form-label small fw-semibold text-secondary mb-1">Remarks (Catatan)</label>
-                  <input type="text" class="form-control form-control-sm input-remarks" data-index="${idx}" value="${escapeHtml(item.OfficeRemarks || '')}" placeholder="Catatan pekerjaan opsional...">
-                </div>
-              </div>
-            </div>
+                  </div>
           `;
         } else {
           return `
@@ -2055,6 +2046,7 @@ async function startCamera(videoElement, statusElement) {
         if (typeof renderJobsProgressTable === "function") renderJobsProgressTable();
         if (typeof renderTechnicianProgressTable === "function") renderTechnicianProgressTable();
         if (typeof renderProgressTable === "function") renderProgressTable();
+        const btnSync = document.querySelector("button.btn-outline-primary, .btn-sync"); if (btnSync) btnSync.click();
       }, 400);
         });
 
