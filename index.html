@@ -1615,6 +1615,54 @@ function handleSowSelection(inputElem) {
     console.warn("Auto-fill Item Code dilewati:", err);
   }
 }
+window.handleSowSelection = function(inputElem) {
+  try {
+    if (!inputElem) return;
+
+    const rowContainer = inputElem.closest(".row") || inputElem.parentElement.parentElement;
+    const itemCodeInput = rowContainer ? (
+      rowContainer.querySelector(".input-item-code") || 
+      rowContainer.querySelector('input[name*="itemCode"]') || 
+      rowContainer.querySelector('.item-code')
+    ) : null;
+
+    const idx = inputElem.dataset ? inputElem.dataset.index : null;
+    const val = inputElem.value ? inputElem.value.trim().toLowerCase() : "";
+
+    if (typeof activityItems !== "undefined" && activityItems && activityItems[idx]) {
+      activityItems[idx].sow = inputElem.value;
+    }
+
+    if (!val) {
+      if (itemCodeInput) itemCodeInput.value = "";
+      return;
+    }
+
+    // Ambil database master tanpa ketergantungan window
+    const masterData = (typeof db !== "undefined" && db && (db.masterSow || db.Master_SOW)) 
+      ? (db.masterSow || db.Master_SOW) 
+      : ((typeof window.db !== "undefined" && window.db) ? (window.db.masterSow || window.db.Master_SOW) : []);
+
+    // Cocokkan teks SOW
+    const match = masterData.find(item => {
+      if (!item) return false;
+      const text = String(item.sow || item.sowDetail || item.SOW || item["SOW Detail"] || "").trim().toLowerCase();
+      return text === val;
+    });
+
+    if (match) {
+      const code = match.itemCode ?? match["Item Code"] ?? match.item_code ?? match.code ?? "";
+      if (itemCodeInput) itemCodeInput.value = code;
+      if (typeof activityItems !== "undefined" && activityItems && activityItems[idx]) {
+        activityItems[idx].itemCode = code;
+      }
+    } else {
+      if (itemCodeInput) itemCodeInput.value = "";
+    }
+  } catch (err) {
+    console.warn("Item code fallback error:", err);
+  }
+};
 async function startCamera(videoElement, statusElement) {
       stopActiveCamera();
       if (!statusElement) return;
