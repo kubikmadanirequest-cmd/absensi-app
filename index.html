@@ -1533,7 +1533,8 @@ function populateSowDatalist() {
 
   // Filter SOW hanya yang sesuai Project Name user login (Huawei / ZTE / dsb)
   const filteredSow = db.masterSow.filter(item => {
-    return item.projectName.toLowerCase() === userProject || item.projectName === "All";
+    if (!userProject) return true; // Tampilkan semua jika project user kosong
+    return (item.projectName || "").toLowerCase() === userProject || (item.projectName || "").toLowerCase().includes(userProject);
   });
 
   filteredSow.forEach(item => {
