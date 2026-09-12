@@ -3409,7 +3409,7 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
         }
         if (json.masterSow && json.masterSow.length) {
           db.masterSow = json.masterSow;
-            if (typeof updateSowDatalist === "function") updateSowDatalist();
+            if (typeof populateSowDatalist === "function") populateSowDatalist();
         }
         if (json.progress && json.progress.length) {
           db.progress = json.progress.map(p => {
