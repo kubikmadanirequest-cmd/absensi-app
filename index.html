@@ -1525,67 +1525,41 @@ const userJabatan = (foundJabatan && foundJabatan !== "-" && foundJabatan.trim()
     }
 // 1. Fungsi mengisi opsi datalist sesuai Project teknisi yang login
 function populateSowDatalist() {
-  const datalist = document.getElementById("datalistMasterSow");
-  if (!datalist || !db || !db.masterSow) return;
+  try {
+    const datalist = document.getElementById("datalistMasterSow");
+    if (!datalist || !db || !db.masterSow) return;
 
-  datalist.innerHTML = "";
+    datalist.innerHTML = "";
 
-  let userProject = "";
-  if (typeof currentUser !== "undefined" && currentUser && currentUser.projectName) {
-    userProject = String(currentUser.projectName).trim().toLowerCase();
-  }
+    // Deklarasi userProj dengan aman
+    let userProj = "";
+    if (typeof currentUser !== "undefined" && currentUser) {
+      userProj = String(currentUser.projectName || currentUser.project || "").trim().toLowerCase();
+    }
 
-  let list = db.masterSow;
-  if (userProject && userProject !== "-" && userProject !== "") {
-    const matched = db.masterSow.filter(item => {
-      if (!item) return false;
-      const itemProj = String(item.projectName || item.project || "").trim().toLowerCase();
-      return itemProj === userProject || itemProj.includes(userProject) || userProj.includes(itemProj);
+    let list = db.masterSow;
+    if (userProj && userProj !== "-" && userProj !== "") {
+      const matched = db.masterSow.filter(item => {
+        if (!item) return false;
+        const itemProj = String(item.projectName || item.project || "").trim().toLowerCase();
+        return itemProj === userProj || itemProj.includes(userProj) || userProj.includes(itemProj);
+      });
+      if (matched.length > 0) list = matched;
+    }
+
+    const seenSow = new Set();
+    list.forEach(item => {
+      if (!item) return;
+      const sowText = String(item.sow || item.sowDetail || "").trim();
+      if (sowText && !seenSow.has(sowText)) {
+        seenSow.add(sowText);
+        const opt = document.createElement("option");
+        opt.value = sowText;
+        datalist.appendChild(opt);
+      }
     });
-    if (matched.length > 0) list = matched;
-  }
-
-  const seenSow = new Set();
-  list.forEach(item => {
-    if (!item) return;
-    const sowText = String(item.sow || item.sowDetail || "").trim();
-    if (sowText && !seenSow.has(sowText)) {
-      seenSow.add(sowText);
-      const opt = document.createElement("option");
-      opt.value = sowText;
-      datalist.appendChild(opt);
-    }
-  });
-}
-
-// 2. Fungsi XLOOKUP Otomatis: Mengisi Item Code saat SOW dipilih/diketik
-function handleSowSelection(inputElem) {
-  const rowContainer = inputElem.closest(".row") || inputElem.parentElement.parentElement;
-  if (!rowContainer) return;
-
-  const itemCodeInput = rowContainer.querySelector(".input-item-code");
-  const idx = inputElem.dataset.index;
-  const selectedText = inputElem.value.trim().toLowerCase();
-
-  // Simpan SOW yang diketik/dipilih ke memori data
-  if (typeof activityItems !== "undefined" && activityItems[idx]) {
-    activityItems[idx].sow = inputElem.value;
-  }
-
-  const masterList = (db && (db.masterSow || db.Master_SOW)) ? (db.masterSow || db.Master_SOW) : [];
-  const match = masterList.find(item => (item.sowDetail || item.sow || "").toLowerCase() === selectedText);
-
-  if (match) {
-    const code = match.itemCode || "";
-    if (itemCodeInput) itemCodeInput.value = code;
-    if (typeof activityItems !== "undefined" && activityItems[idx]) {
-      activityItems[idx].itemCode = code;
-    }
-  } else {
-    if (itemCodeInput) itemCodeInput.value = "";
-    if (typeof activityItems !== "undefined" && activityItems[idx]) {
-      activityItems[idx].itemCode = "";
-    }
+  } catch (err) {
+    console.warn("populateSowDatalist dicegah agar tidak mengganggu sistem lain:", err);
   }
 }
 
