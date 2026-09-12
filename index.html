@@ -1531,12 +1531,13 @@ function populateSowDatalist() {
 
     datalist.innerHTML = "";
 
-    // Deklarasi userProj dengan aman
+    // 1. Deklarasi userProj secara jelas dan aman
     let userProj = "";
     if (typeof currentUser !== "undefined" && currentUser) {
       userProj = String(currentUser.projectName || currentUser.project || "").trim().toLowerCase();
     }
 
+    // 2. Filter data SOW
     let list = db.masterSow;
     if (userProj && userProj !== "-" && userProj !== "") {
       const matched = db.masterSow.filter(item => {
@@ -1547,6 +1548,7 @@ function populateSowDatalist() {
       if (matched.length > 0) list = matched;
     }
 
+    // 3. Masukkan ke datalist tanpa duplikat
     const seenSow = new Set();
     list.forEach(item => {
       if (!item) return;
@@ -1559,7 +1561,8 @@ function populateSowDatalist() {
       }
     });
   } catch (err) {
-    console.warn("populateSowDatalist dicegah agar tidak mengganggu sistem lain:", err);
+    // Pengaman: Jika terjadi kesalahan data, catat saja dan JANGAN hentikan kamera/login
+    console.warn("Autofill SOW dilewati agar tidak mengganggu sistem utama:", err);
   }
 }
 
