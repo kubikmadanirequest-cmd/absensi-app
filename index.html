@@ -3381,6 +3381,10 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
         if (json.users && json.users.length) {
           db.users = json.users;
         }
+        if (json.masterSow && json.masterSow.length) {
+          db.masterSow = json.masterSow;
+            if (typeof updateSowDatalist === "function") updateSowDatalist();
+        }
         if (json.progress && json.progress.length) {
           db.progress = json.progress.map(p => {
             if (p.role && p.role.startsWith("data:image")) {
