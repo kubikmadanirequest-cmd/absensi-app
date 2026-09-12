@@ -1530,58 +1530,27 @@ function populateSowDatalist() {
 
   datalist.innerHTML = "";
 
-  // 1. PENGAMAN LOGIN: Aman 100%, tidak akan membaca properti jika belum login
   let userProject = "";
   if (typeof currentUser !== "undefined" && currentUser && currentUser.projectName) {
     userProject = String(currentUser.projectName).trim().toLowerCase();
   }
 
-  // 2. FILTER PROJECT: Jika user sudah login dan punya project, saring sesuai project
   let list = db.masterSow;
   if (userProject && userProject !== "-" && userProject !== "") {
     const matched = db.masterSow.filter(item => {
       if (!item) return false;
       const itemProj = String(item.projectName || item.project || "").trim().toLowerCase();
-      return itemProj === userProject || itemProj.includes(userProject) || userProject.includes(itemProj);
+      return itemProj === userProject || itemProj.includes(userProject) || userProj.includes(itemProj);
     });
-    // Jika ada data yang cocok dengan project user gunakan data tersebut; jika tidak, gunakan seluruh list
-    if (matched.length > 0) {
-      list = matched;
-    }
+    if (matched.length > 0) list = matched;
   }
 
-  // 3. ANTI-DUPLIKAT: Setiap judul SOW hanya dimasukkan 1 kali ke pilihan dropdown
   const seenSow = new Set();
   list.forEach(item => {
     if (!item) return;
     const sowText = String(item.sow || item.sowDetail || "").trim();
     if (sowText && !seenSow.has(sowText)) {
       seenSow.add(sowText);
-      const opt = document.createElement("option");
-      opt.value = sowText;
-      datalist.appendChild(opt);
-    }
-  });
-}
-  // 2. Filter dengan aman (cegah crash jika ada baris kosong)
-  let list = masterData.filter(item => {
-    if (!item) return false;
-    const itemProj = String(item.projectName || item.project || "").trim().toLowerCase();
-    
-    // Jika user punya project (ZTE / Telkom Infra), cocokkan
-    if (userProj && userProj !== "-" && userProj !== "") {
-      return itemProj === userProj || itemProj.includes(userProj) || userProj.includes(itemProj);
-    }
-    return true; // Jika user tidak punya project, jangan dibuang
-  });
-
-  // Jika hasil filter kosong (misal nama project beda penulisan), tampilkan semua saja
-  if (!list.length) list = masterData;
-
-  // 3. Masukkan opsi ke datalist
-  list.forEach(item => {
-    const sowText = String(item.sow || item.sowDetail || "").trim();
-    if (sowText) {
       const opt = document.createElement("option");
       opt.value = sowText;
       datalist.appendChild(opt);
