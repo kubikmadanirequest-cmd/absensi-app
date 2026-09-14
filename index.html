@@ -2289,7 +2289,17 @@ async function startCamera(videoElement, statusElement) {
       const btnKirimMasuk = document.getElementById("btnSubmitAbsenMasuk");
 
       // Periksa jam masuk (toleransi berbagai alias field waktu)
-      const masukTime = record ? (record.timeMasuk || record.time || record.waktu) : null;
+      let masukTime = record ? (record.timeMasuk || record.time || record.waktu) : null;
+if (masukTime && record) {
+  // 1. Ambil jam murni saja (buang 1899-12-30)
+  const jamMurni = String(masukTime).split(" ").pop().trim();
+  
+  // 2. Ambil tanggal asli absensi dari record (misal: 2026-09-14)
+  const tglAsli = record.date ? String(record.date).split(" ")[0].trim() : "";
+  
+  // 3. Gabungkan tanggal asli dan jamnya
+  masukTime = tglAsli ? (tglAsli + " " + jamMurni) : jamMurni;
+}
 
       // 3. JIKA SUDAH ABSEN MASUK HARI INI
       if (record && masukTime && masukTime !== "-") {
