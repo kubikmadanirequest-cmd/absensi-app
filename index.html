@@ -1829,7 +1829,8 @@ async function startCamera(videoElement, statusElement) {
       }
 
       showLoading("Mencatat presensi masuk...");
-      const today = inputDate.value;
+      const nowMasuk = new Date();
+      const today = `${nowMasuk.getFullYear()}-${String(nowMasuk.getMonth() + 1).padStart(2, '0')}-${String(nowMasuk.getDate()).padStart(2, '0')}`;
       const timeNow = new Date().toTimeString().slice(0, 8);
 
       let record = db.progress.find(p => {
@@ -2169,7 +2170,8 @@ async function startCamera(videoElement, statusElement) {
       }
 
       showLoading("Mencatat presensi pulang...");
-      const today = inputDate.value;
+      const nowPulang = new Date();
+      const today = `${nowPulang.getFullYear()}-${String(nowPulang.getMonth() + 1).padStart(2, '0')}-${String(nowPulang.getDate()).padStart(2, '0')}`;
       const timeNow = new Date().toTimeString().slice(0, 8);
 
       const targetUser = String(currentUser.username || "").toLowerCase().trim();
@@ -2289,23 +2291,14 @@ async function startCamera(videoElement, statusElement) {
       const btnKirimMasuk = document.getElementById("btnSubmitAbsenMasuk");
 
       // Periksa jam masuk (toleransi berbagai alias field waktu)
-      let masukTime = record ? (record.timeMasuk || record.time || record.waktu) : null;
-      if (masukTime && record) {
-        // 1. Ambil jam murni saja (buang 1899-12-30)
-        const jamMurni = String(masukTime).split(" ").pop().trim();
-        
-        // 2. Ambil tanggal asli absensi dari record (misal: 2026-09-14)
-        const tglAsli = record.date ? String(record.date).split(" ")[0].trim() : "";
-        
-        // 3. Gabungkan tanggal asli dan jamnya
-        masukTime = tglAsli ? (tglAsli + " " + jamMurni) : jamMurni;
-      }
-
+      let rawMasuk = record ? (record.timeMasuk || record.time || record.waktu) : null;
+      let jamMurni = rawMasuk ? String(rawMasuk).split(" ").pop().trim() : null;
+      let masukTime = (jamMurni && jamMurni !== "-" && jamMurni !== "undefined") ? jamMurni : null;
       // 3. LOGIKA UTAMA: JIKA SUDAH ABSEN MASUK HARI INI ATAU BELUM
       if (record && masukTime && masukTime !== "-") {
         
         // --- A. JIKA SUDAH ABSEN MASUK ---
-        record.timeMasuk = masukTime; // sinkronkan properti
+        if (record && masukTime) record.timeMasuk = masukTime;
         if (stepMasuk) stepMasuk.className = "workflow-step-item completed";
         if (badgeMasuk) {
             badgeMasuk.textContent = `Masuk: ${masukTime}`;
