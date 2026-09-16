@@ -2313,6 +2313,16 @@ if (masukTime && record) {
           btnKirimMasuk.innerHTML = `<i class="bi bi-check-all me-1"></i> Sudah Absen Masuk Hari Ini`;
           btnKirimMasuk.className = "btn btn-secondary w-100 mt-3 fw-semibold pe-none";
         }
+    } else {
+      // JIKA BELUM ABSEN MASUK HARI INI (RESET KE TOMBOL BIRU AKTIF)
+      if (stepMasuk) stepMasuk.className = "workflow-step-item active";
+      if (badgeMasuk) badgeMasuk.className = "d-none";
+      if (btnKirimMasuk) {
+        btnKirimMasuk.disabled = false;
+        btnKirimMasuk.innerHTML = `<i class="bi bi-camera-fill me-1"></i> Kirim Absen Masuk`;
+        btnKirimMasuk.className = "btn btn-primary w-100 mt-3 fw-bold";
+      }
+    }
 
         stopActiveCamera();
 
