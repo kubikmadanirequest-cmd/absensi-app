@@ -2519,7 +2519,16 @@ async function startCamera(videoElement, statusElement) {
       const selectProject = document.getElementById("selectRecapProjectFilter");
 
       if (userRole === "Office" || userRole === "Non_Office") {
-        list = list.filter(p => p.username === currentUser.username);
+        const targetU = String(currentUser.username || "").toLowerCase().trim();
+        const targetN = String(currentUser.name || "").toLowerCase().trim();
+        const targetI = String(currentUser.idKaryawan || "").toLowerCase().trim();
+
+      list = list.filter(p => {
+        const pU = String(p.username || "").toLowerCase().trim();
+        const pN = String(p.name || p.nama || "").toLowerCase().trim();
+        const pI = String(p.idKaryawan || "").toLowerCase().trim();
+        return (pU && targetU && pU === targetU) || (pN && targetN && pN === targetN) || (pI && targetI && pI === targetI);
+});
         currentRecapViewRole = userRole;
         if (projectFilterWrapper) projectFilterWrapper.classList.add("d-none");
         document.getElementById("recapHeadingTitle").textContent = `${userRole} - Jobs Progress (${currentUser.name})`;
@@ -2604,7 +2613,7 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
       }
 
       // Metadata Top Card (Tidak lagi terkunci nama teknisi jika dibuka oleh PM/RPM/PD)
-      if (userRole === "Staff" || userRole === "Technician") {
+      if (userRole === "Staff" || userRole === "Technician" || userRole === "Office" || userRole === "Non_Office") {
         document.getElementById("recapMetaName").textContent = currentUser.name;
         document.getElementById("recapMetaId").textContent = currentUser.idKaryawan || "-";
         document.getElementById("recapMetaProject").textContent = currentUser.projectName || "-";
