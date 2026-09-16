@@ -2246,8 +2246,8 @@ async function startCamera(videoElement, statusElement) {
       // 1. Ambil tanggal hari ini (YYYY-MM-DD)
       const now = new Date();
       const localToday = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-      const today = (inputDate && inputDate.value) ? inputDate.value : localToday;
-      if (inputDate && !inputDate.value) inputDate.value = localToday;
+      const today = localToday;
+      if (inputDate) inputDate.value = localToday;
 
       // 2. Kunci pencocokan user
       const targetUser = String(currentUser.username || "").toLowerCase().trim();
