@@ -2290,38 +2290,43 @@ async function startCamera(videoElement, statusElement) {
 
       // Periksa jam masuk (toleransi berbagai alias field waktu)
       let masukTime = record ? (record.timeMasuk || record.time || record.waktu) : null;
-if (masukTime && record) {
-  // 1. Ambil jam murni saja (buang 1899-12-30)
-  const jamMurni = String(masukTime).split(" ").pop().trim();
-  
-  // 2. Ambil tanggal asli absensi dari record (misal: 2026-09-14)
-  const tglAsli = record.date ? String(record.date).split(" ")[0].trim() : "";
-  
-  // 3. Gabungkan tanggal asli dan jamnya
-  masukTime = tglAsli ? (tglAsli + " " + jamMurni) : jamMurni;
-}
+      if (masukTime && record) {
+        // 1. Ambil jam murni saja (buang 1899-12-30)
+        const jamMurni = String(masukTime).split(" ").pop().trim();
+        
+        // 2. Ambil tanggal asli absensi dari record (misal: 2026-09-14)
+        const tglAsli = record.date ? String(record.date).split(" ")[0].trim() : "";
+        
+        // 3. Gabungkan tanggal asli dan jamnya
+        masukTime = tglAsli ? (tglAsli + " " + jamMurni) : jamMurni;
+      }
 
-     // 3. JIKA SUDAH ABSEN MASUK HARI INI
-        if (record && masukTime && masukTime !== "-") {
-            record.timeMasuk = masukTime; // sinkronkan properti
-            stepMasuk.className = "workflow-step-item completed";
+      // 3. LOGIKA UTAMA: JIKA SUDAH ABSEN MASUK HARI INI ATAU BELUM
+      if (record && masukTime && masukTime !== "-") {
+        
+        // --- A. JIKA SUDAH ABSEN MASUK ---
+        record.timeMasuk = masukTime; // sinkronkan properti
+        if (stepMasuk) stepMasuk.className = "workflow-step-item completed";
+        if (badgeMasuk) {
             badgeMasuk.textContent = `Masuk: ${masukTime}`;
             badgeMasuk.className = "badge bg-success rounded-pill";
-
-            if (btnKirimMasuk) {
-                btnKirimMasuk.disabled = true;
-                btnKirimMasuk.innerHTML = `<i class="bi bi-check-all me-1"></i> Sudah Absen Masuk Hari Ini`;
-                btnKirimMasuk.className = "btn btn-secondary w-100 mt-3 fw-semibold pe-none";
-            }
         }
 
-        stopActiveCamera();
+        if (btnKirimMasuk) {
+            btnKirimMasuk.disabled = true;
+            btnKirimMasuk.innerHTML = `<i class="bi bi-check-all me-1"></i> Sudah Absen Masuk Hari Ini`;
+            btnKirimMasuk.className = "btn btn-secondary w-100 mt-3 fw-semibold pe-none";
+        }
+
+        if (typeof stopActiveCamera === "function") stopActiveCamera();
 
         // CEK TAHAP 2: JOBS PROGRESS
         if (record.hasJobsProgress || (record.activityDesc && record.activityDesc !== "-")) {
-          stepJobs.className = "workflow-step-item completed";
-          badgeJobs.textContent = "Sudah Diisi";
-          badgeJobs.className = "badge bg-success rounded-pill";
+          if (stepJobs) stepJobs.className = "workflow-step-item completed";
+          if (badgeJobs) {
+              badgeJobs.textContent = "Sudah Diisi";
+              badgeJobs.className = "badge bg-success rounded-pill";
+          }
 
           activityItems = [{
             siteId: record.siteId && record.siteId !== '-' ? record.siteId : '',
@@ -2330,73 +2335,94 @@ if (masukTime && record) {
             result: record.result && record.result !== '-' ? record.result : '',
             OfficeRemarks: record.OfficeRemarks && record.OfficeRemarks !== '-' ? record.OfficeRemarks : ''
           }];
-          renderActivityInputRows();
+          if (typeof renderActivityInputRows === "function") renderActivityInputRows();
 
-          lockNotice.classList.add("d-none");
-          pulangContent.classList.remove("opacity-50", "pe-none");
+          if (lockNotice) lockNotice.classList.add("d-none");
+          if (pulangContent) pulangContent.classList.remove("opacity-50", "pe-none");
 
           // CEK TAHAP 3: ABSEN PULANG
           const pulangTime = record.timePulang && record.timePulang !== "-" ? record.timePulang : null;
           if (pulangTime) {
-            stepPulang.className = "workflow-step-item completed";
-            badgePulang.textContent = `Pulang: ${pulangTime}`;
-            badgePulang.className = "badge bg-success rounded-pill";
+            if (stepPulang) stepPulang.className = "workflow-step-item completed";
+            if (badgePulang) {
+                badgePulang.textContent = `Pulang: ${pulangTime}`;
+                badgePulang.className = "badge bg-success rounded-pill";
+            }
           } else {
-            stepPulang.className = "workflow-step-item active";
-            badgePulang.textContent = "Siap Absen Pulang";
-            badgePulang.className = "badge bg-danger rounded-pill";
+            if (stepPulang) stepPulang.className = "workflow-step-item active";
+            if (badgePulang) {
+                badgePulang.textContent = "Siap Absen Pulang";
+                badgePulang.className = "badge bg-danger rounded-pill";
+            }
 
-            startCamera(videoFeedPulang, cameraStatusPulang);
-            requestGpsAddress(txtAddressPulang, addr => detectedAddressPulang = addr);
+            if (typeof startCamera === "function" && typeof videoFeedPulang !== "undefined") {
+                startCamera(videoFeedPulang, typeof cameraStatusPulang !== "undefined" ? cameraStatusPulang : null);
+            }
+            if (typeof requestGpsAddress === "function" && typeof txtAddressPulang !== "undefined") {
+                requestGpsAddress(txtAddressPulang, addr => detectedAddressPulang = addr);
+            }
           }
         } else {
           // TAHAP 2: MENUNGGU JOBS PROGRESS DIISI
-          stepJobs.className = "workflow-step-item active";
-          badgeJobs.textContent = "Belum Disimpan";
-          badgeJobs.className = "badge bg-warning text-dark rounded-pill";
+          if (stepJobs) stepJobs.className = "workflow-step-item active";
+          if (badgeJobs) {
+              badgeJobs.textContent = "Belum Disimpan";
+              badgeJobs.className = "badge bg-warning text-dark rounded-pill";
+          }
+          if (badgePulang) {
+              badgePulang.textContent = "Terkunci";
+              badgePulang.className = "badge bg-secondary rounded-pill";
+          }
 
-          badgePulang.textContent = "Terkunci";
-          badgePulang.className = "badge bg-secondary rounded-pill";
-
-          lockNotice.classList.remove("d-none");
-          pulangContent.classList.add("opacity-50", "pe-none");
+          if (lockNotice) lockNotice.classList.remove("d-none");
+          if (pulangContent) pulangContent.classList.add("opacity-50", "pe-none");
 
           activityItems = [{ siteId: "", sow: "", activityDesc: "", result: "", OfficeRemarks: "" }];
-          renderActivityInputRows();
+          if (typeof renderActivityInputRows === "function") renderActivityInputRows();
         }
+
       } else {
-        // BELUM ABSEN MASUK
-        stepMasuk.className = "workflow-step-item active";
-        stepJobs.className = "workflow-step-item";
-        stepPulang.className = "workflow-step-item";
+        // --- B. JIKA HARI INI BELUM ABSEN MASUK SAMA SEKALI ---
+        if (stepMasuk) stepMasuk.className = "workflow-step-item active";
+        if (stepJobs) stepJobs.className = "workflow-step-item";
+        if (stepPulang) stepPulang.className = "workflow-step-item";
 
-        badgeMasuk.textContent = "Belum Absen Masuk";
-        badgeMasuk.className = "badge bg-warning text-dark rounded-pill";
+        if (badgeMasuk) {
+            badgeMasuk.textContent = "Belum Absen Masuk";
+            badgeMasuk.className = "badge bg-warning text-dark rounded-pill";
+        }
+        if (badgeJobs) {
+            badgeJobs.textContent = "Menunggu Check-In";
+            badgeJobs.className = "badge bg-secondary rounded-pill";
+        }
+        if (badgePulang) {
+            badgePulang.textContent = "Terkunci";
+            badgePulang.className = "badge bg-secondary rounded-pill";
+        }
 
-        badgeJobs.textContent = "Menunggu Check-In";
-        badgeJobs.className = "badge bg-secondary rounded-pill";
-
-        badgePulang.textContent = "Terkunci";
-        badgePulang.className = "badge bg-secondary rounded-pill";
-
-        lockNotice.classList.remove("d-none");
-        pulangContent.classList.add("opacity-50", "pe-none");
+        if (lockNotice) lockNotice.classList.remove("d-none");
+        if (pulangContent) pulangContent.classList.add("opacity-50", "pe-none");
 
         if (btnKirimMasuk) {
           btnKirimMasuk.disabled = false;
           btnKirimMasuk.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> Kirim Presensi Masuk`;
           btnKirimMasuk.className = "btn btn-primary w-100 mt-3 fw-semibold shadow-sm";
         }
-// Pastikan video aktif terlihat dan preview disembunyikan
-        if (photoPreviewMasuk) photoPreviewMasuk.classList.add("d-none");
-        if (videoFeedMasuk) videoFeedMasuk.classList.remove("d-none");
-        if (btnCaptureMasuk) btnCaptureMasuk.classList.remove("d-none");
-        if (btnRetakeMasuk) btnRetakeMasuk.classList.add("d-none");
-        startCamera(videoFeedMasuk, cameraStatusMasuk);
-        requestGpsAddress(txtAddressMasuk, addr => detectedAddressMasuk = addr);
+
+        // Pastikan video aktif terlihat dan preview disembunyikan
+        if (typeof photoPreviewMasuk !== "undefined" && photoPreviewMasuk) photoPreviewMasuk.classList.add("d-none");
+        if (typeof videoFeedMasuk !== "undefined" && videoFeedMasuk) videoFeedMasuk.classList.remove("d-none");
+        if (typeof btnCaptureMasuk !== "undefined" && btnCaptureMasuk) btnCaptureMasuk.classList.remove("d-none");
+        if (typeof btnRetakeMasuk !== "undefined" && btnRetakeMasuk) btnRetakeMasuk.classList.add("d-none");
+        
+        if (typeof startCamera === "function" && typeof videoFeedMasuk !== "undefined") {
+            startCamera(videoFeedMasuk, typeof cameraStatusMasuk !== "undefined" ? cameraStatusMasuk : null);
+        }
+        if (typeof requestGpsAddress === "function" && typeof txtAddressMasuk !== "undefined") {
+            requestGpsAddress(txtAddressMasuk, addr => detectedAddressMasuk = addr);
+        }
       }
     }
-    inputDate.addEventListener("change", refreshDailyAttendanceStatus);
 
     function parseRecordDate(dStr) {
       if (!dStr) return new Date();
