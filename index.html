@@ -2878,7 +2878,7 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
         // 3. Format CSV yang Aman (Tidak akan crash jika ada angka atau tanda kutip)
         let csvContent = "";
         if (currentRecapViewRole === "Office") {
-          const headers = ["No", "Date", "Activity Description", "Result", "Project Name", "Project Code", "Remarks", "Approval 1 (RPM/PM)", ...];
+          const headers = ["No", "Date", "Activity Description", "Result", "Project Name", "Project Code", "Remarks", "Approval 1 (RPM/PM)", "RPM/PM Remark", "Approval 2", "PD Remark", "Nama Karyawan"];
           const rows = list.map((item, i) => {
             const parsedD = parseRecordDate(item.date);
             const dateStr = !isNaN(parsedD.getTime()) 
