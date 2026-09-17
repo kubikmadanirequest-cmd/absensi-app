@@ -2639,6 +2639,8 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
             <th style="width: 100px;">Date</th>
             <th>Activity Description</th>
             <th style="width: 85px;">Result</th>
+            <th style="width: 120px;">Project Name</th>
+            <th style="width: 90px;">Project Code</th>
             <th>Remarks</th>
             <th style="width: 120px;">Approval 1 (RPM/PM)</th>
             <th style="width: 150px;">RPM/PM Remark</th>
@@ -2655,6 +2657,8 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
             <th rowspan="2" style="width: 100px;">Date</th>
             <th colspan="3" class="bg-secondary bg-opacity-10 fw-bold">Activity Description</th>
             <th rowspan="2" style="width: 80px;">Result</th>
+            <th rowspan="2" style="width: 120px;">Project Name</th>
+            <th rowspan="2" style="width: 90px;">Project Code</th>
             <th rowspan="2">Remarks</th>
             <th rowspan="2" style="width: 120px;">Approval 1 (RPM/PM)</th>
             <th rowspan="2" style="width: 150px;">RPM/PM Remark</th>
@@ -2672,7 +2676,7 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
       }
 
       if (list.length === 0) {
-        const colSpan = (currentRecapViewRole === "Office") ? 10 : 13;
+        const colSpan = (currentRecapViewRole === "Office") ? 12 : 15;
         tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-4 text-muted">Belum ada catatan pekerjaan untuk ${currentRecapViewRole} pada filter ini.</td></tr>`;
         return;
       }
@@ -2728,6 +2732,8 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
             <td>${formattedDate}</td>
             <td class="text-start">${escapeHtml(row.activityDesc || '-')}</td>
             <td class="fw-semibold text-primary">${escapeHtml(row.result || '-')}</td>
+            <td>${escapeHtml(row.projectName || '-')}</td>
+            <td><code>${escapeHtml(row.projectCode || '-')}</code></td>
             <td class="text-start small text-muted">${escapeHtml(row.OfficeRemarks || '-')}</td>
             <td>${app1Display}</td>
             <td class="text-start">${pmRemarkDisplay}</td>
@@ -2748,6 +2754,8 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
             <td class="text-start">${escapeHtml(row.sow || '-')}</td>
             <td class="text-start">${escapeHtml(row.activityDesc || '-')}</td>
             <td class="fw-semibold text-primary">${escapeHtml(row.result || '-')}</td>
+            <td>${escapeHtml(row.projectName || '-')}</td>
+            <td><code>${escapeHtml(row.projectCode || '-')}</code></td>
             <td class="text-start small text-muted">${escapeHtml(row.OfficeRemarks || '-')}</td>
             <td>${app1Display}</td>
             <td class="text-start">${pmRemarkDisplay}</td>
@@ -2870,7 +2878,7 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
         // 3. Format CSV yang Aman (Tidak akan crash jika ada angka atau tanda kutip)
         let csvContent = "";
         if (currentRecapViewRole === "Office") {
-          const headers = ["No", "Date", "Activity Description", "Result", "Remarks", "Approval 1 (RPM/PM)", "RPM/PM Remark", "Approval 2", "PD Remark"];
+          const headers = ["No", "Date", "Activity Description", "Result", "Project Name", "Project Code", "Remarks", "Approval 1 (RPM/PM)", ...];
           const rows = list.map((item, i) => {
             const parsedD = parseRecordDate(item.date);
             const dateStr = !isNaN(parsedD.getTime()) 
@@ -2882,6 +2890,8 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
               safeCsv(dateStr),
               safeCsv(item.activityDesc || "-"),
               safeCsv(item.result || "-"),
+              safeCsv(item.projectName || "-"),
+              safeCsv(item.projectCode || "-"),
               safeCsv(item.OfficeRemarks || "-"),
               safeCsv(item.approval1 || "-"),
               safeCsv(item.pmRemark || "-"),
@@ -2892,7 +2902,7 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
           });
           csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\r\n");
         } else {
-          const headers = ["No", "Date", "Site ID", "Sow", "task or activity", "Result", "Remarks", "Approval 1 (RPM/PM)", "RPM/PM Remark", "Approval 2", "PD Remark", "Nama Karyawan"];
+          const headers = ["No", "Date", "Site ID", "Sow", "task or activity", "Result", "Project Name", "Project Code", "Remarks", "Approval 1 (RPM/PM)", "RPM/PM Remark", "Approval 2", "PD Remark", "Nama Karyawan"];
           const rows = list.map((item, i) => {
             const parsedD = parseRecordDate(item.date);
             const dateStr = !isNaN(parsedD.getTime()) 
@@ -2906,6 +2916,8 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
               safeCsv(item.sow || "-"),
               safeCsv(item.activityDesc || "-"),
               safeCsv(item.result || "-"),
+              safeCsv(item.projectName || "-"),
+              safeCsv(item.projectCode || "-"),
               safeCsv(item.OfficeRemarks || "-"),
               safeCsv(item.approval1 || "-"),
               safeCsv(item.pmRemark || "-"),
