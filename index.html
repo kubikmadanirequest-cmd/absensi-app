@@ -3083,7 +3083,18 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
       const userProject = currentUser && currentUser.projectName ? currentUser.projectName.trim().toLowerCase() : "";
 
       if (userRole === "Office" || userRole === "Non_Office") {
-        list = list.filter(p => p.username === currentUser.username);
+        const targetU = String(currentUser.username || "").toLowerCase().trim();
+        const targetN = String(currentUser.name || "").toLowerCase().trim();
+        const targetI = String(currentUser.idKaryawan || "").toLowerCase().trim();
+
+      list = list.filter(p => {
+        const pU = String(p.username || "").toLowerCase().trim();
+        const pN = String(p.name || p.nama || "").toLowerCase().trim();
+        const pI = String(p.idKaryawan || "").toLowerCase().trim();
+        return (pU && targetU && pU === targetU) || 
+         (pN && targetN && pN === targetN) || 
+         (pI && targetI && pI === targetI);
+});
       } else if (userRole === "PM" || userRole === "RPM" || userRole === "PD") {
         list = list.filter(p => (p.projectName || "").trim().toLowerCase() === userProject);
       }
@@ -3157,7 +3168,18 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
     document.getElementById("btnExportPresensiCsv").addEventListener("click", () => {
       let list = [...db.progress];
       if (currentUser && (currentUser.role === "Office" || currentUser.role === "Non_Office")) {
-        list = list.filter(p => p.username === currentUser.username);
+        const targetU = String(currentUser.username || "").toLowerCase().trim();
+        const targetN = String(currentUser.name || "").toLowerCase().trim();
+        const targetI = String(currentUser.idKaryawan || "").toLowerCase().trim();
+
+      list = list.filter(p => {
+        const pU = String(p.username || "").toLowerCase().trim();
+        const pN = String(p.name || p.nama || "").toLowerCase().trim();
+        const pI = String(p.idKaryawan || "").toLowerCase().trim();
+        return (pU && targetU && pU === targetU) || 
+         (pN && targetN && pN === targetN) || 
+         (pI && targetI && pI === targetI);
+});
       }
       const headers = ["No", "Tanggal", "Nama", "ID Karyawan", "Role", "Project", "Jam Masuk", "Alamat Masuk", "Jam Pulang", "Alamat Pulang", "Activity", "Result", "Approval 1 (RPM/PM)", "Approval 2"];
       const rows = list.map((item, i) => [
