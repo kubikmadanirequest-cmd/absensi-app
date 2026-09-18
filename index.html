@@ -940,21 +940,26 @@
               <!-- PROJECT CODE (KEMBALI KE DROPDOWN DENGAN ID TETAP SAMA) -->
               <!-- PROJECT CODE -->
               <div class="col-6">
-                <label class="form-label small fw-semibold">Project Code</label>
-                <select id="editProjectCode" class="form-select form-select-sm">
-                  <option value="-">-</option>
-                  <option value="CJ">CJ</option>
-                  <option value="EJ">EJ</option>
-                  <option value="HQ">HQ</option>
-                  <option value="Jabo">Jabo</option>
-                  <option value="Sulawesi">Sulawesi</option>
-                  <option value="RECBAT">RECBAT</option>
-                  <option value="REENG JABO">REENG JABO</option>
-                  <option value="REENG Kalimantan">REENG Kalimantan</option>
-                  <option value="RO Kalimantan">RO Kalimantan</option>
-                  <option value="RO West Java">RO West Java</option>
-                </select>
-              </div>
+              <label class="form-label small fw-semibold">Project Code</label>
+              <input type="text" class="form-control form-control-sm" id="editProjectCode" list="editProjectCodeSuggestions" placeholder="Ketik manual / pilih kode...">
+              <datalist id="editProjectCodeSuggestions">
+                <option value="-"></option>
+                <option value="CJ"></option>
+                <option value="EJ"></option>
+                <option value="HQ"></option>
+                <option value="Jabo"></option>
+                <option value="Sulawesi"></option>
+                <option value="RECBAT"></option>
+                <option value="REENG JABO"></option>
+                <option value="REENG Kalimantan"></option>
+                <option value="RO Kalimantan"></option>
+                <option value="RO West Java"></option>
+                <option value="RO"></option>
+                <option value="HWI"></option>
+                <option value="ZTE-RO"></option>
+                <option value="MGT"></option>
+              </datalist>
+            </div>
 
               <div class="col-12">
                 <label class="form-label small fw-semibold">Periode</label>
