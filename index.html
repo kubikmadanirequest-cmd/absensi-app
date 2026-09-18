@@ -3464,9 +3464,9 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
 
       if (newUname !== origUname) {
         db.progress.forEach(p => {
-          if (p.username.toLowerCase() === origUname) p.username = newUname;
-        });
-      }
+          if (p.username && p.username.toLowerCase() === origUname) p.username = newUname;
+  });
+}
 
       saveDbToLocalStorage();
       showLoading("Memperbarui user...");
