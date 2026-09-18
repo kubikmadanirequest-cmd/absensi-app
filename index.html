@@ -3546,7 +3546,7 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
       const apiUrl = getApiUrl();
       if (!apiUrl) return;
       try {
-        const res = await fetch(apiUrl + "?action=getAllData");
+        const res = await fetch(apiUrl + "?action=getAllData&_=" + Date.now());
         const json = await res.json();
         if (json.users && json.users.length) {
           db.users = json.users;
