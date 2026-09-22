@@ -2438,49 +2438,39 @@ async function startCamera(videoElement, statusElement) {
       }
     }
 
-    function parseRecordDate(dStr) {
-  if (!dStr) return new Date();
-  if (dStr instanceof Date) return dStr;
-
-  const str = String(dStr).trim();
-
-  // 1. Format ISO standar (YYYY-MM-DD atau YYYY-MM-DD HH:mm:ss)
-  const isoMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (isoMatch) {
-    return new Date(parseInt(isoMatch[1], 10), parseInt(isoMatch[2], 10) - 1, parseInt(isoMatch[3], 10));
-  }
-
-  // 2. Format Teks Bulan Indonesia & Inggris (misal: 22-Sep-26, 09-Okt-26, 09-Des-26)
-  const textDateMatch = str.match(/^(\d{1,2})[-/\s]([a-zA-Z]{3,})[-/\s](\d{2,4})/);
-  if (textDateMatch) {
-    const months = {
-      jan: 0, feb: 1, mar: 2, apr: 3, mei: 4, may: 4, jun: 5, 
-      jul: 6, agu: 7, agt: 7, aug: 7, sep: 8, okt: 9, oct: 9, 
-      nop: 10, nov: 10, des: 11, dec: 11
-    };
-    const day = parseInt(textDateMatch[1], 10);
-    const mStr = textDateMatch[2].toLowerCase().slice(0, 3);
-    let year = parseInt(textDateMatch[3], 10);
-    if (year < 100) year += 2000;
-
-    if (!isNaN(day) && months[mStr] !== undefined) {
-      return new Date(year, months[mStr], day);
+       function parseRecordDate(dStr) {
+      if (!dStr) return new Date();
+      if (dStr instanceof Date) return dStr;
+      if (/^\d{4}-\d{2}-\d{2}/.test(dStr)) return new Date(dStr);
+    
+      const parts = String(dStr).split("-");
+      if (parts.length === 3) {
+        const months = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+        const day = parseInt(parts[0], 10);
+        const mStr = parts[1].toLowerCase().slice(0, 3);
+        let year = parseInt(parts[2], 10);
+        if (year < 100) year += 2000;
+        if (!isNaN(day) && months[mStr] !== undefined) {
+          return new Date(year, months[mStr], day);
+        }
+      }
+      const parsed = new Date(dStr);
+      return isNaN(parsed.getTime()) ? new Date() : parsed;
     }
-  }
-
-  // 3. Format Angka Indonesia (DD/MM/YYYY atau DD-MM-YYYY)
-  const numDateMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
-  if (numDateMatch) {
-    const day = parseInt(numDateMatch[1], 10);
-    const month = parseInt(numDateMatch[2], 10) - 1;
-    let year = parseInt(numDateMatch[3], 10);
-    if (year < 100) year += 2000;
-    return new Date(year, month, day);
-  }
-
-  const parsed = new Date(str);
-  return isNaN(parsed.getTime()) ? new Date() : parsed;
-}
+    
+      // 3. Format Angka Indonesia (DD/MM/YYYY atau DD-MM-YYYY)
+      const numDateMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+      if (numDateMatch) {
+        const day = parseInt(numDateMatch[1], 10);
+        const month = parseInt(numDateMatch[2], 10) - 1;
+        let year = parseInt(numDateMatch[3], 10);
+        if (year < 100) year += 2000;
+        return new Date(year, month, day);
+      }
+    
+      const parsed = new Date(str);
+      return isNaN(parsed.getTime()) ? new Date() : parsed;
+    }
 
     function filterByTime(list) {
       if (currentFilter === "all") return list;
