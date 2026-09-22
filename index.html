@@ -2191,7 +2191,8 @@ async function startCamera(videoElement, statusElement) {
       const targetName = String(currentUser.name || "").toLowerCase().trim();
       const targetId = String(currentUser.idKaryawan || "").toLowerCase().trim();
 
-      let record = db.progress.find(p => {
+      // Cari SEMUA baris kegiatan user di tanggal hari ini
+      let recordsToday = db.progress.filter(p => {
         const pUser = String(p.username || "").toLowerCase().trim();
         const pName = String(p.name || p.nama || "").toLowerCase().trim();
         const pId = String(p.idKaryawan || "").toLowerCase().trim();
@@ -2212,20 +2213,27 @@ async function startCamera(videoElement, statusElement) {
         return isUserMatch && pDateStr === today;
       });
 
-      // Validasi fleksibel: cek flag boolean ATAU teks kegiatan dari berbagai alias field
-      const actText = record ? (record.activityDesc || record.activityDescription || record.task || record.taskoractivity || "") : "";
-      const isActFilled = actText && actText !== "-" && String(actText).trim() !== "";
-      const hasJobs = record && (record.hasJobsProgress === true || String(record.hasJobsProgress) === "true" || isActFilled);
+      // Cek apakah ada minimal satu kegiatan yang terisi
+      const hasJobs = recordsToday.some(r => {
+        const act = r.activityDesc || r.activityDescription || r.task || r.taskoractivity || "";
+        return r.hasJobsProgress === true || String(r.hasJobsProgress) === "true" || (act && act !== "-" && String(act).trim() !== "");
+      });
 
-      if (!record || !hasJobs) {
+      if (recordsToday.length === 0 || !hasJobs) {
         Swal.fire("Peringatan", "Jobs Progress belum terisi.", "error");
         hideLoading();
         return;
       }
 
-      record.timePulang = timeNow;
-      record.alamatPulang = detectedAddressPulang || "Alamat Pulang GPS";
-      record.photoPulang = capturedPhotoPulang;
+      // Update jam pulang, alamat, dan foto ke SEMUA kegiatan hari ini
+      recordsToday.forEach(rec => {
+        rec.timePulang = timeNow;
+        rec.alamatPulang = detectedAddressPulang || "Alamat Pulang GPS";
+        rec.photoPulang = capturedPhotoPulang;
+      });
+
+      // Tetap sediakan variabel record utama untuk dikirim ke Google Sheets (baris 2236)
+      let record = recordsToday[0];
 
       saveDbToLocalStorage();
 
