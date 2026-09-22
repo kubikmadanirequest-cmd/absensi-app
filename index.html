@@ -2051,21 +2051,11 @@ async function startCamera(videoElement, statusElement) {
         const pName = String(p.name || p.nama || "").toLowerCase().trim();
         const pId = String(p.idKaryawan || "").toLowerCase().trim();
 
-        // Normalisasi tanggal spreadsheet agar cocok dengan format YYYY-MM-DD
-        const pDateRaw = String(p.date || "").trim();
-        let pDateStr = pDateRaw.slice(0, 10);
-        if (pDateRaw.includes("-") && pDateRaw.length <= 11) {
-          const parsed = parseRecordDate(pDateRaw);
-          if (!isNaN(parsed.getTime())) {
-            pDateStr = `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
-          }
-        }
-
         const isUserMatch = (pUser && targetUser && pUser === targetUser) || 
                             (pName && targetName && pName === targetName) || 
                             (pId && targetId && pId === targetId);
 
-        return isUserMatch && pDateStr === today;
+        return isUserMatch && formatToYMD(p.date) === today;
       });
 
       // Cek apakah data presensi ditemukan dan jam masuk sudah tercatat
@@ -2197,20 +2187,11 @@ async function startCamera(videoElement, statusElement) {
         const pName = String(p.name || p.nama || "").toLowerCase().trim();
         const pId = String(p.idKaryawan || "").toLowerCase().trim();
 
-        const pDateRaw = String(p.date || "").trim();
-        let pDateStr = pDateRaw.slice(0, 10);
-        if (pDateRaw.includes("-") && pDateRaw.length <= 11) {
-          const parsed = parseRecordDate(pDateRaw);
-          if (!isNaN(parsed.getTime())) {
-            pDateStr = `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
-          }
-        }
-
         const isUserMatch = (pUser && targetUser && pUser === targetUser) || 
                             (pName && targetName && pName === targetName) || 
                             (pId && targetId && pId === targetId);
 
-        return isUserMatch && pDateStr === today;
+        return isUserMatch && formatToYMD(p.date) === today;
       });
 
       // Cek apakah ada minimal satu kegiatan yang terisi
@@ -2277,27 +2258,24 @@ async function startCamera(videoElement, statusElement) {
       const targetName = String(currentUser.name || "").toLowerCase().trim();
       const targetId = String(currentUser.idKaryawan || "").toLowerCase().trim();
 
-      const record = db.progress.find(p => {
+      // Cari SEMUA catatan milik user pada tanggal hari ini yang sudah ternormalisasi
+      const todayRecords = (db.progress || []).filter(p => {
         const pUser = String(p.username || "").toLowerCase().trim();
         const pName = String(p.name || p.nama || "").toLowerCase().trim();
         const pId = String(p.idKaryawan || "").toLowerCase().trim();
-
-        // Normalisasi tanggal spreadsheet agar kompatibel (mendukung YYYY-MM-DD dan d-MMM-yy)
-        const pDateRaw = String(p.date || "").trim();
-        let pDateStr = pDateRaw.slice(0, 10);
-        if (pDateRaw.includes("-") && pDateRaw.length <= 11) {
-          const parsed = parseRecordDate(pDateRaw);
-          if (!isNaN(parsed.getTime())) {
-            pDateStr = `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
-          }
-        }
 
         const isUserMatch = (pUser && targetUser && pUser === targetUser) || 
                             (pName && targetName && pName === targetName) || 
                             (pId && targetId && pId === targetId);
 
-        return isUserMatch && pDateStr === today;
+        return isUserMatch && formatToYMD(p.date) === today;
       });
+
+      // Ambil data yang SUDAH memiliki jam masuk valid
+      const record = todayRecords.find(p => {
+        const tm = p.timeMasuk || p.time || p.waktu;
+        return tm && tm !== "-" && tm !== "undefined";
+      }) || todayRecords[0];
 
       const stepMasuk = document.getElementById("stepIndicatorMasuk");
       const stepJobs = document.getElementById("stepIndicatorJobs");
@@ -2469,7 +2447,44 @@ async function startCamera(videoElement, statusElement) {
       const parsed = new Date(str);
       return isNaN(parsed.getTime()) ? new Date() : parsed;
     }
+    // Helper penyeragam tanggal ke format YYYY-MM-DD
+    function formatToYMD(dStr) {
+      if (!dStr) return "";
+      if (dStr instanceof Date) {
+        if (isNaN(dStr.getTime())) return "";
+        return `${dStr.getFullYear()}-${String(dStr.getMonth() + 1).padStart(2, '0')}-${String(dStr.getDate()).padStart(2, '0')}`;
+      }
+      const str = String(dStr).trim();
+      if (!str || str === "-") return "";
 
+      // 1. Format ISO/UTC dari database Google Sheets
+      if (str.includes("T") || str.includes("Z")) {
+        const d = new Date(str);
+        if (!isNaN(d.getTime())) {
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+      }
+
+      // 2. Format DD/MM/YYYY atau DD-MM-YYYY (Contoh: 22/09/2026)
+      const dmyMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+      if (dmyMatch) {
+        let p1 = parseInt(dmyMatch[1], 10);
+        let p2 = parseInt(dmyMatch[2], 10);
+        let yr = parseInt(dmyMatch[3], 10);
+        if (yr < 100) yr += 2000;
+        let day = p1, month = p2;
+        if (p1 <= 12 && p2 > 12) { day = p2; month = p1; }
+        return `${yr}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      }
+
+      // 3. Format teks bulan (22-Sep-26) atau ISO standar
+      const parsed = parseRecordDate(str);
+      if (parsed && !isNaN(parsed.getTime())) {
+        return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
+      }
+
+      return str.slice(0, 10);
+    }
     function filterByTime(list) {
       if (currentFilter === "all") return list;
       const now = new Date();
