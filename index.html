@@ -2438,24 +2438,26 @@ async function startCamera(videoElement, statusElement) {
       }
     }
 
-    function parseRecordDate(dStr) {
-      if (!dStr) return new Date();
-      if (dStr instanceof Date) return dStr;
-      if (/^\d{4}-\d{2}-\d{2}/.test(dStr)) return new Date(dStr);
+    function parseRecordDate(dateStr) {
+      if (!dateStr) return new Date(NaN);
+      const str = String(dateStr).trim();
 
-      const parts = String(dStr).split("-");
-      if (parts.length === 3) {
-        const months = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
-        const day = parseInt(parts[0], 10);
-        const mStr = parts[1].toLowerCase().slice(0, 3);
-        let year = parseInt(parts[2], 10);
-        if (year < 100) year += 2000;
-        if (!isNaN(day) && months[mStr] !== undefined) {
-          return new Date(year, months[mStr], day);
-        }
+      // Jika format ISO (YYYY-MM-DD)
+      if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+        const parts = str.slice(0, 10).split('-');
+        return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
       }
-      const parsed = new Date(dStr);
-      return isNaN(parsed.getTime()) ? new Date() : parsed;
+
+      // Jika format Indonesia dengan garis miring atau strip (DD/MM/YYYY atau DD-MM-YYYY)
+      const dmyMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+      if (dmyMatch) {
+        const day = parseInt(dmyMatch[1], 10);
+        const month = parseInt(dmyMatch[2], 10) - 1; // Bulan 0 = Jan, 8 = Sep, 11 = Des
+        const year = parseInt(dmyMatch[3], 10);
+        return new Date(year, month, day);
+      }
+
+      return new Date(str);
     }
 
     function filterByTime(list) {
