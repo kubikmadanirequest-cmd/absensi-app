@@ -2614,45 +2614,56 @@ async function startCamera(videoElement, statusElement) {
           // 1. Pastikan role sesuai tab yang aktif (Office / Non_Office)
           if (p.role !== currentRecapViewRole) return false;
 
-          // Cari data user pemilik absensi di master db.users untuk validasi project yang akurat
-          const ownerUser = db.users.find(u => 
-            (u.username && p.username && String(u.username).toLowerCase().trim() === String(p.username).toLowerCase().trim()) ||
-            (u.name && p.name && String(u.name).toLowerCase().trim() === String(p.name).toLowerCase().trim()) ||
-            (u.idKaryawan && p.idKaryawan && String(u.idKaryawan).trim() === String(p.idKaryawan).trim())
+          const pU = String(p.username || "").toLowerCase().trim();
+          const pN = String(p.name || p.nama || "").toLowerCase().trim();
+          const pI = String(p.idKaryawan || "").toLowerCase().trim();
+
+          // Cari data profil pengguna asli di master db.users
+          const ownerUser = (db.users || []).find(u => 
+            (u.username && pU && String(u.username).toLowerCase().trim() === pU) ||
+            (u.name && pN && String(u.name).toLowerCase().trim() === pN) ||
+            (u.idKaryawan && pI && String(u.idKaryawan).trim() === pI)
           );
 
-          // Ambil nama project dan kode regional dari record absensi (atau profil user aslinya)
-          const itemProj = String(p.projectName || (ownerUser ? ownerUser.projectName : "") || "").toLowerCase().trim();
-          const itemCode = String(p.projectCode || (ownerUser ? ownerUser.projectCode : "") || "").toLowerCase().trim();
+          // PERBAIKAN: Jika data di spreadsheet bernilai "-" atau kosong, ambil dari master data profil user
+          let rawProj = (p.projectName && p.projectName !== "-" && p.projectName.trim() !== "") 
+            ? p.projectName 
+            : (ownerUser && ownerUser.projectName && ownerUser.projectName !== "-" ? ownerUser.projectName : "");
+          let rawCode = (p.projectCode && p.projectCode !== "-" && p.projectCode.trim() !== "") 
+            ? p.projectCode 
+            : (ownerUser && ownerUser.projectCode && ownerUser.projectCode !== "-" ? ownerUser.projectCode : "");
+
+          const itemProj = String(rawProj || "").toLowerCase().trim();
+          const itemCode = String(rawCode || "").toLowerCase().trim();
           
           const userCode = (currentUser && currentUser.projectCode ? currentUser.projectCode : "").toLowerCase().trim();
+          const userProj = (currentUser && currentUser.projectName ? currentUser.projectName : "").toLowerCase().trim();
 
-          // 2. KUNCI KETAT PM & RPM: Harus cocok Project Name DAN Project Code (Regional)
+          // Helper pembersih spasi dan tanda minus untuk pencocokan toleran (misal: "RO Kalimantan2" vs "RO Kalimantan 2")
+          const clean = s => String(s || '').toLowerCase().replace(/[\s\-_]/g, '');
+
+          // 2. KUNCI PM & RPM: Cocokkan Regional / Project Code dan Project Name
           if (userRole === "PM" || userRole === "RPM") {
-            // Jika RPM/PM diset 'all' atau 'management', izinkan melihat semua
-            if (!userProject || userProject === "-" || userProject === "all" || userProject === "management") return true;
+            if (!userCode || userCode === "-" || userCode === "all" || userCode === "management" || userCode === "mgt") return true;
 
-            // Jika data project teknisi kosong, sembunyikan dari RPM
-            if (!itemProj || itemProj === "-") return false;
+            const isCodeMatch = (clean(itemCode) === clean(userCode)) || 
+                                (clean(itemCode).includes(clean(userCode))) || 
+                                (clean(userCode).includes(clean(itemCode)));
 
-            // 1. Cek kesamaan Project Name (misal: "telkom infra")
-            const isProjectMatch = (itemProj === userProject);
+            const isProjectMatch = (!userProj || userProj === "-" || userProj === "all" || userProj === "management") 
+              ? true 
+              : (clean(itemProj) === clean(userProj) || clean(itemProj).includes(clean(userProj)) || clean(userProj).includes(clean(itemProj)));
 
-            // 2. Cek kesamaan Regional / Project Code (misal: "ro kalimantan")
-            // Jika akun RPM tidak diisi kode regionalnya, dia memantau seluruh regional proyek tsb
-            const isCodeMatch = (!userCode || userCode === "-" || userCode === "all") ? true : (itemCode === userCode);
-
-            return isProjectMatch && isCodeMatch;
+            return isCodeMatch && isProjectMatch;
           }
 
           // 3. Untuk PD / Admin: Gunakan filter dropdown
           if (selectedProject && selectedProject !== "all") {
-            return itemProj === selectedProject;
+            return clean(itemProj) === clean(selectedProject) || clean(itemProj).includes(clean(selectedProject));
           }
 
           return true;
         });
-
         const activeProjectName = (userRole === "PM" || userRole === "RPM") 
           ? (currentUser.projectName || "Huawei") 
           : ((selectedProject && selectedProject !== "all") ? selectProject.options[selectProject.selectedIndex].text : "Semua Proyek");
