@@ -2625,30 +2625,37 @@ async function startCamera(videoElement, statusElement) {
 
           // 2. KUNCI PM & RPM: Cocokkan Regional / Project Code dan Project Name
           if (userRole === "PM" || userRole === "RPM") {
-            // 2. KUNCI PM & RPM: Cocokkan Regional / Project Code dan Project Name
-          if (userRole === "PM" || userRole === "RPM") {
-            if (!userCode || userCode === "-" || userCode === "all" || userCode === "management" || userCode === "mgt") return true;
+            // Bersihkan teks agar aman dari error 'undefined' dan masalah huruf besar/kecil
+            const uCode = (userCode || "").toLowerCase().trim();
+            const uProj = (userProj || "").toLowerCase().trim();
+            const iCode = (itemCode || "").toLowerCase().trim();
+            const iProj = (itemProj || "").toLowerCase().trim();
 
-            const cItemCode = clean(itemCode);
-            const cUserCode = clean(userCode);
-            const cItemProj = clean(itemProj);
-            const cUserProj = clean(userProj);
+            // Jika userCode kosong atau diset 'all'/'management', beri akses penuh
+            if (uCode === "" || uCode === "-" || uCode === "all" || uCode === "management" || uCode === "mgt") {
+              return true;
+            }
 
-            // Mencegah bug: jika teknisi tidak punya kode (""), jangan bocorkan ke RPM
-            const isCodeMatch = (cItemCode !== "") && (
-                                (cItemCode === cUserCode) || 
-                                (cItemCode.includes(cUserCode)) || 
-                                (cUserCode.includes(cItemCode))
-                              );
+            // 1. Cek Regional (Wajib Cocok, jika kosong maka langsung sembunyikan)
+            let isCodeMatch = false;
+            if (iCode !== "") {
+              if (iCode === uCode || iCode.indexOf(uCode) > -1 || uCode.indexOf(iCode) > -1) {
+                isCodeMatch = true;
+              }
+            }
 
-            const isProjectMatch = (!userProj || userProj === "-" || userProj === "all" || userProj === "management") 
-              ? true 
-              : (cItemProj !== "") && (
-                  (cItemProj === cUserProj) || 
-                  (cItemProj.includes(cUserProj)) || 
-                  (cUserProj.includes(cItemProj))
-                );
+            // 2. Cek Project (Hanya jika RPM ditugaskan di project spesifik)
+            let isProjectMatch = true; 
+            if (uProj !== "" && uProj !== "-" && uProj !== "all" && uProj !== "management") {
+              isProjectMatch = false;
+              if (iProj !== "") {
+                if (iProj === uProj || iProj.indexOf(uProj) > -1 || uProj.indexOf(iProj) > -1) {
+                  isProjectMatch = true;
+                }
+              }
+            }
 
+            // Keduanya harus terpenuhi. Jika regional beda (isCodeMatch = false), data disembunyikan.
             return isCodeMatch && isProjectMatch;
           }
 
