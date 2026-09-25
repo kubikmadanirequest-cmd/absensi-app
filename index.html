@@ -2625,18 +2625,34 @@ async function startCamera(videoElement, statusElement) {
 
           // 2. KUNCI PM & RPM: Cocokkan Regional / Project Code dan Project Name
           if (userRole === "PM" || userRole === "RPM") {
+            // 2. KUNCI PM & RPM: Cocokkan Regional / Project Code dan Project Name
+          if (userRole === "PM" || userRole === "RPM") {
             if (!userCode || userCode === "-" || userCode === "all" || userCode === "management" || userCode === "mgt") return true;
 
-            const isCodeMatch = (clean(itemCode) === clean(userCode)) || 
-                                (clean(itemCode).includes(clean(userCode))) || 
-                                (clean(userCode).includes(clean(itemCode)));
+            const cItemCode = clean(itemCode);
+            const cUserCode = clean(userCode);
+            const cItemProj = clean(itemProj);
+            const cUserProj = clean(userProj);
+
+            // Mencegah bug: jika teknisi tidak punya kode (""), jangan bocorkan ke RPM
+            const isCodeMatch = (cItemCode !== "") && (
+                                (cItemCode === cUserCode) || 
+                                (cItemCode.includes(cUserCode)) || 
+                                (cUserCode.includes(cItemCode))
+                              );
 
             const isProjectMatch = (!userProj || userProj === "-" || userProj === "all" || userProj === "management") 
               ? true 
-              : (clean(itemProj) === clean(userProj) || clean(itemProj).includes(clean(userProj)) || clean(userProj).includes(clean(itemProj)));
+              : (cItemProj !== "") && (
+                  (cItemProj === cUserProj) || 
+                  (cItemProj.includes(cUserProj)) || 
+                  (cUserProj.includes(cItemProj))
+                );
 
             return isCodeMatch && isProjectMatch;
           }
+
+          // 3. Untuk PD / Admin: Gunakan filter dropdown
 
           // 3. Untuk PD / Admin: Gunakan filter dropdown
           if (selectedProject && selectedProject !== "all") {
