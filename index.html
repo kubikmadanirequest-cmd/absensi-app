@@ -2418,34 +2418,43 @@ async function startCamera(videoElement, statusElement) {
 
       function parseRecordDate(dStr) {
       if (!dStr) return new Date();
-      if (dStr instanceof Date) return dStr;
+      if (dStr instanceof Date) {
+        return isNaN(dStr.getTime()) ? new Date() : dStr;
+      }
 
       const str = String(dStr).trim();
       if (!str || str === "-") return new Date();
 
-      // 1. Format ISO YYYY-MM-DD
-      if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
-        const parts = str.slice(0, 10).split('-');
+      // 1. Format ISO (YYYY-MM-DD)
+      // Tangani "2026-09-12", "2026/09/12", atau "2026-09-12T15:00:00.000Z"
+      if (/^\d{4}[\/\-]\d{2}[\/\-]\d{2}/.test(str)) {
+        const parts = str.slice(0, 10).split(/[\/\-]/);
         return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
       }
 
-      // 2. Format Teks Bulan (contoh: 22-Sep-26 atau 22-Sep-2026)
-      const parts = str.split(/[-/\s]/);
-      if (parts.length === 3 && isNaN(parts[1])) {
+      // 2. Gunakan parser native JS (Sangat penting untuk "9/12/2026" / US format dari Google Sheets)
+      const nativeDate = new Date(str);
+      if (!isNaN(nativeDate.getTime())) {
+        return nativeDate;
+      }
+
+      // 3. Format Teks Bulan (contoh: 22-Sep-26 atau 22 Sep 2026)
+      const partsText = str.split(/[-/\s]/);
+      if (partsText.length === 3 && isNaN(partsText[1])) {
         const months = { 
           jan: 0, feb: 1, mar: 2, apr: 3, mei: 4, may: 4, jun: 5, 
           jul: 6, agu: 7, aug: 7, sep: 8, okt: 9, oct: 9, nop: 10, nov: 10, des: 11, dec: 11 
         };
-        const day = parseInt(parts[0], 10);
-        const mStr = parts[1].toLowerCase().slice(0, 3);
-        let year = parseInt(parts[2], 10);
+        const day = parseInt(partsText[0], 10);
+        const mStr = partsText[1].toLowerCase().slice(0, 3);
+        let year = parseInt(partsText[2], 10);
         if (year < 100) year += 2000;
         if (!isNaN(day) && months[mStr] !== undefined) {
           return new Date(year, months[mStr], day);
         }
       }
 
-      // 3. Format Angka (M/D/YYYY atau D/M/YYYY)
+      // 4. Fallback jika native gagal (Biasanya format DD-MM-YYYY secara manual seperti 25-09-2026)
       const numMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
       if (numMatch) {
         let p1 = parseInt(numMatch[1], 10);
@@ -2453,59 +2462,31 @@ async function startCamera(videoElement, statusElement) {
         let yr = parseInt(numMatch[3], 10);
         if (yr < 100) yr += 2000;
 
-        let day, month;
-        // Jika angka kedua > 12 (contoh: 9/21/2026), berarti p1 = Bulan, p2 = Tanggal
+        // Jika sampai sini, berarti bukan format US yang valid di JS
+        // Kita asumsikan format Indonesia: DD-MM-YYYY
+        let day = p1;
+        let month = p2 - 1;
+        
         if (p2 > 12) {
           day = p2;
           month = p1 - 1;
-        } else {
-          // Format standar Indonesia: p1 = Tanggal, p2 = Bulan
-          day = p1;
-          month = p2 - 1;
         }
-        return new Date(yr, month, day);
+
+        const fallback = new Date(yr, month, day);
+        if (!isNaN(fallback.getTime())) return fallback;
       }
 
-      const parsed = new Date(str);
-      return isNaN(parsed.getTime()) ? new Date() : parsed;
+      return new Date();
     }
+
     // Helper penyeragam tanggal ke format YYYY-MM-DD
     function formatToYMD(dStr) {
       if (!dStr) return "";
-      if (dStr instanceof Date) {
-        if (isNaN(dStr.getTime())) return "";
-        return `${dStr.getFullYear()}-${String(dStr.getMonth() + 1).padStart(2, '0')}-${String(dStr.getDate()).padStart(2, '0')}`;
-      }
-      const str = String(dStr).trim();
-      if (!str || str === "-") return "";
-
-      // 1. Format ISO/UTC dari database Google Sheets
-      if (str.includes("T") || str.includes("Z")) {
-        const d = new Date(str);
-        if (!isNaN(d.getTime())) {
-          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        }
-      }
-
-      // 2. Format DD/MM/YYYY atau DD-MM-YYYY (Contoh: 22/09/2026)
-      const dmyMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
-      if (dmyMatch) {
-        let p1 = parseInt(dmyMatch[1], 10);
-        let p2 = parseInt(dmyMatch[2], 10);
-        let yr = parseInt(dmyMatch[3], 10);
-        if (yr < 100) yr += 2000;
-        let day = p1, month = p2;
-        if (p1 <= 12 && p2 > 12) { day = p2; month = p1; }
-        return `${yr}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      }
-
-      // 3. Format teks bulan (22-Sep-26) atau ISO standar
-      const parsed = parseRecordDate(str);
+      const parsed = parseRecordDate(dStr);
       if (parsed && !isNaN(parsed.getTime())) {
         return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
       }
-
-      return str.slice(0, 10);
+      return String(dStr).slice(0, 10);
     }
     function filterByTime(list) {
       if (currentFilter === "all") return list;
