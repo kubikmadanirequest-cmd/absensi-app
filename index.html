@@ -807,9 +807,9 @@
                 <input type="text" class="form-control form-control-sm" id="newName" required>
               </div>
               <div class="col-6">
-  <label class="form-label small fw-semibold">Jabatan</label>
-  <input type="text" class="form-control form-control-sm" id="newJabatan" placeholder="Contoh: Rigger, Engineer, Admin...">
-</div>
+                <label class="form-label small fw-semibold">Jabatan</label>
+                <input type="text" class="form-control form-control-sm" id="newJabatan" placeholder="Contoh: Rigger, Engineer, Admin...">
+              </div>
               <div class="col-6">
                 <label class="form-label small fw-semibold">Role</label>
                 <input type="text" class="form-control form-control-sm" id="newRole" list="roleSuggestions" placeholder="Pilih / ketik role..." required>
@@ -904,13 +904,13 @@
                 <input type="text" class="form-control form-control-sm" id="editName" required>
               </div>
 
-              <!-- FIELD JABATAN (BARU) -->
+              <!-- FIELD JABATAN -->
               <div class="col-6">
                 <label class="form-label small fw-semibold">Jabatan</label>
                 <input type="text" class="form-control form-control-sm" id="editJabatan" placeholder="Contoh: Rigger, Engineer, Admin...">
               </div>
 
-              <!-- ROLE (TETAP SAMA) -->
+              <!-- ROLE -->
               <div class="col-6">
                 <label class="form-label small fw-semibold">Role</label>
                 <select class="form-select form-select-sm" id="editRole" required>
@@ -933,40 +933,40 @@
                 <input type="text" class="form-control form-control-sm" id="editWa">
               </div>
 
-              <!-- PROJECT NAME (KEMBALI KE DROPDOWN DENGAN ID TETAP SAMA) -->
+              <!-- PROJECT NAME -->
               <div class="col-6">
-              <label class="form-label small fw-semibold">Project Name</label>
-              <select class="form-select form-select-sm" id="editProjectName" onchange="handleCustomSelect(this, 'Project Name')">
-                <option value="">-- Pilih Proyek --</option>
-                <option value="Telkom infra">Telkom infra</option>
-                <option value="Huawei">Huawei</option>
-                <option value="ZTE">ZTE</option>
-                <option value="Management">Management</option>
-                <option value="__CUSTOM__" class="fw-bold text-primary">+ Tambah Manual...</option>
-              </select>
+                <label class="form-label small fw-semibold">Project Name</label>
+                <select class="form-select form-select-sm" id="editProjectName" onchange="handleCustomSelect(this, 'Project Name')">
+                  <option value="">-- Pilih Proyek --</option>
+                  <option value="Telkom infra">Telkom infra</option>
+                  <option value="Huawei">Huawei</option>
+                  <option value="ZTE">ZTE</option>
+                  <option value="Management">Management</option>
+                  <option value="__CUSTOM__" class="fw-bold text-primary">+ Tambah Manual...</option>
+                </select>
               </div>
-              <!-- PROJECT CODE (KEMBALI KE DROPDOWN DENGAN ID TETAP SAMA) -->
+
               <!-- PROJECT CODE -->
               <div class="col-6">
-              <label class="form-label small fw-semibold">Project Code</label>
-              <select class="form-select form-select-sm" id="editProjectCode" onchange="handleCustomSelect(this, 'Project Code')">
-                <option value="">-- Pilih Kode --</option>
-                <option value="-">-</option>
-                <option value="CJ">CJ</option>
-                <option value="EJ">EJ</option>
-                <option value="HQ">HQ</option>
-                <option value="Jabo">Jabo</option>
-                <option value="Sulawesi">Sulawesi</option>
-                <option value="RECBAT">RECBAT</option>
-                <option value="REENG JABO">REENG JABO</option>
-                <option value="REENG Kalimantan">REENG Kalimantan</option>
-                <option value="RO Kalimantan">RO Kalimantan</option>
-                <option value="RO Kalimantan1">RO Kalimantan1</option>
-                <option value="RO Kalimantan2">RO Kalimantan2</option>
-                <option value="RO Kalimantan3">RO Kalimantan3</option>
-                <option value="RO West Java">RO West Java</option>                          
-                <option value="__CUSTOM__" class="fw-bold text-primary">+ Tambah Manual...</option>
-              </select>
+                <label class="form-label small fw-semibold">Project Code</label>
+                <select class="form-select form-select-sm" id="editProjectCode" onchange="handleCustomSelect(this, 'Project Code')">
+                  <option value="">-- Pilih Kode --</option>
+                  <option value="-">-</option>
+                  <option value="CJ">CJ</option>
+                  <option value="EJ">EJ</option>
+                  <option value="HQ">HQ</option>
+                  <option value="Jabo">Jabo</option>
+                  <option value="Sulawesi">Sulawesi</option>
+                  <option value="RECBAT">RECBAT</option>
+                  <option value="REENG JABO">REENG JABO</option>
+                  <option value="REENG Kalimantan">REENG Kalimantan</option>
+                  <option value="RO Kalimantan">RO Kalimantan</option>
+                  <option value="RO Kalimantan1">RO Kalimantan1</option>
+                  <option value="RO Kalimantan2">RO Kalimantan2</option>
+                  <option value="RO Kalimantan3">RO Kalimantan3</option>
+                  <option value="RO West Java">RO West Java</option>                          
+                  <option value="__CUSTOM__" class="fw-bold text-primary">+ Tambah Manual...</option>
+                </select>
               </div>
 
               <div class="col-12">
@@ -1007,15 +1007,79 @@
       </div>
     </div>
   </div>
+
   <!-- Bootstrap 5 Bundle JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+  <!-- PUSTAKA RESMI FIREBASE SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
   <script>
+    // ====================================================================
+    // 🔥 INISIALISASI FIREBASE FIRESTORE TERPUSAT
+    // ====================================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyDNcwBtu6PZK4asABIyqpcXSy8a84N9Zrk",
+      authDomain: "absensi-v1-f05e7.firebaseapp.com",
+      projectId: "absensi-v1-f05e7"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const firebaseDB = firebase.firestore();
+
     const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzE2X3dR-nTF7r2jzZDywCEG5Yd6uV47-sQCnLt5EGQT3xtu3vd_BJVXl-ddK55uc67GA/exec";
 
+    // ====================================================================
+    // ⚡ PENCEGAT PENGIRIMAN DATA: KILAT KE FIREBASE, CADANGAN KE GOOGLE SHEETS
+    // ====================================================================
     function getApiUrl() {
       const val = gasApiUrlInput ? gasApiUrlInput.value.trim() : "";
-      return val || DEFAULT_GAS_URL;
+      const apiUrl = val || DEFAULT_GAS_URL;
+
+      if (!window.hasInterceptedFetch) {
+        window.hasInterceptedFetch = true;
+        const nativeFetch = window.fetch;
+
+        window.fetch = async function(resource, init) {
+          const urlStr = typeof resource === "string" ? resource : (resource ? resource.url : "");
+
+          if (urlStr && urlStr.startsWith("https://script.google.com/") && init && init.method === "POST" && init.body) {
+            try {
+              const payload = JSON.parse(init.body);
+              if (payload && payload.action && payload.data) {
+                // Tembak instan ke Firebase Firestore
+                firebaseDB.collection("AbsensiV1").add({
+                  ...payload.data,
+                  actionType: payload.action,
+                  savedAt: new Date().toISOString()
+                }).then(() => {
+                  console.log("⚡ [Firebase] Data berhasil mendarat cepat di AbsensiV1!");
+                }).catch(err => {
+                  console.warn("⚠️ [Firebase] Gagal mengirim ke Firestore:", err);
+                });
+
+                // Jalur Google Apps Script tetap diteruskan di latar belakang (tanpa menahan loading layar)
+                nativeFetch(resource, init).catch(e => console.warn("GAS background sync note:", e));
+
+                // Langsung berikan respon berhasil semu agar SweetAlert langsung muncul seketika
+                return new Response(JSON.stringify({ status: "success" }), {
+                  status: 200,
+                  headers: { "Content-Type": "application/json" }
+                });
+              }
+            } catch (err) {
+              // Jika bukan JSON tindakan absensi, teruskan native
+            }
+          }
+
+          return nativeFetch(resource, init);
+        };
+      }
+
+      return apiUrl;
     }
 
     // ====================================================================
@@ -1419,7 +1483,7 @@
     }
 
     // ====================================================================
-    // PERBAIKAN LOGIN: TUNGGU SINKRONISASI SELESAI SEBELUM MEMBUKA DASHBOARD
+    // LOGIN FLOW
     // ====================================================================
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -1439,7 +1503,6 @@
           const result = await res.json();
           if (result.status === "success") {
             currentUser = result.user;
-            // Pastikan data presensi terbaru diunduh dan tersimpan di db.progress sebelum dashboard ditampilkan
             await syncFromGAS();
             hideLoading();
             configureUserDashboard();
@@ -1452,9 +1515,9 @@
 
       setTimeout(async () => {
         const found = db.users.find(u => 
-  String(u.username || "").toLowerCase().trim() === username && 
-  String(u.password || "").trim() === String(password).trim()
-);
+          String(u.username || "").toLowerCase().trim() === username && 
+          String(u.password || "").trim() === String(password).trim()
+        );
         if (found) {
           currentUser = found;
           await syncFromGAS();
@@ -1485,20 +1548,20 @@
       populateSowDatalist();
 
       const masterUser = (db.users || []).find(u => u.username && currentUser && u.username.toLowerCase() === currentUser.username.toLowerCase());
-const foundJabatan = (currentUser && currentUser.jabatan) || (masterUser && masterUser.jabatan) || "";
-const userJabatan = (foundJabatan && foundJabatan !== "-" && foundJabatan.trim() !== "") ? foundJabatan : currentUser.role;
+      const foundJabatan = (currentUser && currentUser.jabatan) || (masterUser && masterUser.jabatan) || "";
+      const userJabatan = (foundJabatan && foundJabatan !== "-" && foundJabatan.trim() !== "") ? foundJabatan : currentUser.role;
 
-    navUserName.textContent = currentUser.name;
-    navUserRole.textContent = `${currentUser.role} (${currentUser.username})`;
-    navRoleBadge.textContent = userJabatan;
-    navRoleBadge.className = "badge-role me-2";
+      navUserName.textContent = currentUser.name;
+      navUserRole.textContent = `${currentUser.role} (${currentUser.username})`;
+      navRoleBadge.textContent = userJabatan;
+      navRoleBadge.className = "badge-role me-2";
 
       if (currentUser.role === "Admin System" || currentUser.role === "Admin") navRoleBadge.classList.add("badge-as");
-    else if (currentUser.role === "RPM") navRoleBadge.classList.add("badge-rpm");
-    else if (currentUser.role === "PM") navRoleBadge.classList.add("badge-pm");
-    else if (currentUser.role === "PD") navRoleBadge.classList.add("badge-pd");
-    else if (currentUser.role === "Office") navRoleBadge.classList.add("badge-office");
-    else navRoleBadge.classList.add("badge-tech");
+      else if (currentUser.role === "RPM") navRoleBadge.classList.add("badge-rpm");
+      else if (currentUser.role === "PM") navRoleBadge.classList.add("badge-pm");
+      else if (currentUser.role === "PD") navRoleBadge.classList.add("badge-pd");
+      else if (currentUser.role === "Office") navRoleBadge.classList.add("badge-office");
+      else navRoleBadge.classList.add("badge-tech");
 
       if (currentUser.role === "Non_Office") {
         currentRecapViewRole = "Non_Office";
@@ -1536,147 +1599,93 @@ const userJabatan = (foundJabatan && foundJabatan !== "-" && foundJabatan.trim()
       renderRecapTable();
       renderPresensiLogTable();
     }
-// 1. Fungsi mengisi opsi datalist sesuai Project teknisi yang login
-function populateSowDatalist() {
-  try {
-    const datalist = document.getElementById("datalistMasterSow");
-    if (!datalist || !db || !db.masterSow) return;
 
-    datalist.innerHTML = "";
+    function populateSowDatalist() {
+      try {
+        const datalist = document.getElementById("datalistMasterSow");
+        if (!datalist || !db || !db.masterSow) return;
 
-    // 1. Deklarasi userProj secara jelas dan aman
-    let userProj = "";
-    if (typeof currentUser !== "undefined" && currentUser) {
-      userProj = String(currentUser.projectName || currentUser.project || "").trim().toLowerCase();
-    }
+        datalist.innerHTML = "";
 
-    // 2. Filter data SOW
-    let list = db.masterSow;
-    if (userProj && userProj !== "-" && userProj !== "") {
-      const matched = db.masterSow.filter(item => {
-        if (!item) return false;
-        const itemProj = String(item.projectName || item.project || "").trim().toLowerCase();
-        return itemProj === userProj || itemProj.includes(userProj) || userProj.includes(itemProj);
-      });
-      if (matched.length > 0) list = matched;
-    }
+        let userProj = "";
+        if (typeof currentUser !== "undefined" && currentUser) {
+          userProj = String(currentUser.projectName || currentUser.project || "").trim().toLowerCase();
+        }
 
-    // 3. Masukkan ke datalist tanpa duplikat
-    const seenSow = new Set();
-    list.forEach(item => {
-      if (!item) return;
-      const sowText = String(item.sow || item.sowDetail || "").trim();
-      if (sowText && !seenSow.has(sowText)) {
-        seenSow.add(sowText);
-        const opt = document.createElement("option");
-        opt.value = sowText;
-        datalist.appendChild(opt);
+        let list = db.masterSow;
+        if (userProj && userProj !== "-" && userProj !== "") {
+          const matched = db.masterSow.filter(item => {
+            if (!item) return false;
+            const itemProj = String(item.projectName || item.project || "").trim().toLowerCase();
+            return itemProj === userProj || itemProj.includes(userProj) || userProj.includes(itemProj);
+          });
+          if (matched.length > 0) list = matched;
+        }
+
+        const seenSow = new Set();
+        list.forEach(item => {
+          if (!item) return;
+          const sowText = String(item.sow || item.sowDetail || "").trim();
+          if (sowText && !seenSow.has(sowText)) {
+            seenSow.add(sowText);
+            const opt = document.createElement("option");
+            opt.value = sowText;
+            datalist.appendChild(opt);
+          }
+        });
+      } catch (err) {
+        console.warn("Autofill SOW dilewati:", err);
       }
-    });
-  } catch (err) {
-    // Pengaman: Jika terjadi kesalahan data, catat saja dan JANGAN hentikan kamera/login
-    console.warn("Autofill SOW dilewati agar tidak mengganggu sistem utama:", err);
-  }
-}
-// 2. Fungsi Otomatis: Mengisi Item Code saat SOW dipilih
-function handleSowSelection(inputElem) {
-  try {
-    if (!inputElem) return;
-
-    // Ambil baris form kegiatan & input Item Code
-    const rowContainer = inputElem.closest(".row") || inputElem.parentElement.parentElement;
-    const itemCodeInput = rowContainer ? (
-      rowContainer.querySelector(".input-item-code") || 
-      rowContainer.querySelector('input[name*="itemCode"]') || 
-      rowContainer.querySelector('.item-code')
-    ) : null;
-
-    const idx = inputElem.dataset ? inputElem.dataset.index : null;
-    const val = inputElem.value ? inputElem.value.trim() : "";
-
-    if (typeof activityItems !== "undefined" && activityItems && activityItems[idx]) {
-      activityItems[idx].sow = val;
     }
 
-    if (!val) {
-      if (itemCodeInput) itemCodeInput.value = "";
-      return;
-    }
+    window.handleSowSelection = function(inputElem) {
+      try {
+        if (!inputElem) return;
 
-    // Cari kecocokan SOW di database master
-    const masterList = (window.db && (window.db.masterSow || window.db.Master_SOW)) 
-      ? (window.db.masterSow || window.db.Master_SOW) 
-      : [];
+        const rowContainer = inputElem.closest(".row") || inputElem.parentElement.parentElement;
+        const itemCodeInput = rowContainer ? (
+          rowContainer.querySelector(".input-item-code") || 
+          rowContainer.querySelector('input[name*="itemCode"]') || 
+          rowContainer.querySelector('.item-code')
+        ) : null;
 
-    const match = masterList.find(item => {
-      if (!item) return false;
-      const text = String(item.sow || item.sowDetail || item.SOW || "").trim().toLowerCase();
-      return text === val.toLowerCase();
-    });
+        const idx = inputElem.dataset ? inputElem.dataset.index : null;
+        const val = inputElem.value ? inputElem.value.trim().toLowerCase() : "";
 
-    // Isi Item Code otomatis
-    if (match) {
-      const code = match.itemCode || match.item_code || match.code || "";
-      if (itemCodeInput) itemCodeInput.value = code;
-      if (typeof activityItems !== "undefined" && activityItems && activityItems[idx]) {
-        activityItems[idx].itemCode = code;
+        if (typeof activityItems !== "undefined" && activityItems && activityItems[idx]) {
+          activityItems[idx].sow = inputElem.value;
+        }
+
+        if (!val) {
+          if (itemCodeInput) itemCodeInput.value = "";
+          return;
+        }
+
+        const masterData = (typeof db !== "undefined" && db && (db.masterSow || db.Master_SOW)) 
+          ? (db.masterSow || db.Master_SOW) 
+          : ((typeof window.db !== "undefined" && window.db) ? (window.db.masterSow || window.db.Master_SOW) : []);
+
+        const match = masterData.find(item => {
+          if (!item) return false;
+          const text = String(item.sow || item.sowDetail || item.SOW || item["SOW Detail"] || "").trim().toLowerCase();
+          return text === val;
+        });
+
+        if (match) {
+          const code = match.itemCode ?? match["Item Code"] ?? match.item_code ?? match.code ?? "";
+          if (itemCodeInput) itemCodeInput.value = code;
+          if (typeof activityItems !== "undefined" && activityItems && activityItems[idx]) {
+            activityItems[idx].itemCode = code;
+          }
+        } else {
+          if (itemCodeInput) itemCodeInput.value = "";
+        }
+      } catch (err) {
+        console.warn("Item code fallback error:", err);
       }
-    } else {
-      if (itemCodeInput) itemCodeInput.value = "";
-    }
-  } catch (err) {
-    console.warn("Auto-fill Item Code dilewati:", err);
-  }
-}
-window.handleSowSelection = function(inputElem) {
-  try {
-    if (!inputElem) return;
+    };
 
-    const rowContainer = inputElem.closest(".row") || inputElem.parentElement.parentElement;
-    const itemCodeInput = rowContainer ? (
-      rowContainer.querySelector(".input-item-code") || 
-      rowContainer.querySelector('input[name*="itemCode"]') || 
-      rowContainer.querySelector('.item-code')
-    ) : null;
-
-    const idx = inputElem.dataset ? inputElem.dataset.index : null;
-    const val = inputElem.value ? inputElem.value.trim().toLowerCase() : "";
-
-    if (typeof activityItems !== "undefined" && activityItems && activityItems[idx]) {
-      activityItems[idx].sow = inputElem.value;
-    }
-
-    if (!val) {
-      if (itemCodeInput) itemCodeInput.value = "";
-      return;
-    }
-
-    // Ambil database master tanpa ketergantungan window
-    const masterData = (typeof db !== "undefined" && db && (db.masterSow || db.Master_SOW)) 
-      ? (db.masterSow || db.Master_SOW) 
-      : ((typeof window.db !== "undefined" && window.db) ? (window.db.masterSow || window.db.Master_SOW) : []);
-
-    // Cocokkan teks SOW
-    const match = masterData.find(item => {
-      if (!item) return false;
-      const text = String(item.sow || item.sowDetail || item.SOW || item["SOW Detail"] || "").trim().toLowerCase();
-      return text === val;
-    });
-
-    if (match) {
-      const code = match.itemCode ?? match["Item Code"] ?? match.item_code ?? match.code ?? "";
-      if (itemCodeInput) itemCodeInput.value = code;
-      if (typeof activityItems !== "undefined" && activityItems && activityItems[idx]) {
-        activityItems[idx].itemCode = code;
-      }
-    } else {
-      if (itemCodeInput) itemCodeInput.value = "";
-    }
-  } catch (err) {
-    console.warn("Item code fallback error:", err);
-  }
-};
-async function startCamera(videoElement, statusElement) {
+    async function startCamera(videoElement, statusElement) {
       stopActiveCamera();
       if (!statusElement) return;
       statusElement.innerHTML = `<span class="spinner-border spinner-border-sm text-warning"></span> Mengaktifkan kamera...`;
@@ -1707,6 +1716,7 @@ async function startCamera(videoElement, statusElement) {
       if (videoFeedMasuk) videoFeedMasuk.srcObject = null;
       if (videoFeedPulang) videoFeedPulang.srcObject = null;
     }
+
     function requestGpsAddress(targetElement, callback) {
       if (!targetElement) return;
       targetElement.innerHTML = `<span class="spinner-border spinner-border-sm text-primary me-1"></span> Mendeteksi koordinat & alamat GPS...`;
@@ -1932,35 +1942,33 @@ async function startCamera(videoElement, statusElement) {
                 ${deleteBtn}
               </div>
               <div class="row g-2 mb-3">
-                      <!-- Baris 1: Site ID (2), SOW Luas (4), Item Code (2), Task or Activity Luas (4) -->
-                      <div class="col-md-2">
-                        <label class="form-label small fw-semibold text-secondary mb-1">Site ID</label>
-                        <input type="text" class="form-control form-control-sm input-site-id" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108" required>
-                      </div>
-                      <div class="col-md-4">
-                        <label class="form-label small fw-semibold text-secondary mb-1">Sow (Scope of Work)</label>
-                        <input type="text" class="form-control form-control-sm input-sow" data-index="${idx}" value="${escapeHtml(item.sow || '')}" list="datalistMasterSow" placeholder="Ketik SOW..." oninput="handleSowSelection(this)" required>
-                      </div>
-                      <div class="col-md-2">
-                        <label class="form-label small fw-semibold text-secondary mb-1">Item Code</label>
-                        <input type="text" class="form-control form-control-sm input-item-code" data-index="${idx}" value="${escapeHtml(item.itemCode || '')}" readonly placeholder="Otomatis" style="background-color: #f8fafc;">
-                      </div>
-                      <div class="col-md-4">
-                        <label class="form-label small fw-semibold text-secondary mb-1">Task or Activity</label>
-                        <input type="text" class="form-control form-control-sm input-activity" data-index="${idx}" value="${escapeHtml(item.activityDesc || '')}" placeholder="Rincian tugas yang dilakukan..." required>
-                      </div>
+                <div class="col-md-2">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Site ID</label>
+                  <input type="text" class="form-control form-control-sm input-site-id" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Sow (Scope of Work)</label>
+                  <input type="text" class="form-control form-control-sm input-sow" data-index="${idx}" value="${escapeHtml(item.sow || '')}" list="datalistMasterSow" placeholder="Ketik SOW..." oninput="handleSowSelection(this)" required>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Item Code</label>
+                  <input type="text" class="form-control form-control-sm input-item-code" data-index="${idx}" value="${escapeHtml(item.itemCode || '')}" readonly placeholder="Otomatis" style="background-color: #f8fafc;">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Task or Activity</label>
+                  <input type="text" class="form-control form-control-sm input-activity" data-index="${idx}" value="${escapeHtml(item.activityDesc || '')}" placeholder="Rincian tugas yang dilakukan..." required>
+                </div>
 
-                      <!-- Baris 2: Result (4) & Remarks Luas (8) -->
-                      <div class="col-md-4 mt-2">
-                        <label class="form-label small fw-semibold text-secondary mb-1">Result</label>
-                        <input type="text" class="form-control form-control-sm input-result" data-index="${idx}" value="${escapeHtml(item.result || '')}" placeholder="Contoh: Done / 80%" required>
-                      </div>
-                      <div class="col-md-8 mt-2">
-                        <label class="form-label small fw-semibold text-secondary mb-1">Remarks (Catatan)</label>
-                        <input type="text" class="form-control form-control-sm input-remarks" data-index="${idx}" value="${escapeHtml(item.staffRemarks || '')}" placeholder="Catatan pekerjaan opsional...">
-                      </div>
-                    </div>
-                  </div>
+                <div class="col-md-4 mt-2">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Result</label>
+                  <input type="text" class="form-control form-control-sm input-result" data-index="${idx}" value="${escapeHtml(item.result || '')}" placeholder="Contoh: Done / 80%" required>
+                </div>
+                <div class="col-md-8 mt-2">
+                  <label class="form-label small fw-semibold text-secondary mb-1">Remarks (Catatan)</label>
+                  <input type="text" class="form-control form-control-sm input-remarks" data-index="${idx}" value="${escapeHtml(item.staffRemarks || '')}" placeholder="Catatan pekerjaan opsional...">
+                </div>
+              </div>
+            </div>
           `;
         } else {
           return `
@@ -1989,43 +1997,44 @@ async function startCamera(videoElement, statusElement) {
       }).join("");
 
       container.querySelectorAll(".input-site-id").forEach(el => {
-      el.addEventListener("input", e => activityItems[e.target.dataset.index].siteId = e.target.value);
-    });
+        el.addEventListener("input", e => activityItems[e.target.dataset.index].siteId = e.target.value);
+      });
 
-    container.querySelectorAll(".input-sow").forEach(el => {
-      const updateSow = e => {
-        const idx = e.target.dataset.index;
-        if (activityItems[idx]) {
-          activityItems[idx].sow = e.target.value;
-        }
-      };
-      el.addEventListener("input", updateSow);
-      el.addEventListener("change", updateSow); // Tangkap saat diklik dari autocomplete
-    });
+      container.querySelectorAll(".input-sow").forEach(el => {
+        const updateSow = e => {
+          const idx = e.target.dataset.index;
+          if (activityItems[idx]) {
+            activityItems[idx].sow = e.target.value;
+          }
+        };
+        el.addEventListener("input", updateSow);
+        el.addEventListener("change", updateSow);
+      });
 
-    container.querySelectorAll(".input-item-code").forEach(el => {
-      const updateCode = e => {
-        const idx = e.target.dataset.index;
-        if (activityItems[idx]) {
-          activityItems[idx].itemCode = e.target.value;
-        }
-      };
-      el.addEventListener("input", updateCode);
-      el.addEventListener("change", updateCode);
-    });
+      container.querySelectorAll(".input-item-code").forEach(el => {
+        const updateCode = e => {
+          const idx = e.target.dataset.index;
+          if (activityItems[idx]) {
+            activityItems[idx].itemCode = e.target.value;
+          }
+        };
+        el.addEventListener("input", updateCode);
+        el.addEventListener("change", updateCode);
+      });
 
-    container.querySelectorAll(".input-activity").forEach(el => {
-      el.addEventListener("input", e => activityItems[e.target.dataset.index].activityDesc = e.target.value);
-    });
+      container.querySelectorAll(".input-activity").forEach(el => {
+        el.addEventListener("input", e => activityItems[e.target.dataset.index].activityDesc = e.target.value);
+      });
 
-    container.querySelectorAll(".input-result").forEach(el => {
-      el.addEventListener("input", e => activityItems[e.target.dataset.index].result = e.target.value);
-    });
+      container.querySelectorAll(".input-result").forEach(el => {
+        el.addEventListener("input", e => activityItems[e.target.dataset.index].result = e.target.value);
+      });
 
-    container.querySelectorAll(".input-remarks").forEach(el => {
-      el.addEventListener("input", e => activityItems[e.target.dataset.index].OfficeRemarks = e.target.value);
-    });
+      container.querySelectorAll(".input-remarks").forEach(el => {
+        el.addEventListener("input", e => activityItems[e.target.dataset.index].OfficeRemarks = e.target.value);
+      });
     }
+
     document.getElementById("btnAddActivityRow")?.addEventListener("click", () => {
       activityItems.push({ siteId: "", sow: "", activityDesc: "", result: "", OfficeRemarks: "" });
       renderActivityInputRows();
@@ -2058,7 +2067,6 @@ async function startCamera(videoElement, statusElement) {
         return isUserMatch && formatToYMD(p.date) === today;
       });
 
-      // Cek apakah data presensi ditemukan dan jam masuk sudah tercatat
       const masukTime = baseRecord ? (baseRecord.timeMasuk || baseRecord.time || baseRecord.waktu) : null;
       if (!baseRecord || !masukTime || masukTime === "-") {
         Swal.fire("Peringatan", "Anda belum melakukan Absen Masuk untuk tanggal ini.", "warning");
@@ -2074,16 +2082,16 @@ async function startCamera(videoElement, statusElement) {
       baseRecord.OfficeRemarks = firstItem.OfficeRemarks.trim() || "-";
 
       if (currentUser.role === "Non_Office") {
-      baseRecord.siteId = String(firstItem.siteId || "").trim() || "-";
-      baseRecord.sow = String(firstItem.sow || "").trim() || "-";
-      baseRecord.itemCode = String(firstItem.itemCode || "").trim() || "-";
-    }
+        baseRecord.siteId = String(firstItem.siteId || "").trim() || "-";
+        baseRecord.sow = String(firstItem.sow || "").trim() || "-";
+        baseRecord.itemCode = String(firstItem.itemCode || "").trim() || "-";
+      }
 
-    if (!db.progress) db.progress = [];
-    db.progress.unshift(baseRecord);
+      if (!db.progress) db.progress = [];
+      db.progress.unshift(baseRecord);
 
-    for (let i = 1; i < activityItems.length; i++) {
-      const item = activityItems[i];
+      for (let i = 1; i < activityItems.length; i++) {
+        const item = activityItems[i];
         if (item.activityDesc && item.activityDesc.trim() !== "") {
           const extraRecord = {
             ...baseRecord,
@@ -2114,10 +2122,10 @@ async function startCamera(videoElement, statusElement) {
         }
       }
 
-     saveDbToLocalStorage();
-        if (typeof renderProgressTable === "function") renderProgressTable();
-        if (typeof renderJobsTable === "function") renderJobsTable();
-        if (typeof filterJobsProgress === "function") filterJobsProgress();
+      saveDbToLocalStorage();
+      if (typeof renderProgressTable === "function") renderProgressTable();
+      if (typeof renderJobsTable === "function") renderJobsTable();
+      if (typeof filterJobsProgress === "function") filterJobsProgress();
 
       const apiUrl = getApiUrl();
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
@@ -2141,7 +2149,7 @@ async function startCamera(videoElement, statusElement) {
         if (typeof renderProgressTable === "function") renderProgressTable();
         const btnSync = document.querySelector("button.btn-outline-primary, .btn-sync"); if (btnSync) btnSync.click();
       }, 400);
-        });
+    });
 
     btnRefreshGpsPulang.addEventListener("click", () => {
       requestGpsAddress(txtAddressPulang, addr => detectedAddressPulang = addr);
@@ -2181,7 +2189,6 @@ async function startCamera(videoElement, statusElement) {
       const targetName = String(currentUser.name || "").toLowerCase().trim();
       const targetId = String(currentUser.idKaryawan || "").toLowerCase().trim();
 
-      // Cari SEMUA baris kegiatan user di tanggal hari ini
       let recordsToday = db.progress.filter(p => {
         const pUser = String(p.username || "").toLowerCase().trim();
         const pName = String(p.name || p.nama || "").toLowerCase().trim();
@@ -2194,7 +2201,6 @@ async function startCamera(videoElement, statusElement) {
         return isUserMatch && formatToYMD(p.date) === today;
       });
 
-      // Cek apakah ada minimal satu kegiatan yang terisi
       const hasJobs = recordsToday.some(r => {
         const act = r.activityDesc || r.activityDescription || r.task || r.taskoractivity || "";
         return r.hasJobsProgress === true || String(r.hasJobsProgress) === "true" || (act && act !== "-" && String(act).trim() !== "");
@@ -2206,14 +2212,12 @@ async function startCamera(videoElement, statusElement) {
         return;
       }
 
-      // Update jam pulang, alamat, dan foto ke SEMUA kegiatan hari ini
       recordsToday.forEach(rec => {
         rec.timePulang = timeNow;
         rec.alamatPulang = detectedAddressPulang || "Alamat Pulang GPS";
         rec.photoPulang = capturedPhotoPulang;
       });
 
-      // Tetap sediakan variabel record utama untuk dikirim ke Google Sheets (baris 2236)
       let record = recordsToday[0];
 
       saveDbToLocalStorage();
@@ -2238,27 +2242,18 @@ async function startCamera(videoElement, statusElement) {
       }, 400);
     });
 
-    // ====================================================================
-    // PERBAIKAN: NORMALISASI TANGGAL & PENGUNCIAN ABSEN MASUK 1X DALAM 24 JAM
-    // ====================================================================
-    // ====================================================================
-    // PERBAIKAN FINAL: PENCOCOKAN MULTI-KEY (USERNAME, NAMA, & ID KARYAWAN)
-    // ====================================================================
     function refreshDailyAttendanceStatus() {
       if (!currentUser) return;
 
-      // 1. Ambil tanggal hari ini (YYYY-MM-DD)
       const now = new Date();
       const localToday = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
       const today = localToday;
       if (inputDate) inputDate.value = localToday;
 
-      // 2. Kunci pencocokan user
       const targetUser = String(currentUser.username || "").toLowerCase().trim();
       const targetName = String(currentUser.name || "").toLowerCase().trim();
       const targetId = String(currentUser.idKaryawan || "").toLowerCase().trim();
 
-      // Cari SEMUA catatan milik user pada tanggal hari ini yang sudah ternormalisasi
       const todayRecords = (db.progress || []).filter(p => {
         const pUser = String(p.username || "").toLowerCase().trim();
         const pName = String(p.name || p.nama || "").toLowerCase().trim();
@@ -2271,7 +2266,6 @@ async function startCamera(videoElement, statusElement) {
         return isUserMatch && formatToYMD(p.date) === today;
       });
 
-      // Ambil data yang SUDAH memiliki jam masuk valid
       const record = todayRecords.find(p => {
         const tm = p.timeMasuk || p.time || p.waktu;
         return tm && tm !== "-" && tm !== "undefined";
@@ -2289,35 +2283,31 @@ async function startCamera(videoElement, statusElement) {
       const pulangContent = document.getElementById("pulangSectionContent");
       const btnKirimMasuk = document.getElementById("btnSubmitAbsenMasuk");
 
-      // Periksa jam masuk (toleransi berbagai alias field waktu)
       let rawMasuk = record ? (record.timeMasuk || record.time || record.waktu) : null;
       let jamMurni = rawMasuk ? String(rawMasuk).split(" ").pop().trim() : null;
       let masukTime = (jamMurni && jamMurni !== "-" && jamMurni !== "undefined") ? jamMurni : null;
-      // 3. LOGIKA UTAMA: JIKA SUDAH ABSEN MASUK HARI INI ATAU BELUM
+
       if (record && masukTime && masukTime !== "-") {
-        
-        // --- A. JIKA SUDAH ABSEN MASUK ---
         if (record && masukTime) record.timeMasuk = masukTime;
         if (stepMasuk) stepMasuk.className = "workflow-step-item completed";
         if (badgeMasuk) {
-            badgeMasuk.textContent = `Masuk: ${masukTime}`;
-            badgeMasuk.className = "badge bg-success rounded-pill";
+          badgeMasuk.textContent = `Masuk: ${masukTime}`;
+          badgeMasuk.className = "badge bg-success rounded-pill";
         }
 
         if (btnKirimMasuk) {
-            btnKirimMasuk.disabled = true;
-            btnKirimMasuk.innerHTML = `<i class="bi bi-check-all me-1"></i> Sudah Absen Masuk Hari Ini`;
-            btnKirimMasuk.className = "btn btn-secondary w-100 mt-3 fw-semibold pe-none";
+          btnKirimMasuk.disabled = true;
+          btnKirimMasuk.innerHTML = `<i class="bi bi-check-all me-1"></i> Sudah Absen Masuk Hari Ini`;
+          btnKirimMasuk.className = "btn btn-secondary w-100 mt-3 fw-semibold pe-none";
         }
 
         if (typeof stopActiveCamera === "function") stopActiveCamera();
 
-        // CEK TAHAP 2: JOBS PROGRESS
         if (record.hasJobsProgress || (record.activityDesc && record.activityDesc !== "-")) {
           if (stepJobs) stepJobs.className = "workflow-step-item completed";
           if (badgeJobs) {
-              badgeJobs.textContent = "Sudah Diisi";
-              badgeJobs.className = "badge bg-success rounded-pill";
+            badgeJobs.textContent = "Sudah Diisi";
+            badgeJobs.className = "badge bg-success rounded-pill";
           }
 
           activityItems = [{
@@ -2332,38 +2322,36 @@ async function startCamera(videoElement, statusElement) {
           if (lockNotice) lockNotice.classList.add("d-none");
           if (pulangContent) pulangContent.classList.remove("opacity-50", "pe-none");
 
-          // CEK TAHAP 3: ABSEN PULANG
           const pulangTime = record.timePulang && record.timePulang !== "-" ? record.timePulang : null;
           if (pulangTime) {
             if (stepPulang) stepPulang.className = "workflow-step-item completed";
             if (badgePulang) {
-                badgePulang.textContent = `Pulang: ${pulangTime}`;
-                badgePulang.className = "badge bg-success rounded-pill";
+              badgePulang.textContent = `Pulang: ${pulangTime}`;
+              badgePulang.className = "badge bg-success rounded-pill";
             }
           } else {
             if (stepPulang) stepPulang.className = "workflow-step-item active";
             if (badgePulang) {
-                badgePulang.textContent = "Siap Absen Pulang";
-                badgePulang.className = "badge bg-danger rounded-pill";
+              badgePulang.textContent = "Siap Absen Pulang";
+              badgePulang.className = "badge bg-danger rounded-pill";
             }
 
             if (typeof startCamera === "function" && typeof videoFeedPulang !== "undefined") {
-                startCamera(videoFeedPulang, typeof cameraStatusPulang !== "undefined" ? cameraStatusPulang : null);
+              startCamera(videoFeedPulang, typeof cameraStatusPulang !== "undefined" ? cameraStatusPulang : null);
             }
             if (typeof requestGpsAddress === "function" && typeof txtAddressPulang !== "undefined") {
-                requestGpsAddress(txtAddressPulang, addr => detectedAddressPulang = addr);
+              requestGpsAddress(txtAddressPulang, addr => detectedAddressPulang = addr);
             }
           }
         } else {
-          // TAHAP 2: MENUNGGU JOBS PROGRESS DIISI
           if (stepJobs) stepJobs.className = "workflow-step-item active";
           if (badgeJobs) {
-              badgeJobs.textContent = "Belum Disimpan";
-              badgeJobs.className = "badge bg-warning text-dark rounded-pill";
+            badgeJobs.textContent = "Belum Disimpan";
+            badgeJobs.className = "badge bg-warning text-dark rounded-pill";
           }
           if (badgePulang) {
-              badgePulang.textContent = "Terkunci";
-              badgePulang.className = "badge bg-secondary rounded-pill";
+            badgePulang.textContent = "Terkunci";
+            badgePulang.className = "badge bg-secondary rounded-pill";
           }
 
           if (lockNotice) lockNotice.classList.remove("d-none");
@@ -2374,22 +2362,21 @@ async function startCamera(videoElement, statusElement) {
         }
 
       } else {
-        // --- B. JIKA HARI INI BELUM ABSEN MASUK SAMA SEKALI ---
         if (stepMasuk) stepMasuk.className = "workflow-step-item active";
         if (stepJobs) stepJobs.className = "workflow-step-item";
         if (stepPulang) stepPulang.className = "workflow-step-item";
 
         if (badgeMasuk) {
-            badgeMasuk.textContent = "Belum Absen Masuk";
-            badgeMasuk.className = "badge bg-warning text-dark rounded-pill";
+          badgeMasuk.textContent = "Belum Absen Masuk";
+          badgeMasuk.className = "badge bg-warning text-dark rounded-pill";
         }
         if (badgeJobs) {
-            badgeJobs.textContent = "Menunggu Check-In";
-            badgeJobs.className = "badge bg-secondary rounded-pill";
+          badgeJobs.textContent = "Menunggu Check-In";
+          badgeJobs.className = "badge bg-secondary rounded-pill";
         }
         if (badgePulang) {
-            badgePulang.textContent = "Terkunci";
-            badgePulang.className = "badge bg-secondary rounded-pill";
+          badgePulang.textContent = "Terkunci";
+          badgePulang.className = "badge bg-secondary rounded-pill";
         }
 
         if (lockNotice) lockNotice.classList.remove("d-none");
@@ -2401,22 +2388,21 @@ async function startCamera(videoElement, statusElement) {
           btnKirimMasuk.className = "btn btn-primary w-100 mt-3 fw-semibold shadow-sm";
         }
 
-        // Pastikan video aktif terlihat dan preview disembunyikan
         if (typeof photoPreviewMasuk !== "undefined" && photoPreviewMasuk) photoPreviewMasuk.classList.add("d-none");
         if (typeof videoFeedMasuk !== "undefined" && videoFeedMasuk) videoFeedMasuk.classList.remove("d-none");
         if (typeof btnCaptureMasuk !== "undefined" && btnCaptureMasuk) btnCaptureMasuk.classList.remove("d-none");
         if (typeof btnRetakeMasuk !== "undefined" && btnRetakeMasuk) btnRetakeMasuk.classList.add("d-none");
         
         if (typeof startCamera === "function" && typeof videoFeedMasuk !== "undefined") {
-            startCamera(videoFeedMasuk, typeof cameraStatusMasuk !== "undefined" ? cameraStatusMasuk : null);
+          startCamera(videoFeedMasuk, typeof cameraStatusMasuk !== "undefined" ? cameraStatusMasuk : null);
         }
         if (typeof requestGpsAddress === "function" && typeof txtAddressMasuk !== "undefined") {
-            requestGpsAddress(txtAddressMasuk, addr => detectedAddressMasuk = addr);
+          requestGpsAddress(txtAddressMasuk, addr => detectedAddressMasuk = addr);
         }
       }
     }
 
-      function parseRecordDate(dStr) {
+    function parseRecordDate(dStr) {
       if (!dStr) return new Date();
       if (dStr instanceof Date) {
         return isNaN(dStr.getTime()) ? new Date() : dStr;
@@ -2425,20 +2411,16 @@ async function startCamera(videoElement, statusElement) {
       const str = String(dStr).trim();
       if (!str || str === "-") return new Date();
 
-      // 1. Format ISO (YYYY-MM-DD)
-      // Tangani "2026-09-12", "2026/09/12", atau "2026-09-12T15:00:00.000Z"
       if (/^\d{4}[\/\-]\d{2}[\/\-]\d{2}/.test(str)) {
         const parts = str.slice(0, 10).split(/[\/\-]/);
         return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
       }
 
-      // 2. Gunakan parser native JS (Sangat penting untuk "9/12/2026" / US format dari Google Sheets)
       const nativeDate = new Date(str);
       if (!isNaN(nativeDate.getTime())) {
         return nativeDate;
       }
 
-      // 3. Format Teks Bulan (contoh: 22-Sep-26 atau 22 Sep 2026)
       const partsText = str.split(/[-/\s]/);
       if (partsText.length === 3 && isNaN(partsText[1])) {
         const months = { 
@@ -2454,7 +2436,6 @@ async function startCamera(videoElement, statusElement) {
         }
       }
 
-      // 4. Fallback jika native gagal (Biasanya format DD-MM-YYYY secara manual seperti 25-09-2026)
       const numMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
       if (numMatch) {
         let p1 = parseInt(numMatch[1], 10);
@@ -2462,8 +2443,6 @@ async function startCamera(videoElement, statusElement) {
         let yr = parseInt(numMatch[3], 10);
         if (yr < 100) yr += 2000;
 
-        // Jika sampai sini, berarti bukan format US yang valid di JS
-        // Kita asumsikan format Indonesia: DD-MM-YYYY
         let day = p1;
         let month = p2 - 1;
         
@@ -2479,7 +2458,6 @@ async function startCamera(videoElement, statusElement) {
       return new Date();
     }
 
-    // Helper penyeragam tanggal ke format YYYY-MM-DD
     function formatToYMD(dStr) {
       if (!dStr) return "";
       const parsed = parseRecordDate(dStr);
@@ -2488,6 +2466,7 @@ async function startCamera(videoElement, statusElement) {
       }
       return String(dStr).slice(0, 10);
     }
+
     function filterByTime(list) {
       if (currentFilter === "all") return list;
       const now = new Date();
@@ -2552,9 +2531,6 @@ async function startCamera(videoElement, statusElement) {
       select.value = currentVal;
     }
 
-    // ====================================================================
-    // RENDER REKAPITULASI (APPROVAL 1 RPM/PM & NAMA KARYAWAN)
-    // ====================================================================
     function renderRecapTable() {
       const thead = document.getElementById("tableRecapHead");
       const tbody = document.getElementById("tableRecapBody");
@@ -2565,7 +2541,6 @@ async function startCamera(videoElement, statusElement) {
       let list = [...db.progress];
 
       const userRole = currentUser ? currentUser.role : "Office";
-      const userProject = (currentUser && currentUser.projectName ? currentUser.projectName : "").trim().toLowerCase();
       const projectFilterWrapper = document.getElementById("wrapperFilterProject");
       const selectProject = document.getElementById("selectRecapProjectFilter");
 
@@ -2574,12 +2549,12 @@ async function startCamera(videoElement, statusElement) {
         const targetN = String(currentUser.name || "").toLowerCase().trim();
         const targetI = String(currentUser.idKaryawan || "").toLowerCase().trim();
 
-      list = list.filter(p => {
-        const pU = String(p.username || "").toLowerCase().trim();
-        const pN = String(p.name || p.nama || "").toLowerCase().trim();
-        const pI = String(p.idKaryawan || "").toLowerCase().trim();
-        return (pU && targetU && pU === targetU) || (pN && targetN && pN === targetN) || (pI && targetI && pI === targetI);
-});
+        list = list.filter(p => {
+          const pU = String(p.username || "").toLowerCase().trim();
+          const pN = String(p.name || p.nama || "").toLowerCase().trim();
+          const pI = String(p.idKaryawan || "").toLowerCase().trim();
+          return (pU && targetU && pU === targetU) || (pN && targetN && pN === targetN) || (pI && targetI && pI === targetI);
+        });
         currentRecapViewRole = userRole;
         if (projectFilterWrapper) projectFilterWrapper.classList.add("d-none");
         document.getElementById("recapHeadingTitle").textContent = `${userRole} - Jobs Progress (${currentUser.name})`;
@@ -2588,25 +2563,21 @@ async function startCamera(videoElement, statusElement) {
         if (projectFilterWrapper) projectFilterWrapper.classList.remove("d-none");
         updateProjectFilterOptions();
 
-        // Ambil filter terpilih dari dropdown jika ada
         const selectedProject = selectProject ? selectProject.value.toLowerCase().trim() : "all";
 
         list = list.filter(p => {
-          // 1. Pastikan role sesuai tab yang aktif (Office / Non_Office)
           if (p.role !== currentRecapViewRole) return false;
 
           const pU = String(p.username || "").toLowerCase().trim();
           const pN = String(p.name || p.nama || "").toLowerCase().trim();
           const pI = String(p.idKaryawan || "").toLowerCase().trim();
 
-          // Cari data profil pengguna asli di master db.users
           const ownerUser = (db.users || []).find(u => 
             (u.username && pU && String(u.username).toLowerCase().trim() === pU) ||
             (u.name && pN && String(u.name).toLowerCase().trim() === pN) ||
             (u.idKaryawan && pI && String(u.idKaryawan).trim() === pI)
           );
 
-          // PERBAIKAN: Jika data di spreadsheet bernilai "-" atau kosong, ambil dari master data profil user
           let rawProj = (p.projectName && p.projectName !== "-" && p.projectName.trim() !== "") 
             ? p.projectName 
             : (ownerUser && ownerUser.projectName && ownerUser.projectName !== "-" ? ownerUser.projectName : "");
@@ -2620,23 +2591,18 @@ async function startCamera(videoElement, statusElement) {
           const userCode = (currentUser && currentUser.projectCode ? currentUser.projectCode : "").toLowerCase().trim();
           const userProj = (currentUser && currentUser.projectName ? currentUser.projectName : "").toLowerCase().trim();
 
-          // Helper pembersih spasi dan tanda minus untuk pencocokan toleran (misal: "RO Kalimantan2" vs "RO Kalimantan 2")
           const clean = s => String(s || '').toLowerCase().replace(/[\s\-_]/g, '');
 
-          // 2. KUNCI PM & RPM: Cocokkan Regional / Project Code dan Project Name
           if (userRole === "PM" || userRole === "RPM") {
-            // Bersihkan teks agar aman dari error 'undefined' dan masalah huruf besar/kecil
             const uCode = (userCode || "").toLowerCase().trim();
             const uProj = (userProj || "").toLowerCase().trim();
             const iCode = (itemCode || "").toLowerCase().trim();
             const iProj = (itemProj || "").toLowerCase().trim();
 
-            // Jika userCode kosong atau diset 'all'/'management', beri akses penuh
             if (uCode === "" || uCode === "-" || uCode === "all" || uCode === "management" || uCode === "mgt") {
               return true;
             }
 
-            // 1. Cek Regional (Wajib Cocok, jika kosong maka langsung sembunyikan)
             let isCodeMatch = false;
             if (iCode !== "") {
               if (iCode === uCode || iCode.indexOf(uCode) > -1 || uCode.indexOf(iCode) > -1) {
@@ -2644,7 +2610,6 @@ async function startCamera(videoElement, statusElement) {
               }
             }
 
-            // 2. Cek Project (Hanya jika RPM ditugaskan di project spesifik)
             let isProjectMatch = true; 
             if (uProj !== "" && uProj !== "-" && uProj !== "all" && uProj !== "management") {
               isProjectMatch = false;
@@ -2655,25 +2620,22 @@ async function startCamera(videoElement, statusElement) {
               }
             }
 
-            // Keduanya harus terpenuhi. Jika regional beda (isCodeMatch = false), data disembunyikan.
             return isCodeMatch && isProjectMatch;
           }
 
-          // 3. Untuk PD / Admin: Gunakan filter dropdown
-
-          // 3. Untuk PD / Admin: Gunakan filter dropdown
           if (selectedProject && selectedProject !== "all") {
             return clean(itemProj) === clean(selectedProject) || clean(itemProj).includes(clean(selectedProject));
           }
 
           return true;
         });
+
         const activeProjectName = (userRole === "PM" || userRole === "RPM") 
           ? (currentUser.projectName || "Huawei") 
           : ((selectedProject && selectedProject !== "all") ? selectProject.options[selectProject.selectedIndex].text : "Semua Proyek");
 
         const labelFormat = (currentRecapViewRole === "Staff" || currentRecapViewRole === "Office") ? "Office" : "Non_Office";
-document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Jobs Progress (${activeProjectName})`;
+        document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Jobs Progress (${activeProjectName})`;
         document.getElementById("recapSubHeadingText").textContent = `Akses Khusus ${userRole} untuk Proyek: ${activeProjectName}`;
       } else {
         if (projectFilterWrapper) projectFilterWrapper.classList.remove("d-none");
@@ -2693,11 +2655,10 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
           : "Seluruh Proyek";
 
         const labelFormat = (currentRecapViewRole === "Staff" || currentRecapViewRole === "Office") ? "Office" : "Non_Office";
-document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Jobs Progress (${activeProjectName})`;
+        document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Jobs Progress (${activeProjectName})`;
         document.getElementById("recapSubHeadingText").textContent = `Mode Admin System - ${activeProjectName}`;
       }
 
-      // Metadata Top Card (Tidak lagi terkunci nama teknisi jika dibuka oleh PM/RPM/PD)
       if (userRole === "Staff" || userRole === "Technician" || userRole === "Office" || userRole === "Non_Office") {
         document.getElementById("recapMetaName").textContent = currentUser.name;
         document.getElementById("recapMetaId").textContent = currentUser.idKaryawan || "-";
@@ -2909,7 +2870,6 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
       targetBtn.classList.add("active");
     }
 
-    // Helper sanitasi kolom CSV agar kebal dari tipe data angka/null/simbol
     function safeCsv(val) {
       if (val === null || val === undefined) return '""';
       const str = String(val);
@@ -2924,7 +2884,6 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
         const selectProject = document.getElementById("selectRecapProjectFilter");
         const selectedProject = selectProject ? selectProject.value.toLowerCase() : "all";
 
-        // 1. Filter Role & Akun sesuai tampilan tabel saat ini
         if (userRole === "Office" || userRole === "Non_Office") {
           const targetU = String(currentUser.username || "").toLowerCase().trim();
           const targetN = String(currentUser.name || "").toLowerCase().trim();
@@ -2951,7 +2910,6 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
           });
         }
 
-        // 2. Filter Waktu (Minggu Ini / Bulan Ini / Semua)
         list = filterByTime(list);
         list.sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -2960,7 +2918,6 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
           return;
         }
 
-        // 3. Format CSV yang Aman (Tidak akan crash jika ada angka atau tanda kutip)
         let csvContent = "";
         if (currentRecapViewRole === "Office") {
           const headers = ["No", "Date", "Activity Description", "Result", "Project Name", "Project Code", "Remarks", "Approval 1 (RPM/PM)", "RPM/PM Remark", "Approval 2", "PD Remark", "Nama Karyawan"];
@@ -3172,14 +3129,14 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
         const targetN = String(currentUser.name || "").toLowerCase().trim();
         const targetI = String(currentUser.idKaryawan || "").toLowerCase().trim();
 
-      list = list.filter(p => {
-        const pU = String(p.username || "").toLowerCase().trim();
-        const pN = String(p.name || p.nama || "").toLowerCase().trim();
-        const pI = String(p.idKaryawan || "").toLowerCase().trim();
-        return (pU && targetU && pU === targetU) || 
-         (pN && targetN && pN === targetN) || 
-         (pI && targetI && pI === targetI);
-});
+        list = list.filter(p => {
+          const pU = String(p.username || "").toLowerCase().trim();
+          const pN = String(p.name || p.nama || "").toLowerCase().trim();
+          const pI = String(p.idKaryawan || "").toLowerCase().trim();
+          return (pU && targetU && pU === targetU) || 
+                 (pN && targetN && pN === targetN) || 
+                 (pI && targetI && pI === targetI);
+        });
       } else if (userRole === "PM" || userRole === "RPM" || userRole === "PD") {
         list = list.filter(p => (p.projectName || "").trim().toLowerCase() === userProject);
       }
@@ -3257,14 +3214,14 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
         const targetN = String(currentUser.name || "").toLowerCase().trim();
         const targetI = String(currentUser.idKaryawan || "").toLowerCase().trim();
 
-      list = list.filter(p => {
-        const pU = String(p.username || "").toLowerCase().trim();
-        const pN = String(p.name || p.nama || "").toLowerCase().trim();
-        const pI = String(p.idKaryawan || "").toLowerCase().trim();
-        return (pU && targetU && pU === targetU) || 
-         (pN && targetN && pN === targetN) || 
-         (pI && targetI && pI === targetI);
-});
+        list = list.filter(p => {
+          const pU = String(p.username || "").toLowerCase().trim();
+          const pN = String(p.name || p.nama || "").toLowerCase().trim();
+          const pI = String(p.idKaryawan || "").toLowerCase().trim();
+          return (pU && targetU && pU === targetU) || 
+                 (pN && targetN && pN === targetN) || 
+                 (pI && targetI && pI === targetI);
+        });
       }
       const headers = ["No", "Tanggal", "Nama", "ID Karyawan", "Role", "Project", "Jam Masuk", "Alamat Masuk", "Jam Pulang", "Alamat Pulang", "Activity", "Result", "Approval 1 (RPM/PM)", "Approval 2"];
       const rows = list.map((item, i) => [
@@ -3404,9 +3361,9 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
           <td><code>${escapeHtml(u.username)}</code></td>
           <td><span class="text-muted">••••••••</span></td>
           <td class="text-start">
-              <div class="fw-bold">${escapeHtml(u.name)}</div>
-              <small class="text-muted">${escapeHtml(u.jabatan || "-")}</small>
-            </td>
+            <div class="fw-bold">${escapeHtml(u.name)}</div>
+            <small class="text-muted">${escapeHtml(u.jabatan || "-")}</small>
+          </td>
           <td><span class="badge bg-secondary">${u.role}</span></td>
           <td>${escapeHtml(u.idKaryawan || '-')}</td>
           <td><small>${escapeHtml(u.projectName || '-')}</small></td>
@@ -3420,7 +3377,7 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
         tbody.appendChild(tr);
       });
     }
-// Isi otomatis opsi Project Name & Code dari spreadsheet ke datalist saat modal dibuka
+
     document.getElementById("modalAddUser")?.addEventListener("show.bs.modal", () => {
       const projectListEl = document.getElementById("projectNameSuggestions");
       const codeListEl = document.getElementById("projectCodeSuggestions");
@@ -3428,7 +3385,6 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
       const projects = new Set();
       const codes = new Set();
 
-      // Ambil seluruh proyek dari data spreadsheet yang tersinkron
       db.users.forEach(u => {
         if (u.projectName && u.projectName !== "-" && u.projectName.trim() !== "") projects.add(u.projectName.trim());
         if (u.projectCode && u.projectCode !== "-" && u.projectCode.trim() !== "") codes.add(u.projectCode.trim());
@@ -3445,17 +3401,17 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
         codeListEl.innerHTML = Array.from(codes).map(c => `<option value="${c}"></option>`).join("");
       }
 
-      // Pastikan form input kosong siap pakai
       document.getElementById("newProjectName").value = "";
       document.getElementById("newProjectCode").value = "";
     });
+
     document.getElementById("formAddUser").addEventListener("submit", async (e) => {
       e.preventDefault();
       const newUser = {
         username: document.getElementById("newUsername").value.trim().toLowerCase(),
         password: document.getElementById("newPassword").value,
         name: document.getElementById("newName").value.trim(),
-        jabatan: document.getElementById("newJabatan") ? document.getElementById("newJabatan").value.trim() : "-", // <-- Tambahkan baris ini
+        jabatan: document.getElementById("newJabatan") ? document.getElementById("newJabatan").value.trim() : "-",
         role: document.getElementById("newRole").value,
         idKaryawan: document.getElementById("newIdKaryawan").value.trim() || "-",
         noWa: document.getElementById("newWa").value.trim() || "-",
@@ -3498,83 +3454,81 @@ document.getElementById("recapHeadingTitle").textContent = `${labelFormat} - Job
       if (!user) return;
 
       const setVal = (id, val) => {
-      const el = document.getElementById(id);
-      if (el) el.value = val || "";
-    };
+        const el = document.getElementById(id);
+        if (el) el.value = val || "";
+      };
 
-    setVal("editOriginalUsername", user.username);
-    setVal("editUsername", user.username);
-    setVal("editPassword", user.password);
-    setVal("editName", user.name);
-    setVal("editJabatan", user.jabatan);
-    setVal("editRole", user.role);
-    setVal("editIdKaryawan", user.idKaryawan);
-    const setDropdownVal = (id, val) => {
-      const sel = document.getElementById(id);
-      if (!sel) return;
-      const target = (val || "").trim();
+      setVal("editOriginalUsername", user.username);
+      setVal("editUsername", user.username);
+      setVal("editPassword", user.password);
+      setVal("editName", user.name);
+      setVal("editJabatan", user.jabatan);
+      setVal("editRole", user.role);
+      setVal("editIdKaryawan", user.idKaryawan);
+      
+      const setDropdownVal = (id, val) => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        const target = (val || "").trim();
 
-      // Pengaman jika elemen masih bertipe <input> biasa
-      if (!sel.options) {
-        sel.value = target;
-        return;
-      }
-
-      if (!target || target === "-") {
-        sel.value = target || "";
-        return;
-      }
-
-      // Jika bertipe <select> dropdown
-      let opt = Array.from(sel.options).find(o => o.value.toLowerCase() === target.toLowerCase());
-      if (!opt) {
-        const newOpt = document.createElement("option");
-        newOpt.value = target;
-        newOpt.textContent = target;
-        const customOpt = sel.querySelector('option[value="__CUSTOM__"]');
-        if (customOpt) {
-          sel.insertBefore(newOpt, customOpt);
-        } else {
-          sel.appendChild(newOpt);
+        if (!sel.options) {
+          sel.value = target;
+          return;
         }
-        sel.value = target;
-      } else {
-        sel.value = opt.value;
-      }
-      sel.dataset.prev = sel.value;
-    };
 
-    setDropdownVal("editProjectName", user.projectName);
-    setDropdownVal("editProjectCode", user.projectCode);
-    setVal("editPeriode", user.periode);
-    setVal("editWa", user.noWa);
+        if (!target || target === "-") {
+          sel.value = target || "";
+          return;
+        }
+
+        let opt = Array.from(sel.options).find(o => o.value.toLowerCase() === target.toLowerCase());
+        if (!opt) {
+          const newOpt = document.createElement("option");
+          newOpt.value = target;
+          newOpt.textContent = target;
+          const customOpt = sel.querySelector('option[value="__CUSTOM__"]');
+          if (customOpt) {
+            sel.insertBefore(newOpt, customOpt);
+          } else {
+            sel.appendChild(newOpt);
+          }
+          sel.value = target;
+        } else {
+          sel.value = opt.value;
+        }
+        sel.dataset.prev = sel.value;
+      };
+
+      setDropdownVal("editProjectName", user.projectName);
+      setDropdownVal("editProjectCode", user.projectCode);
+      setVal("editPeriode", user.periode);
+      setVal("editWa", user.noWa);
       new bootstrap.Modal(document.getElementById("modalEditUser")).show();
     };
 
-    // Fungsi pilihan manual Project Name & Code
-function handleCustomSelect(sel, title) {
-  if (sel.value === "__CUSTOM__") {
-    const val = prompt(`Masukkan ${title} baru:`);
-    if (val && val.trim() !== "" && val.trim() !== "-") {
-      const cleanVal = val.trim();
-      let exists = Array.from(sel.options).find(o => o.value.toLowerCase() === cleanVal.toLowerCase());
-      if (!exists) {
-        const newOpt = document.createElement("option");
-        newOpt.value = cleanVal;
-        newOpt.textContent = cleanVal;
-        sel.insertBefore(newOpt, sel.querySelector('option[value="__CUSTOM__"]'));
-        sel.value = cleanVal;
+    function handleCustomSelect(sel, title) {
+      if (sel.value === "__CUSTOM__") {
+        const val = prompt(`Masukkan ${title} baru:`);
+        if (val && val.trim() !== "" && val.trim() !== "-") {
+          const cleanVal = val.trim();
+          let exists = Array.from(sel.options).find(o => o.value.toLowerCase() === cleanVal.toLowerCase());
+          if (!exists) {
+            const newOpt = document.createElement("option");
+            newOpt.value = cleanVal;
+            newOpt.textContent = cleanVal;
+            sel.insertBefore(newOpt, sel.querySelector('option[value="__CUSTOM__"]'));
+            sel.value = cleanVal;
+          } else {
+            sel.value = exists.value;
+          }
+          sel.dataset.prev = sel.value;
+        } else {
+          sel.value = sel.dataset.prev || "-";
+        }
       } else {
-        sel.value = exists.value;
+        sel.dataset.prev = sel.value;
       }
-      sel.dataset.prev = sel.value;
-    } else {
-      sel.value = sel.dataset.prev || "-";
     }
-  } else {
-    sel.dataset.prev = sel.value;
-  }
-}
     
     document.getElementById("formEditUser").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -3593,8 +3547,8 @@ function handleCustomSelect(sel, title) {
       user.password = document.getElementById("editPassword").value;
       user.name = document.getElementById("editName").value.trim();
       if (document.getElementById("editJabatan")) {
-      user.jabatan = document.getElementById("editJabatan").value.trim();
-    }
+        user.jabatan = document.getElementById("editJabatan").value.trim();
+      }
       user.role = document.getElementById("editRole").value;
       user.idKaryawan = document.getElementById("editIdKaryawan").value.trim();
       user.projectName = document.getElementById("editProjectName").value.trim();
@@ -3605,8 +3559,8 @@ function handleCustomSelect(sel, title) {
       if (newUname !== origUname) {
         db.progress.forEach(p => {
           if (p.username && p.username.toLowerCase() === origUname) p.username = newUname;
-  });
-}
+        });
+      }
 
       saveDbToLocalStorage();
       showLoading("Memperbarui user...");
@@ -3693,7 +3647,7 @@ function handleCustomSelect(sel, title) {
         }
         if (json.masterSow && json.masterSow.length) {
           db.masterSow = json.masterSow;
-            if (typeof populateSowDatalist === "function") populateSowDatalist();
+          if (typeof populateSowDatalist === "function") populateSowDatalist();
         }
         if (json.progress && json.progress.length) {
           db.progress = json.progress.map(p => {
