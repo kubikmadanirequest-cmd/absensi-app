@@ -2413,6 +2413,7 @@
       }
     }
 
+    // 1. Fungsi Parser Tanggal (Pembaca Teks Jadi Objek Date)
     function parseRecordDate(dStr) {
       if (!dStr) return new Date();
       if (dStr instanceof Date) return dStr;
@@ -2420,35 +2421,36 @@
       const str = String(dStr).trim();
       if (!str || str === "-") return new Date();
 
-      // 1. Format ISO/UTC dari database Google Sheets (Sangat Akurat)
+      // A. Format ISO (Database/Server-Side)
       if (str.includes("T") || str.includes("Z")) {
         const d = new Date(str);
         if (!isNaN(d.getTime())) return d;
       }
-
-      // 2. Format ISO YYYY-MM-DD
       if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
         const parts = str.slice(0, 10).split('-');
         return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
       }
 
-      // 3. Format Teks Bulan (contoh: 22-Sep-26 atau 22-Sep-2026)
-      const parts = str.split(/[-/\s]/);
-      if (parts.length === 3 && isNaN(parts[1])) {
-        const months = { 
-          jan: 0, feb: 1, mar: 2, apr: 3, mei: 4, may: 4, jun: 5, 
-          jul: 6, agu: 7, aug: 7, sep: 8, okt: 9, oct: 9, nop: 10, nov: 10, des: 11, dec: 11 
-        };
-        const day = parseInt(parts[0], 10);
-        const mStr = parts[1].toLowerCase().slice(0, 3);
-        let year = parseInt(parts[2], 10);
+      // B. Format Teks Bulan Bahasa Indonesia & Inggris yang Kuat (misal: 12 Sep 26, 09-Okt-26, 09 Des 2026)
+      const textMatch = str.match(/^(\d{1,2})[-/\s]+([a-zA-Z]+)[-/\s]+(\d{2,4})/);
+      if (textMatch) {
+        const day = parseInt(textMatch[1], 10);
+        const monthStr = textMatch[2].toLowerCase().slice(0, 3);
+        let year = parseInt(textMatch[3], 10);
         if (year < 100) year += 2000;
-        if (!isNaN(day) && months[mStr] !== undefined) {
-          return new Date(year, months[mStr], day);
+
+        const monthsMap = {
+          jan: 0, feb: 1, mar: 2, apr: 3, mei: 4, may: 4, jun: 5,
+          jul: 6, agu: 7, agt: 7, aug: 7, sep: 8, okt: 9, oct: 9,
+          nop: 10, nov: 10, des: 11, dec: 11
+        };
+
+        if (monthsMap[monthStr] !== undefined) {
+          return new Date(year, monthsMap[monthStr], day);
         }
       }
 
-      // 4. Format Angka Bergaris Miring (09/12/2026)
+      // C. Format Angka (09/12/2026 atau 09-12-2026)
       const numMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
       if (numMatch) {
         let p1 = parseInt(numMatch[1], 10);
@@ -2456,67 +2458,46 @@
         let yr = parseInt(numMatch[3], 10);
         if (yr < 100) yr += 2000;
 
+        // KUNCI: Google Sheets API mengirim MM/DD/YYYY secara default (misal 09/22/2026 untuk 22 Sep)
         let day, month;
-        // KUNCI PERBAIKAN DESEMBER: Google Sheets API default mengirim MM/DD/YYYY
-        // Jika tertulis 09/12/2026 (Maksudnya 12 September), p1=9(Bulan), p2=12(Tanggal)
         if (p1 > 12) {
-          // Pasti DD/MM (misal 25/09)
+          // Tidak mungkin p1 itu bulan. Berarti format DD/MM
           day = p1; month = p2 - 1;
         } else if (p2 > 12) {
-          // Pasti MM/DD (misal 09/25)
+          // Tidak mungkin p2 itu bulan. Berarti format MM/DD (Google Sheets Default)
           month = p1 - 1; day = p2;
         } else {
-          // Ambigu (misal 09/12). Kita paksa baca sebagai Bulan/Tanggal (MM/DD) mengikuti Google Sheets
+          // Jika ambigu (misal 09/12), PAKSA ikuti kebiasaan API Sheets yaitu MM/DD
+          // 09 (Bulan 9/Sep), 12 (Tanggal)
           month = p1 - 1; day = p2;
         }
         return new Date(yr, month, day);
       }
 
+      // D. Fallback Terakhir
       const parsed = new Date(str);
       return isNaN(parsed.getTime()) ? new Date() : parsed;
     }
 
-    // Helper penyeragam tanggal ke format YYYY-MM-DD
+    // 2. Fungsi Normalisasi Teks untuk Pencocokan Hari Ini (YYYY-MM-DD)
     function formatToYMD(dStr) {
       if (!dStr) return "";
       if (dStr instanceof Date) {
         if (isNaN(dStr.getTime())) return "";
         return `${dStr.getFullYear()}-${String(dStr.getMonth() + 1).padStart(2, '0')}-${String(dStr.getDate()).padStart(2, '0')}`;
       }
+      
       const str = String(dStr).trim();
       if (!str || str === "-") return "";
 
-      // 1. Format ISO/UTC dari database Google Sheets
-      if (str.includes("T") || str.includes("Z")) {
-        const d = new Date(str);
-        if (!isNaN(d.getTime())) {
-          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        }
-      }
-
-      // 2. Format DD/MM/YYYY atau MM/DD/YYYY
-      const dmyMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
-      if (dmyMatch) {
-        let p1 = parseInt(dmyMatch[1], 10);
-        let p2 = parseInt(dmyMatch[2], 10);
-        let yr = parseInt(dmyMatch[3], 10);
-        if (yr < 100) yr += 2000;
-        
-        let day, month;
-        if (p1 > 12) { day = p1; month = p2; }
-        else if (p2 > 12) { day = p2; month = p1; }
-        else { month = p1; day = p2; } // Paksa ke MM/DD mengikuti Sheets
-        
-        return `${yr}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      }
-
-      // 3. Format teks bulan (22-Sep-26) atau ISO standar
+      // Kita buang logika manual yang panjang di sini, dan langsung perintahkan parseRecordDate untuk bekerja!
+      // Karena parseRecordDate sekarang sudah sangat kokoh, formatToYMD tinggal meminta hasil akhirnya saja.
       const parsed = parseRecordDate(str);
       if (parsed && !isNaN(parsed.getTime())) {
         return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
       }
 
-      return str.slice(0, 10);
+      return str.slice(0, 10); // Ultimate fallback jika benar-benar rusak
     }
 
     function filterByTime(list) {
