@@ -1055,51 +1055,41 @@
     // ⚡ PENCEGAT PENGIRIMAN DATA: KILAT KE FIREBASE, CADANGAN KE GOOGLE SHEETS
     // ====================================================================
     function getApiUrl() {
-      const val = gasApiUrlInput ? gasApiUrlInput.value.trim() : "";
-      const apiUrl = val || DEFAULT_GAS_URL;
-
-      if (!window.hasInterceptedFetch) {
-        window.hasInterceptedFetch = true;
-        const nativeFetch = window.fetch;
-
-        window.fetch = async function(resource, init) {
-          const urlStr = typeof resource === "string" ? resource : (resource ? resource.url : "");
-
-          if (urlStr && urlStr.startsWith("https://script.google.com/") && init && init.method === "POST" && init.body) {
-            try {
-              const payload = JSON.parse(init.body);
-              if (payload && payload.action && payload.data) {
-                // Tembak instan ke Firebase Firestore
-                firebaseDB.collection("AbsensiV1").add({
-                  ...payload.data,
-                  actionType: payload.action,
-                  savedAt: new Date().toISOString()
-                }).then(() => {
-                  console.log("⚡ [Firebase] Data berhasil mendarat cepat di AbsensiV1!");
-                }).catch(err => {
-                  console.warn("⚠️ [Firebase] Gagal mengirim ke Firestore:", err);
-                });
-
-                // Jalur Google Apps Script tetap diteruskan di latar belakang (tanpa menahan loading layar)
-                nativeFetch(resource, init).catch(e => console.warn("GAS background sync note:", e));
-
-                // Langsung berikan respon berhasil semu agar SweetAlert langsung muncul seketika
-                return new Response(JSON.stringify({ status: "success" }), {
-                  status: 200,
-                  headers: { "Content-Type": "application/json" }
-                });
-              }
-            } catch (err) {
-              // Jika bukan JSON tindakan absensi, teruskan native
-            }
-          }
-
-          return nativeFetch(resource, init);
-        };
+  const val = gasApiUrlInput ? gasApiUrlInput.value.trim() : "";
+  const apiUrl = val || DEFAULT_GAS_URL;
+  
+  window.originalFetch = window.originalFetch || window.fetch;
+  window.fetch = async function(url, options) {
+    if (url === apiUrl && options && options.body) {
+      try {
+        const payload = JSON.parse(options.body);
+        
+        // 🚨 JALUR KHUSUS LOGIN: Jika aksi berupa login/validasi, biarkan lewat normal ke Google Sheet
+        if (payload.action === "checkLogin" || payload.action === "validateUser") {
+          return window.originalFetch(url, options);
+        }
+        
+        // 🚀 JALUR KILAT FIREBASE: Khusus untuk Tombol Absen dan Jobs Progress
+        const folderName = payload.action === "submitCheckIn" ? "AbsensiMasukV1" : 
+                           payload.action === "submitJobsProgress" ? "JobsProgressV1" : "AbsensiPulangV1";
+        
+        await firebaseDB.collection(folderName).add(payload.data);
+        console.log("🚀 Berhasil ditembak cepat ke Firebase folder: " + folderName);
+      } catch (fbError) {
+        console.error("Gagal Firebase:", fbError);
       }
-
-      return apiUrl;
+      
+      // Jalur cadangan Google Sheets berjalan diam-diam di latar belakang
+      window.originalFetch(url, options).catch(e => console.warn("GAS background error:", e));
+      
+      // Mengelabui tombol absen agar langsung sukses tanpa loading lama
+      return new Response(JSON.stringify({ status: "success" }), { status: 200 });
     }
+    return window.originalFetch(url, options);
+  };
+
+  return apiUrl;
+}
 
     // ====================================================================
     // HELPER: MENGUBAH URL GOOGLE DRIVE MENJADI DIRECT IMAGE STREAM
