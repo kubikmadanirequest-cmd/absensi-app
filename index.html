@@ -288,7 +288,6 @@
     <h6 class="fw-semibold text-white" id="loadingText">Memproses data...</h6>
   </div>
 
-  <!-- Login Section -->
   <section id="loginSection" class="login-wrapper">
     <div class="login-card">
       <div class="brand-icon-box">
@@ -337,7 +336,6 @@
     </div>
   </section>
 
-  <!-- App Navbar -->
   <nav id="mainNavbar" class="navbar navbar-expand-lg app-navbar d-none">
     <div class="container-fluid px-3 px-lg-4">
       <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-dark" href="#">
@@ -348,6 +346,17 @@
       </a>
 
       <div class="d-flex align-items-center gap-2 ms-auto">
+        <!-- FITUR KHUSUS ADMIN: DROPDOWN SIMULASI PERGANTIAN AKUN/ROLE -->
+        <div id="adminSwitchWrapper" class="d-none d-flex align-items-center gap-1 bg-warning bg-opacity-25 border border-warning px-2 py-1 rounded-3 me-2">
+          <i class="bi bi-person-bounding-box text-warning-emphasis"></i>
+          <span class="small fw-bold text-dark d-none d-md-inline" style="font-size: 0.75rem;">Simulasi:</span>
+          <select id="selectSwitchUser" class="form-select form-select-sm py-0 px-2 fw-semibold" style="font-size: 0.8rem; width: auto; max-width: 220px; height: 30px;" title="Pilih akun untuk inspeksi tampilan tanpa logout">
+          </select>
+          <button type="button" id="btnReturnToAdmin" class="btn btn-sm btn-dark py-0 px-2 d-none fw-semibold" style="font-size: 0.75rem; height: 30px;" title="Kembali ke Akun Admin Utama">
+            <i class="bi bi-arrow-return-left me-1"></i> Admin
+          </button>
+        </div>
+
         <div class="text-end d-none d-sm-block">
           <div class="fw-semibold text-dark small" id="navUserName">Nama User</div>
           <div class="text-muted" style="font-size: 0.75rem;" id="navUserRole">Role User</div>
@@ -365,10 +374,20 @@
 
   <main class="container-fluid px-3 px-lg-4 py-3 flex-grow-1">
 
+    <!-- BANNER PERINGATAN KETIKA ADMIN SEDANG MENSIMULASIKAN ROLE LAIN -->
+    <div id="adminSimulationBanner" class="alert alert-warning border-warning d-none py-2 px-3 mb-3 d-flex flex-wrap justify-content-between align-items-center gap-2 shadow-sm rounded-3">
+      <div class="small d-flex align-items-center gap-2">
+        <span class="badge bg-warning text-dark px-2 py-1"><i class="bi bi-eye-fill me-1"></i> Mode Simulasi Inspeksi</span>
+        <span class="text-dark">Anda sedang melihat & memeriksa sistem sebagai: <strong id="simulatedUserBadge" class="badge bg-dark">-</strong></span>
+      </div>
+      <button type="button" class="btn btn-sm btn-dark py-1 px-3 fw-semibold shadow-sm" onclick="switchUserSimulate(originalAdminUser.username)">
+        <i class="bi bi-arrow-return-left me-1"></i> Kembali ke Akun Admin
+      </button>
+    </div>
+
     <!-- 1. PORTAL HARIAN: ABSENSI MASUK, FORM PROGRESS, ABSENSI PULANG -->
     <section id="formProgressSection" class="d-none">
       
-      <!-- Step Indicator -->
       <div class="workflow-steps-wrapper mb-3">
         <div class="workflow-step-item" id="stepIndicatorMasuk">
           <div class="workflow-step-circle"><i class="bi bi-camera"></i></div>
@@ -1099,6 +1118,7 @@
       return url;
     }
 
+    let originalAdminUser = null; // Menyimpan status admin sebelum simulasi
     let currentUser = null;
     let currentFilter = "week";
     let currentRecapViewRole = "Office";
@@ -1157,200 +1177,6 @@
         pmRemark: "Proposal sudah ditinjau, sangat rapi.",
         approval2: "ok",
         pdRemark: "Disetujui untuk dikirimkan."
-      },
-      {
-        id: "PROG-102",
-        username: "denizar",
-        name: "Denizar",
-        idKaryawan: "2601020033",
-        role: "Office",
-        projectName: "Telkom infra",
-        projectCode: "RO",
-        siteId: "-",
-        sow: "-",
-        periode: "agustus - desember 26",
-        date: "2026-08-08",
-        timeMasuk: "08:25:30",
-        alamatMasuk: "Jl. Kebon Sirih No. 10, Jakarta Pusat",
-        photoMasuk: "https://placehold.co/400x300/1e293b/ffffff?text=Selfie+Masuk+Selasa",
-        hasJobsProgress: true,
-        activityDesc: "memperbaiki aplikasi absensi",
-        result: "80%",
-        OfficeRemarks: "bisa dipercepat",
-        timePulang: "17:15:10",
-        alamatPulang: "Jl. Kebon Sirih No. 10, Jakarta Pusat",
-        photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Selfie+Pulang+Selasa",
-        approval1: "ok",
-        pmRemark: "Lanjutkan ke pengetesan kamera dan reverse geocoding.",
-        approval2: "ok",
-        pdRemark: "Sudah oke"
-      },
-      {
-        id: "PROG-103",
-        username: "denizar",
-        name: "Denizar",
-        idKaryawan: "2601020033",
-        role: "Office",
-        projectName: "Telkom infra",
-        projectCode: "RO",
-        siteId: "-",
-        sow: "-",
-        periode: "agustus - desember 26",
-        date: "2026-08-08",
-        timeMasuk: "08:30:00",
-        alamatMasuk: "Jl. Gatot Subroto No. 52, Jakarta Selatan",
-        photoMasuk: "-",
-        hasJobsProgress: true,
-        activityDesc: "meeting dengan Tim",
-        result: "done",
-        OfficeRemarks: "sip",
-        timePulang: "17:00:00",
-        alamatPulang: "-",
-        photoPulang: "-",
-        approval1: "ok",
-        pmRemark: "-",
-        approval2: "ok",
-        pdRemark: "-"
-      },
-      {
-        id: "PROG-HW-01",
-        username: "ahmad.hw",
-        name: "Ahmad Rizky",
-        idKaryawan: "2601020044",
-        role: "Non_Office",
-        projectName: "Huawei",
-        projectCode: "HWI",
-        siteId: "HWI-JKT09",
-        sow: "Swap Antena Sektoral & Commisioning",
-        periode: "agustus - desember 26",
-        date: "2026-08-08",
-        timeMasuk: "08:05:00",
-        alamatMasuk: "Site HWI-JKT09 Kalibata",
-        photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+HWI-JKT09",
-        hasJobsProgress: true,
-        activityDesc: "Penggantian antena sektoral 3 sektor dan testing VSWR",
-        result: "done",
-        OfficeRemarks: "VSWR normal di bawah 1.3",
-        timePulang: "17:30:00",
-        alamatPulang: "Site HWI-JKT09 Kalibata",
-        photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+HWI-JKT09",
-        approval1: "pending",
-        pmRemark: "-",
-        approval2: "pending",
-        pdRemark: "-",
-        picRigger: "Ahmad Rizky"
-      },
-      {
-        id: "PROG-ZTE-01",
-        username: "fajar.zte",
-        name: "Fajar Pratama",
-        idKaryawan: "2601020099",
-        role: "Non_Office",
-        projectName: "ZTE",
-        projectCode: "ZTE-RO",
-        siteId: "ZTE-BDG02",
-        sow: "Drive Test Cluster 4",
-        periode: "agustus - desember 26",
-        date: "2026-08-08",
-        timeMasuk: "08:15:00",
-        alamatMasuk: "Cluster Bandung Timur",
-        photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+ZTE-BDG02",
-        hasJobsProgress: true,
-        activityDesc: "Single Site Verification (SSV) 5G NSA",
-        result: "Done",
-        OfficeRemarks: "Throughput download mencapai 450Mbps",
-        timePulang: "17:45:00",
-        alamatPulang: "Cluster Bandung Timur",
-        photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+ZTE-BDG02",
-        approval1: "pending",
-        pmRemark: "-",
-        approval2: "pending",
-        pdRemark: "-",
-        picRigger: "Fajar Pratama"
-      },
-      {
-        id: "PROG-TECH-01",
-        username: "dewin",
-        name: "Dewin Saputra",
-        idKaryawan: "Rigger",
-        role: "Non_Office",
-        projectName: "RO Kalimantan",
-        projectCode: "-",
-        siteId: "NNK108,NNK060",
-        sow: "Complaint",
-        periode: "Agustus 2026",
-        date: "2026-08-01",
-        timeMasuk: "08:00:10",
-        alamatMasuk: "Site NNK108 Kalimantan",
-        photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+NNK108",
-        hasJobsProgress: true,
-        activityDesc: "Physical Tuning & Drive Test",
-        result: "Done",
-        OfficeRemarks: "-",
-        timePulang: "17:30:00",
-        alamatPulang: "Site NNK108 Kalimantan",
-        photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+NNK108",
-        approval1: "Ok",
-        pmRemark: "Pekerjaan sesuai standar",
-        approval2: "-",
-        pdRemark: "-",
-        picRigger: "Dewin Saputra"
-      },
-      {
-        id: "PROG-TECH-02",
-        username: "dewin",
-        name: "Dewin Saputra",
-        idKaryawan: "Rigger",
-        role: "Non_Office",
-        projectName: "RO Kalimantan",
-        projectCode: "-",
-        siteId: "NNK066",
-        sow: "Complaint",
-        periode: "Agustus 2026",
-        date: "2026-08-02",
-        timeMasuk: "08:15:00",
-        alamatMasuk: "Site NNK066 Kalimantan",
-        photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+NNK066",
-        hasJobsProgress: true,
-        activityDesc: "Physical Tuning & Drive Test",
-        result: "Done",
-        OfficeRemarks: "-",
-        timePulang: "17:45:00",
-        alamatPulang: "Site NNK066 Kalimantan",
-        photoPulang: "https://placehold.co/400x300/0f172a/ffffff?text=Pulang+NNK066",
-        approval1: "Ok",
-        pmRemark: "-",
-        approval2: "-",
-        pdRemark: "-",
-        picRigger: "Dewin Saputra"
-      },
-      {
-        id: "PROG-TECH-03",
-        username: "dewin",
-        name: "Dewin Saputra",
-        idKaryawan: "Rigger",
-        role: "Non_Office",
-        projectName: "RO Kalimantan",
-        projectCode: "-",
-        siteId: "TRK018,TRK078,",
-        sow: "Red Coverage",
-        periode: "Agustus 2026",
-        date: "2026-08-03",
-        timeMasuk: "08:10:00",
-        alamatMasuk: "Site TRK018 Kalimantan",
-        photoMasuk: "https://placehold.co/400x300/0f172a/ffffff?text=Site+TRK018",
-        hasJobsProgress: true,
-        activityDesc: "Physical Tuning",
-        result: "Done",
-        OfficeRemarks: "-",
-        timePulang: "18:00:00",
-        alamatPulang: "Site TRK018 Kalimantan",
-        photoPulang: "-",
-        approval1: "Ok",
-        pmRemark: "-",
-        approval2: "-",
-        pdRemark: "-",
-        picRigger: "Dewin Saputra"
       }
     ];
 
@@ -1500,8 +1326,14 @@
 
       if (found) {
         currentUser = found;
+        if (currentUser.role === "Admin System" || currentUser.role === "Admin") {
+          originalAdminUser = currentUser;
+        } else {
+          originalAdminUser = null;
+        }
         hideLoading();
         configureUserDashboard();
+        updateAdminSwitchUserDropdown();
         // Sinkronisasi data Google Sheets dijalankan diam-diam di background tanpa menahan layar
         syncFromGAS().then(() => {
           refreshDailyAttendanceStatus();
@@ -1523,32 +1355,140 @@
           const result = await res.json();
           if (result.status === "success") {
             currentUser = result.user;
+            if (currentUser.role === "Admin System" || currentUser.role === "Admin") {
+              originalAdminUser = currentUser;
+            } else {
+              originalAdminUser = null;
+            }
+            // Pastikan data presensi terbaru diunduh dan tersimpan di db.progress sebelum dashboard ditampilkan
+            await syncFromGAS();
             hideLoading();
             configureUserDashboard();
-            syncFromGAS().then(() => {
-              refreshDailyAttendanceStatus();
-              renderRecapTable();
-              renderPresensiLogTable();
-            });
+            updateAdminSwitchUserDropdown();
             return;
           }
         } catch (err) {
-          console.warn("GAS Login fallback error:", err);
+          console.warn("GAS Login fallback to local storage:", err);
         }
       }
 
-      hideLoading();
-      Swal.fire("Login Gagal", "Username atau password salah.", "error");
+      setTimeout(async () => {
+        const foundLocal = db.users.find(u => 
+          String(u.username || "").toLowerCase().trim() === username && 
+          String(u.password || "").trim() === String(password).trim()
+        );
+        if (foundLocal) {
+          currentUser = foundLocal;
+          if (currentUser.role === "Admin System" || currentUser.role === "Admin") {
+            originalAdminUser = currentUser;
+          } else {
+            originalAdminUser = null;
+          }
+          await syncFromGAS();
+          hideLoading();
+          configureUserDashboard();
+          updateAdminSwitchUserDropdown();
+        } else {
+          hideLoading();
+          Swal.fire("Login Gagal", "Username atau password salah.", "error");
+        }
+      }, 300);
     });
 
     btnHeaderLogout.addEventListener("click", () => {
       stopActiveCamera();
       currentUser = null;
+      originalAdminUser = null;
       mainNavbar.classList.add("d-none");
       formProgressSection.classList.add("d-none");
       adminSection.classList.add("d-none");
       reportNavTabs.classList.add("d-none");
       loginSection.classList.remove("d-none");
+      document.getElementById("adminSwitchWrapper")?.classList.add("d-none");
+      document.getElementById("adminSimulationBanner")?.classList.add("d-none");
+    });
+
+    // ====================================================================
+    // FITUR SIMULASI & PERGANTIAN AKUN / ROLE UNTUK ADMIN SYSTEM
+    // ====================================================================
+    function updateAdminSwitchUserDropdown() {
+      const select = document.getElementById("selectSwitchUser");
+      const wrapper = document.getElementById("adminSwitchWrapper");
+      if (!select || !wrapper) return;
+
+      if (!originalAdminUser) {
+        wrapper.classList.add("d-none");
+        return;
+      }
+
+      wrapper.classList.remove("d-none");
+      select.innerHTML = "";
+
+      const adminOpt = document.createElement("option");
+      adminOpt.value = originalAdminUser.username;
+      adminOpt.textContent = `⭐ [ADMIN] ${originalAdminUser.name}`;
+      select.appendChild(adminOpt);
+
+      const sortedUsers = [...db.users]
+        .filter(u => u.username.toLowerCase() !== originalAdminUser.username.toLowerCase())
+        .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+
+      sortedUsers.forEach(u => {
+        const opt = document.createElement("option");
+        opt.value = u.username;
+        const userJab = (u.jabatan && u.jabatan !== "-" && u.jabatan.trim() !== "") ? u.jabatan : u.role;
+        opt.textContent = `${u.name} (${userJab} - ${u.projectName || '-'})`;
+        select.appendChild(opt);
+      });
+
+      select.value = currentUser ? currentUser.username : originalAdminUser.username;
+    }
+
+    function switchUserSimulate(targetUsername) {
+      if (!originalAdminUser) return;
+      const target = db.users.find(u => u.username.toLowerCase() === String(targetUsername).toLowerCase().trim());
+      if (!target) {
+        Swal.fire("Pengguna Tidak Ditemukan", "Data pengguna tidak ditemukan di sistem.", "warning");
+        return;
+      }
+
+      stopActiveCamera();
+      capturedPhotoMasuk = null;
+      capturedPhotoPulang = null;
+
+      currentUser = target;
+
+      const banner = document.getElementById("adminSimulationBanner");
+      const bannerBadge = document.getElementById("simulatedUserBadge");
+      const btnReturn = document.getElementById("btnReturnToAdmin");
+
+      const isSimulatingOther = (currentUser.username.toLowerCase() !== originalAdminUser.username.toLowerCase());
+      if (isSimulatingOther) {
+        if (banner) banner.classList.remove("d-none");
+        if (bannerBadge) {
+          const jab = (currentUser.jabatan && currentUser.jabatan !== "-" && currentUser.jabatan.trim() !== "") ? currentUser.jabatan : currentUser.role;
+          bannerBadge.textContent = `${currentUser.name} (${jab} - ${currentUser.projectName || '-'})`;
+        }
+        if (btnReturn) btnReturn.classList.remove("d-none");
+      } else {
+        if (banner) banner.classList.add("d-none");
+        if (btnReturn) btnReturn.classList.add("d-none");
+      }
+
+      configureUserDashboard();
+
+      const select = document.getElementById("selectSwitchUser");
+      if (select) select.value = currentUser.username;
+    }
+    window.switchUserSimulate = switchUserSimulate;
+
+    document.getElementById("selectSwitchUser")?.addEventListener("change", (e) => {
+      switchUserSimulate(e.target.value);
+    });
+    document.getElementById("btnReturnToAdmin")?.addEventListener("click", () => {
+      if (originalAdminUser) {
+        switchUserSimulate(originalAdminUser.username);
+      }
     });
 
     function configureUserDashboard() {
@@ -1557,6 +1497,7 @@
       reportNavTabs.classList.remove("d-none");
 
       populateSowDatalist();
+      populateSiteIdDatalist(); // Panggil fungsi autocomplete Site ID
 
       const masterUser = (db.users || []).find(u => u.username && currentUser && u.username.toLowerCase() === currentUser.username.toLowerCase());
       const foundJabatan = (currentUser && currentUser.jabatan) || (masterUser && masterUser.jabatan) || "";
@@ -1567,7 +1508,7 @@
       navRoleBadge.textContent = userJabatan;
       navRoleBadge.className = "badge-role me-2";
 
-      if (currentUser.role === "Admin System" || currentUser.role === "Admin") navRoleBadge.classList.add("badge-as");
+      if (currentUser.role === "Admin System" || currentUser.role === "Admin" || originalAdminUser !== null) navRoleBadge.classList.add("badge-as");
       else if (currentUser.role === "RPM") navRoleBadge.classList.add("badge-rpm");
       else if (currentUser.role === "PM") navRoleBadge.classList.add("badge-pm");
       else if (currentUser.role === "PD") navRoleBadge.classList.add("badge-pd");
@@ -1594,7 +1535,7 @@
       renderActivityInputRows();
       refreshDailyAttendanceStatus();
 
-      if (currentUser.role === "Admin System" || currentUser.role === "Admin") {
+      if (currentUser.role === "Admin System" || currentUser.role === "Admin" || originalAdminUser !== null) {
         adminSection.classList.remove("d-none");
         document.getElementById("recapRoleSelectorGroup")?.classList.remove("d-none");
         renderAdminUsers();
@@ -1611,6 +1552,32 @@
       renderPresensiLogTable();
     }
 
+    // 1. Fungsi Autocomplete untuk Site ID
+    function populateSiteIdDatalist() {
+      try {
+        const datalist = document.getElementById("datalistSiteId");
+        if (!datalist || !db || !db.progress) return;
+
+        datalist.innerHTML = "";
+        const seenSites = new Set();
+
+        db.progress.forEach(p => {
+          if (p.siteId && p.siteId !== "-" && p.siteId.trim() !== "") {
+            const val = p.siteId.trim();
+            if (!seenSites.has(val)) {
+              seenSites.add(val);
+              const opt = document.createElement("option");
+              opt.value = val;
+              datalist.appendChild(opt);
+            }
+          }
+        });
+      } catch (err) {
+        console.warn("Auto-saran Site ID gagal dimuat:", err);
+      }
+    }
+
+    // 2. Fungsi mengisi opsi datalist sesuai Project teknisi yang login
     function populateSowDatalist() {
       try {
         const datalist = document.getElementById("datalistMasterSow");
@@ -1618,11 +1585,13 @@
 
         datalist.innerHTML = "";
 
+        // 1. Deklarasi userProj secara jelas dan aman
         let userProj = "";
         if (typeof currentUser !== "undefined" && currentUser) {
           userProj = String(currentUser.projectName || currentUser.project || "").trim().toLowerCase();
         }
 
+        // 2. Filter data SOW
         let list = db.masterSow;
         if (userProj && userProj !== "-" && userProj !== "") {
           const matched = db.masterSow.filter(item => {
@@ -1633,6 +1602,7 @@
           if (matched.length > 0) list = matched;
         }
 
+        // 3. Masukkan ke datalist tanpa duplikat
         const seenSow = new Set();
         list.forEach(item => {
           if (!item) return;
@@ -1645,10 +1615,12 @@
           }
         });
       } catch (err) {
-        console.warn("Autofill SOW dilewati:", err);
+        // Pengaman: Jika terjadi kesalahan data, catat saja dan JANGAN hentikan kamera/login
+        console.warn("Autofill SOW dilewati agar tidak mengganggu sistem utama:", err);
       }
     }
 
+    // 3. Fungsi Otomatis: Mengisi Item Code saat SOW dipilih
     window.handleSowSelection = function(inputElem) {
       try {
         if (!inputElem) return;
@@ -1672,10 +1644,12 @@
           return;
         }
 
+        // Ambil database master tanpa ketergantungan window
         const masterData = (typeof db !== "undefined" && db && (db.masterSow || db.Master_SOW)) 
           ? (db.masterSow || db.Master_SOW) 
           : ((typeof window.db !== "undefined" && window.db) ? (window.db.masterSow || window.db.Master_SOW) : []);
 
+        // Cocokkan teks SOW
         const match = masterData.find(item => {
           if (!item) return false;
           const text = String(item.sow || item.sowDetail || item.SOW || item["SOW Detail"] || "").trim().toLowerCase();
@@ -1869,7 +1843,7 @@
 
       let record = db.progress.find(p => {
         const uMatch = p.username && currentUser && p.username.toLowerCase() === currentUser.username.toLowerCase();
-        const dStr = String(p.date || "").trim().slice(0, 10);
+        const dStr = formatToYMD(p.date);
         return uMatch && dStr === today;
       });
 
@@ -1955,7 +1929,7 @@
               <div class="row g-2 mb-3">
                 <div class="col-md-2">
                   <label class="form-label small fw-semibold text-secondary mb-1">Site ID</label>
-                  <input type="text" class="form-control form-control-sm input-site-id" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108" required>
+                  <input type="text" class="form-control form-control-sm input-site-id" list="datalistSiteId" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108" required>
                 </div>
                 <div class="col-md-4">
                   <label class="form-label small fw-semibold text-secondary mb-1">Sow (Scope of Work)</label>
@@ -2413,7 +2387,7 @@
       }
     }
 
-    // 1. Fungsi Parser Tanggal (Pembaca Teks Jadi Objek Date)
+    // 1. Fungsi Parser Tanggal (Pembaca Teks Jadi Objek Date) - ANTI DESEMBER BUG
     function parseRecordDate(dStr) {
       if (!dStr) return new Date();
       if (dStr instanceof Date) return dStr;
@@ -2490,14 +2464,12 @@
       const str = String(dStr).trim();
       if (!str || str === "-") return "";
 
-      // Kita buang logika manual yang panjang di sini, dan langsung perintahkan parseRecordDate untuk bekerja!
-      // Karena parseRecordDate sekarang sudah sangat kokoh, formatToYMD tinggal meminta hasil akhirnya saja.
       const parsed = parseRecordDate(str);
       if (parsed && !isNaN(parsed.getTime())) {
         return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, '0')}-${String(parsed.getDate()).padStart(2, '0')}`;
       }
 
-      return str.slice(0, 10); // Ultimate fallback jika benar-benar rusak
+      return str.slice(0, 10);
     }
 
     function filterByTime(list) {
@@ -2627,27 +2599,28 @@
           const clean = s => String(s || '').toLowerCase().replace(/[\s\-_]/g, '');
 
           if (userRole === "PM" || userRole === "RPM") {
-            const uCode = (userCode || "").toLowerCase().trim();
-            const uProj = (userProj || "").toLowerCase().trim();
-            const iCode = (itemCode || "").toLowerCase().trim();
-            const iProj = (itemProj || "").toLowerCase().trim();
+            const uCode = clean(userCode);
+            const uProj = clean(userProj);
+            const iCode = clean(itemCode);
+            const iProj = clean(itemProj);
 
-            if (uCode === "" || uCode === "-" || uCode === "all" || uCode === "management" || uCode === "mgt") {
+            if (uCode === "" || uCode === "all" || uCode === "management" || uCode === "mgt") {
               return true;
             }
 
             let isCodeMatch = false;
+            // ANTI KEBOCORAN ARDIANSYAH: Hanya proses jika teknisi punya kode wilayah yang jelas (tidak kosong/strip)
             if (iCode !== "") {
-              if (iCode === uCode || iCode.indexOf(uCode) > -1 || uCode.indexOf(iCode) > -1) {
+              if (iCode === uCode || iCode.includes(uCode) || uCode.includes(iCode)) {
                 isCodeMatch = true;
               }
             }
 
             let isProjectMatch = true; 
-            if (uProj !== "" && uProj !== "-" && uProj !== "all" && uProj !== "management") {
+            if (uProj !== "" && uProj !== "all" && uProj !== "management") {
               isProjectMatch = false;
               if (iProj !== "") {
-                if (iProj === uProj || iProj.indexOf(uProj) > -1 || uProj.indexOf(iProj) > -1) {
+                if (iProj === uProj || iProj.includes(uProj) || uProj.includes(iProj)) {
                   isProjectMatch = true;
                 }
               }
@@ -2944,7 +2917,7 @@
         }
 
         list = filterByTime(list);
-        list.sort((a, b) => new Date(b.date) - new Date(a.date));
+        list.sort((a, b) => parseRecordDate(b.date) - parseRecordDate(a.date));
 
         if (list.length === 0) {
           Swal.fire("Informasi", `Tidak ada data pekerjaan untuk diekspor pada format ${currentRecapViewRole}.`, "info");
@@ -3174,7 +3147,7 @@
         list = list.filter(p => (p.projectName || "").trim().toLowerCase() === userProject);
       }
 
-      list.sort((a, b) => new Date(b.date) - new Date(a.date));
+      list.sort((a, b) => parseRecordDate(b.date) - parseRecordDate(a.date));
 
       if (list.length === 0) {
         tbody.innerHTML = `<tr><td colspan="11" class="text-center py-3 text-muted">Belum ada data log presensi.</td></tr>`;
@@ -3701,6 +3674,8 @@
       } catch (e) { console.warn("GAS sync error:", e); }
     }
   </script>
+  
+  <datalist id="datalistSiteId"></datalist>
   <datalist id="datalistMasterSow"></datalist>
 </body>
 </html>
