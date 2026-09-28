@@ -1557,23 +1557,25 @@
       try {
         const datalist = document.getElementById("datalistSiteId");
         if (!datalist || !db || !db.progress) return;
-
         datalist.innerHTML = "";
         const seenSites = new Set();
-
         db.progress.forEach(p => {
-          if (p.siteId && p.siteId !== "-" && p.siteId.trim() !== "") {
-            const val = p.siteId.trim();
-            if (!seenSites.has(val)) {
-              seenSites.add(val);
-              const opt = document.createElement("option");
-              opt.value = val;
-              datalist.appendChild(opt);
-            }
+          if (p.siteId && p.siteId !== "-") {
+            // Baris ini yang bertugas memecah koma
+            const sites = String(p.siteId).split(",");
+            sites.forEach(s => {
+              const sClean = s.trim();
+              if (sClean && !seenSites.has(sClean)) {
+                seenSites.add(sClean);
+                const opt = document.createElement("option");
+                opt.value = sClean;
+                datalist.appendChild(opt);
+              }
+            });
           }
         });
       } catch (err) {
-        console.warn("Auto-saran Site ID gagal dimuat:", err);
+        console.warn("Autofill Site ID error:", err);
       }
     }
 
@@ -1929,11 +1931,11 @@
               <div class="row g-2 mb-3">
                 <div class="col-md-2">
                   <label class="form-label small fw-semibold text-secondary mb-1">Site ID</label>
-                  <input type="text" class="form-control form-control-sm input-site-id" list="datalistSiteId" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108" required>
+                  <input type="text" class="form-control form-control-sm input-site-id" list="datalistSiteId" autocomplete="off" data-index="${idx}" value="${escapeHtml(item.siteId || '')}" placeholder="Contoh: NNK108" required>
                 </div>
                 <div class="col-md-4">
                   <label class="form-label small fw-semibold text-secondary mb-1">Sow (Scope of Work)</label>
-                  <input type="text" class="form-control form-control-sm input-sow" data-index="${idx}" value="${escapeHtml(item.sow || '')}" list="datalistMasterSow" placeholder="Ketik SOW..." oninput="handleSowSelection(this)" required>
+                  <input type="text" class="form-control form-control-sm input-sow" data-index="${idx}" value="${escapeHtml(item.sow || '')}" list="datalistMasterSow" autocomplete="off" placeholder="Ketik SOW..." oninput="handleSowSelection(this)" required>
                 </div>
                 <div class="col-md-2">
                   <label class="form-label small fw-semibold text-secondary mb-1">Item Code</label>
@@ -3653,7 +3655,7 @@
         }
         if (json.masterSow && json.masterSow.length) {
           db.masterSow = json.masterSow;
-          if (typeof populateSowDatalist === "function") populateSowDatalist();
+          if (typeof populateSowDatalist === "function") populateSowDatalist();        
         }
         if (json.progress && json.progress.length) {
           db.progress = json.progress.map(p => {
@@ -3670,6 +3672,8 @@
             return p;
           });
         }
+
+        if (typeof populateSiteIdDatalist === "function") populateSiteIdDatalist();
         saveDbToLocalStorage();
       } catch (e) { console.warn("GAS sync error:", e); }
     }
