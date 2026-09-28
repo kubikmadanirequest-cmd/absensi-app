@@ -1492,6 +1492,26 @@
 
       showLoading("Memverifikasi kredensial & menyinkronkan data...");
 
+      // Cek akun langsung di data lokal/tersimpan terlebih dahulu agar kilat
+      const found = db.users.find(u => 
+        String(u.username || "").toLowerCase().trim() === username && 
+        String(u.password || "").trim() === String(password).trim()
+      );
+
+      if (found) {
+        currentUser = found;
+        hideLoading();
+        configureUserDashboard();
+        // Sinkronisasi data Google Sheets dijalankan diam-diam di background tanpa menahan layar
+        syncFromGAS().then(() => {
+          refreshDailyAttendanceStatus();
+          renderRecapTable();
+          renderPresensiLogTable();
+        }).catch(err => console.warn(err));
+        return;
+      }
+
+      // Jika akun tidak ada di memori lokal, baru hubungi Apps Script
       const apiUrl = getApiUrl();
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
         try {
@@ -1503,31 +1523,22 @@
           const result = await res.json();
           if (result.status === "success") {
             currentUser = result.user;
-            await syncFromGAS();
             hideLoading();
             configureUserDashboard();
+            syncFromGAS().then(() => {
+              refreshDailyAttendanceStatus();
+              renderRecapTable();
+              renderPresensiLogTable();
+            });
             return;
           }
         } catch (err) {
-          console.warn("GAS Login fallback to local storage:", err);
+          console.warn("GAS Login fallback error:", err);
         }
       }
 
-      setTimeout(async () => {
-        const found = db.users.find(u => 
-          String(u.username || "").toLowerCase().trim() === username && 
-          String(u.password || "").trim() === String(password).trim()
-        );
-        if (found) {
-          currentUser = found;
-          await syncFromGAS();
-          hideLoading();
-          configureUserDashboard();
-        } else {
-          hideLoading();
-          Swal.fire("Login Gagal", "Username atau password salah.", "error");
-        }
-      }, 300);
+      hideLoading();
+      Swal.fire("Login Gagal", "Username atau password salah.", "error");
     });
 
     btnHeaderLogout.addEventListener("click", () => {
