@@ -1063,6 +1063,21 @@
     if (url === apiUrl && options && options.body) {
       try {
         const payload = JSON.parse(options.body);
+
+        // --- MULAI PENYELAMAT DATA KOSONG (UNTUK FIREBASE & SPREADSHEET) ---
+            if (payload.data && payload.data.username && typeof db !== "undefined" && db.users) {
+              const targetUname = String(payload.data.username).toLowerCase().trim();
+              const latestUser = db.users.find(u => String(u.username).toLowerCase().trim() === targetUname);
+              if (latestUser) {
+                payload.data.projectName = latestUser.projectName || payload.data.projectName;
+                payload.data.projectCode = latestUser.projectCode || payload.data.projectCode;
+                payload.data.periode = latestUser.periode || payload.data.periode;
+                
+                // Bungkus kembali datanya agar Google Sheet juga menerima data yang lengkap
+                options.body = JSON.stringify(payload); 
+              }
+            }
+            // --- SELESAI ---
         
         // 🚨 JALUR KHUSUS LOGIN: Jika aksi berupa login/validasi, biarkan lewat normal ke Google Sheet
         if (payload.action === "checkLogin" || payload.action === "validateUser") {
