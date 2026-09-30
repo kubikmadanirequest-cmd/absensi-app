@@ -2167,8 +2167,9 @@
     });
 
     btnSubmitAbsenPulang.addEventListener("click", async () => {
-      if (!capturedPhotoPulang) {
-        Swal.fire("Foto Belum Diambil", "Silakan klik tombol 'Ambil Foto' pulang.", "warning");
+      // 1. Validasi Ketat: Pastikan foto ada dan berformat Base64 gambar
+      if (!capturedPhotoPulang || typeof capturedPhotoPulang !== "string" || !capturedPhotoPulang.startsWith("data:image")) {
+        Swal.fire("Foto Belum Diambil", "Silakan klik tombol 'Ambil Foto' pulang terlebih dahulu hingga preview foto muncul.", "warning");
         return;
       }
 
@@ -2204,23 +2205,37 @@
         return;
       }
 
+      // 2. Pastikan Semua Key Cadangan Terisi Konsisten di Setiap Record Hari Ini
       recordsToday.forEach(rec => {
         rec.timePulang = timeNow;
         rec.alamatPulang = detectedAddressPulang || "Alamat Pulang GPS";
         rec.photoPulang = capturedPhotoPulang;
+        rec.fotoBase64 = capturedPhotoPulang;
+        rec.fotopulang = capturedPhotoPulang;
+        rec.fotopulangurl = capturedPhotoPulang;
       });
 
       let record = recordsToday[0];
 
+      // Simpan ke memori lokal
       saveDbToLocalStorage();
 
+      // 3. Kirim ke Backend API dengan Payload yang Rapi dan Lengkap
       const apiUrl = getApiUrl();
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
         try {
           await fetch(apiUrl, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ action: "submitCheckOut", data: record })
+            body: JSON.stringify({ 
+              action: "submitCheckOut", 
+              data: {
+                ...record,
+                photoPulang: capturedPhotoPulang,
+                fotoBase64: capturedPhotoPulang,
+                fotopulang: capturedPhotoPulang
+              }
+            })
           });
         } catch (e) { console.warn("GAS checkout error:", e); }
       }
