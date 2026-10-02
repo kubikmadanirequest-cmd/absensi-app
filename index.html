@@ -1813,7 +1813,7 @@
         ctx.fillText(streetText, 15, canvasEl.height - barH + 98);
       }
 
-      const base64 = canvasEl.toDataURL("image/jpeg", 0.85);
+      const base64 = canvasEl.toDataURL("image/jpeg", 0.6);
       previewEl.src = base64;
       previewEl.classList.remove("d-none");
       videoEl.classList.add("d-none");
@@ -2415,7 +2415,7 @@
       }
     }
 
-    // 1. Fungsi Parser Tanggal (Pembaca Teks Jadi Objek Date) - ANTI DESEMBER BUG
+    // 1. Fungsi Parser Tanggal (Pembaca Teks Jadi Objek Date) - STANDAR INDONESIA DD/MM/YYYY
     function parseRecordDate(dStr) {
       if (!dStr) return new Date();
       if (dStr instanceof Date) return dStr;
@@ -2423,7 +2423,7 @@
       const str = String(dStr).trim();
       if (!str || str === "-") return new Date();
 
-      // A. Format ISO (Database/Server-Side)
+      // A. Format ISO (Database/Server-Side: YYYY-MM-DD)
       if (str.includes("T") || str.includes("Z")) {
         const d = new Date(str);
         if (!isNaN(d.getTime())) return d;
@@ -2433,7 +2433,7 @@
         return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
       }
 
-      // B. Format Teks Bulan Bahasa Indonesia & Inggris yang Kuat (misal: 12 Sep 26, 09-Okt-26, 09 Des 2026)
+      // B. Format Teks Bulan Bahasa Indonesia & Inggris (misal: 12 Sep 26, 09-Okt-26, 09 Des 2026)
       const textMatch = str.match(/^(\d{1,2})[-/\s]+([a-zA-Z]+)[-/\s]+(\d{2,4})/);
       if (textMatch) {
         const day = parseInt(textMatch[1], 10);
@@ -2452,7 +2452,7 @@
         }
       }
 
-      // C. Format Angka (09/12/2026 atau 09-12-2026)
+      // C. Format Angka (Prioritaskan Format Indonesia DD/MM/YYYY)
       const numMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
       if (numMatch) {
         let p1 = parseInt(numMatch[1], 10);
@@ -2460,19 +2460,16 @@
         let yr = parseInt(numMatch[3], 10);
         if (yr < 100) yr += 2000;
 
-        // KUNCI: Google Sheets API mengirim MM/DD/YYYY secara default (misal 09/22/2026 untuk 22 Sep)
-        let day, month;
-        if (p1 > 12) {
-          // Tidak mungkin p1 itu bulan. Berarti format DD/MM
-          day = p1; month = p2 - 1;
-        } else if (p2 > 12) {
-          // Tidak mungkin p2 itu bulan. Berarti format MM/DD (Google Sheets Default)
-          month = p1 - 1; day = p2;
-        } else {
-          // Jika ambigu (misal 09/12), PAKSA ikuti kebiasaan API Sheets yaitu MM/DD
-          // 09 (Bulan 9/Sep), 12 (Tanggal)
-          month = p1 - 1; day = p2;
+        // Default Indonesia: p1 adalah Tanggal, p2 adalah Bulan
+        let day = p1;
+        let month = p2 - 1;
+
+        // Hanya jika p2 > 12 (artinya data dari sistem luar bertipe MM/DD/YYYY), baru dibalik
+        if (p2 > 12) {
+          day = p2;
+          month = p1 - 1;
         }
+
         return new Date(yr, month, day);
       }
 
@@ -2632,29 +2629,19 @@
             const iCode = clean(itemCode);
             const iProj = clean(itemProj);
 
-            if (uCode === "" || uCode === "all" || uCode === "management" || uCode === "mgt") {
-              return true;
-            }
-
-            let isCodeMatch = false;
-            // ANTI KEBOCORAN ARDIANSYAH: Hanya proses jika teknisi punya kode wilayah yang jelas (tidak kosong/strip)
-            if (iCode !== "") {
-              if (iCode === uCode || iCode.includes(uCode) || uCode.includes(iCode)) {
-                isCodeMatch = true;
-              }
-            }
-
-            let isProjectMatch = true; 
+            // 1. Kunci Pertama: Proyek WAJIB Cocok (Cegah Kalimantan masuk ke Huawei)
             if (uProj !== "" && uProj !== "all" && uProj !== "management") {
-              isProjectMatch = false;
-              if (iProj !== "") {
-                if (iProj === uProj || iProj.includes(uProj) || uProj.includes(iProj)) {
-                  isProjectMatch = true;
-                }
+              if (iProj !== uProj && !iProj.includes(uProj) && !uProj.includes(iProj)) {
+                return false; // Proyek beda langsung tolak
               }
             }
 
-            return isCodeMatch && isProjectMatch;
+            // 2. Kunci Kedua: Jika PM punya kode regional spesifik, cocokkan kodenya
+            if (uCode !== "" && uCode !== "all" && uCode !== "management" && uCode !== "mgt" && uCode !== "ro" && uCode !== "-") {
+              return (iCode === uCode || iCode.includes(uCode) || uCode.includes(iCode));
+            }
+
+            return true;
           }
 
           if (selectedProject && selectedProject !== "all") {
