@@ -2783,7 +2783,7 @@
         }
 
         const photoMasukUrl = row.photoMasuk || row.photoUrl || row.buktifoto || row.buktifotourl || row.fotoMasuk || row.fotomasukurl || "";
-        const photoPulangUrl = row.photoPulang || row.fotopulang || row.fotopulangurl || "";
+        const photoPulangUrl = row.photoPulang || row.fotopulang || row.fotopulangurl || row.buktifotopulang || row.buktifotopulangurl || row.rawDrivePulang || "";
 
         const hasMasukPhoto = photoMasukUrl && photoMasukUrl !== "-" && photoMasukUrl.length > 5;
         const hasPulangPhoto = photoPulangUrl && photoPulangUrl !== "-" && photoPulangUrl.length > 5;
@@ -3174,7 +3174,7 @@
 
         let rowRole = row.role || "Office";
         let rowPhotoMasuk = row.photoMasuk;
-        let rowPhotoPulang = row.photoPulang;
+        let rowPhotoPulang = row.photoPulang || row.fotopulang || row.fotopulangurl || row.buktifotopulang || row.buktifotopulangurl || row.rawDrivePulang || "";
 
         if (rowRole.startsWith("data:image")) {
           rowPhotoMasuk = rowRole;
@@ -3344,7 +3344,7 @@
       if (!record) return;
 
       const photoMasukUrl = record.photoMasuk || record.photoUrl || record.buktifoto || record.buktifotourl || record.fotoMasuk || record.fotomasukurl || "";
-      const photoPulangUrl = record.photoPulang || record.fotopulang || record.fotopulangurl || "";
+      const photoPulangUrl = record.photoPulang || record.fotopulang || record.fotopulangurl || record.buktifotopulang || record.buktifotopulangurl || record.rawDrivePulang || "";
 
       const rawPhotoUrl = (stage === "masuk") ? photoMasukUrl : photoPulangUrl;
       const directPhotoUrl = resolveDriveImage(rawPhotoUrl);
@@ -3681,7 +3681,7 @@
               p.name = p.username || "Karyawan";
             }
             p.photoMasuk = resolveDriveImage(p.photoMasuk || p.photoUrl || p.buktifoto || p.buktifotourl || p.fotoMasuk || p.fotomasukurl || "-");
-            p.photoPulang = resolveDriveImage(p.photoPulang || p.fotopulang || p.fotopulangurl || "-");
+            p.photoPulang = resolveDriveImage(p.photoPulang || p.fotopulang || p.fotopulangurl || p.buktifotopulang || p.buktifotopulangurl || p.rawDrivePulang || "-");
             return p;
           });
         }
