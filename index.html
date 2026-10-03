@@ -2226,21 +2226,29 @@
       // Simpan ke memori lokal
       saveDbToLocalStorage();
 
-      // 3. Kirim ke Backend API dengan Payload yang Rapi dan Lengkap
+      // 3. Kirim ke Backend API dengan Payload Ringan (Bebas Crash 2MB)
       const apiUrl = getApiUrl();
       if (apiUrl && apiUrl.startsWith("https://script.google.com/")) {
         try {
-          await fetch(apiUrl, {
+          // Buat paket data bersih khusus pulang agar ukuran data di bawah 300KB
+          const cleanCheckoutData = {
+            id: record.id,
+            username: currentUser.username,
+            name: currentUser.name,
+            idKaryawan: currentUser.idKaryawan,
+            role: currentUser.role,
+            date: today,
+            timePulang: timeNow,
+            alamatPulang: detectedAddressPulang || "Alamat Pulang GPS",
+            photoPulang: capturedPhotoPulang // Hanya 1 foto pulang, tanpa duplikasi
+          };
+
+          await (window.originalFetch || window.fetch)(apiUrl, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({ 
               action: "submitCheckOut", 
-              data: {
-                ...record,
-                photoPulang: capturedPhotoPulang,
-                fotoBase64: capturedPhotoPulang,
-                fotopulang: capturedPhotoPulang
-              }
+              data: cleanCheckoutData 
             })
           });
         } catch (e) { console.warn("GAS checkout error:", e); }
