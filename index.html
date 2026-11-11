@@ -1111,31 +1111,35 @@
         const payload = JSON.parse(options.body);
 
         // --- MULAI PENYELAMAT DATA KOSONG (UNTUK FIREBASE & SPREADSHEET) ---
-            if (payload.data && payload.data.username && typeof db !== "undefined" && db.users) {
-              const targetUname = String(payload.data.username).toLowerCase().trim();
-              const latestUser = db.users.find(u => String(u.username).toLowerCase().trim() === targetUname);
-              if (latestUser) {
-                payload.data.projectName = latestUser.projectName || payload.data.projectName;
-                payload.data.projectCode = latestUser.projectCode || payload.data.projectCode;
-                payload.data.periode = latestUser.periode || payload.data.periode;
-                
-                // Bungkus kembali datanya agar Google Sheet juga menerima data yang lengkap
-                options.body = JSON.stringify(payload); 
-              }
-            }
-            // --- SELESAI ---
+        if (payload.data && payload.data.username && typeof db !== "undefined" && db.users) {
+          const targetUname = String(payload.data.username).toLowerCase().trim();
+          const latestUser = db.users.find(u => String(u.username).toLowerCase().trim() === targetUname);
+          if (latestUser) {
+            payload.data.projectName = latestUser.projectName || payload.data.projectName;
+            payload.data.projectCode = latestUser.projectCode || payload.data.projectCode;
+            payload.data.periode = latestUser.periode || payload.data.periode;
+            
+            // Bungkus kembali datanya agar Google Sheet juga menerima data yang lengkap
+            options.body = JSON.stringify(payload); 
+          }
+        }
+        // --- SELESAI ---
         
-        // 🚨 JALUR KHUSUS LOGIN: Jika aksi berupa login/validasi, biarkan lewat normal ke Google Sheet
-        if (payload.action === "checkLogin" || payload.action === "validateUser") {
+        // 🚨 1. JALUR KHUSUS LOGIN: Biarkan lewat normal ke Google Sheet
+        if (payload.action === "login" || payload.action === "checkLogin" || payload.action === "validateUser") {
           return window.originalFetch(url, options);
         }
         
-        // 🚀 JALUR KILAT FIREBASE: Khusus untuk Tombol Absen dan Jobs Progress
-        const folderName = payload.action === "submitCheckIn" ? "AbsensiMasukV1" : 
-                           payload.action === "submitJobsProgress" ? "JobsProgressV1" : "AbsensiPulangV1";
-        
-        await firebaseDB.collection(folderName).add(payload.data);
-        console.log("🚀 Berhasil ditembak cepat ke Firebase folder: " + folderName);
+        // 🚀 2. JALUR KILAT FIREBASE: Untuk Absen, Jobs Progress, dan Edit/Tambah User
+        const dataToSave = payload.data || payload.user;
+        if (dataToSave) {
+          const folderName = payload.action === "submitCheckIn" ? "AbsensiMasukV1" : 
+                             payload.action === "submitJobsProgress" ? "JobsProgressV1" : 
+                             payload.action === "submitCheckOut" ? "AbsensiPulangV1" : "ManajemenUserV1";
+          
+          await firebaseDB.collection(folderName).add(dataToSave);
+          console.log("🚀 Berhasil ditembak cepat ke Firebase folder: " + folderName);
+        }
       } catch (fbError) {
         console.error("Gagal Firebase:", fbError);
       }
@@ -1143,7 +1147,7 @@
       // Jalur cadangan Google Sheets berjalan diam-diam di latar belakang
       window.originalFetch(url, options).catch(e => console.warn("GAS background error:", e));
       
-      // Mengelabui tombol absen agar langsung sukses tanpa loading lama
+      // Langsung beri respon sukses tanpa loading lama
       return new Response(JSON.stringify({ status: "success" }), { status: 200 });
     }
     return window.originalFetch(url, options);
