@@ -595,10 +595,10 @@
 
     <!-- 2. ADMIN SECTION -->
     <section id="adminSection" class="app-card d-none">
-      <div class="app-card-header">
+      <div class="app-card-header flex-wrap gap-2">
         <div>
           <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-people-fill text-primary me-1"></i> Manajemen Pengguna & Karyawan</h6>
-          <small class="text-muted">Kelola akun, hak akses role, serta kredensial login</small>
+          <small class="text-muted">Kelola akun, hak akses role, तथा kredensial login</small>
         </div>
         <div class="d-flex gap-2 flex-wrap">
           <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddUser">
@@ -612,6 +612,32 @@
           </button>
         </div>
       </div>
+
+      <!-- PANEL BARU: DOWNLOAD REPORT ABSENSI MATRIX PER KARYAWAN -->
+      <div class="px-3 pt-3">
+        <div class="p-3 rounded-3 border bg-light d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-calendar2-check-fill text-success fs-5"></i>
+            <div>
+              <div class="fw-bold small text-dark">Download Report Absensi Kehadiran (Format Matrix 1 - 31)</div>
+              <div class="text-muted" style="font-size: 0.75rem;">Hadir = Tanda Centang (✓) | Tidak Hadir = Blok Warna Merah</div>
+            </div>
+          </div>
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <input type="month" id="matrixMonthFilter" class="form-control form-control-sm" style="width: auto;" title="Pilih Bulan & Tahun">
+            <select id="matrixProjectFilter" class="form-select form-select-sm" style="width: auto;">
+              <option value="ALL">Semua Project</option>
+            </select>
+            <select id="matrixUserFilter" class="form-select form-select-sm" style="width: auto; max-width: 200px;">
+              <option value="ALL">Semua Karyawan</option>
+            </select>
+            <button type="button" class="btn btn-sm btn-success fw-semibold shadow-sm" onclick="downloadMatrixAbsensiExcel()">
+              <i class="bi bi-file-earmark-excel-fill me-1"></i> Download Report Absensi
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="p-3">
         <div class="table-responsive">
           <table class="table table-hover table-bordered align-middle small text-center" id="tableAdminUsers">
@@ -3923,6 +3949,213 @@
         saveDbToLocalStorage();
       } catch (e) { console.warn("GAS sync error:", e); }
     }
+    // ====================================================================
+    // 📊 FITUR DOWNLOAD REPORT ABSENSI MATRIX (TANGGAL 1 - 31) UNTUK ADMIN
+    // ====================================================================
+    function initMatrixFilterOptions() {
+      const monthInput = document.getElementById("matrixMonthFilter");
+      if (monthInput && !monthInput.value) {
+        const now = new Date();
+        monthInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+      }
+
+      const projSelect = document.getElementById("matrixProjectFilter");
+      const userSelect = document.getElementById("matrixUserFilter");
+      if (!projSelect || !userSelect || !db || !db.users) return;
+
+      const currentProj = projSelect.value || "ALL";
+      const currentUserVal = userSelect.value || "ALL";
+
+      const projects = new Set();
+      db.users.forEach(u => {
+        if (u.projectName && u.projectName !== "-" && u.projectName.trim() !== "") {
+          projects.add(u.projectName.trim());
+        }
+      });
+
+      projSelect.innerHTML = `<option value="ALL">Semua Project</option>`;
+      Array.from(projects).sort().forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p;
+        opt.textContent = p;
+        projSelect.appendChild(opt);
+      });
+      projSelect.value = Array.from(projects).includes(currentProj) ? currentProj : "ALL";
+
+      userSelect.innerHTML = `<option value="ALL">Semua Karyawan</option>`;
+      db.users
+        .filter(u => u.role !== "Admin System" && u.username !== "admin")
+        .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
+        .forEach(u => {
+          if (projSelect.value !== "ALL" && (u.projectName || "").toLowerCase() !== projSelect.value.toLowerCase()) {
+            return;
+          }
+          const opt = document.createElement("option");
+          opt.value = u.username;
+          opt.textContent = `${u.name} (${u.projectName || "-"})`;
+          userSelect.appendChild(opt);
+        });
+      userSelect.value = currentUserVal;
+    }
+
+    document.getElementById("matrixProjectFilter")?.addEventListener("change", () => {
+      const userSelect = document.getElementById("matrixUserFilter");
+      if (userSelect) userSelect.value = "ALL";
+      initMatrixFilterOptions();
+    });
+
+    // Jalankan inisialisasi dropdown setiap kali tabel Admin dirender
+    const _origRenderAdminUsers = renderAdminUsers;
+    renderAdminUsers = function() {
+      _origRenderAdminUsers();
+      initMatrixFilterOptions();
+    };
+
+    window.downloadMatrixAbsensiExcel = function() {
+      initMatrixFilterOptions();
+      const monthVal = document.getElementById("matrixMonthFilter")?.value || new Date().toISOString().slice(0, 7);
+      const selectedProj = document.getElementById("matrixProjectFilter")?.value || "ALL";
+      const selectedUser = document.getElementById("matrixUserFilter")?.value || "ALL";
+
+      const [yearStr, monthStr] = monthVal.split("-");
+      const year = parseInt(yearStr, 10);
+      const month = parseInt(monthStr, 10); // 1 s/d 12
+      const daysInMonth = new Date(year, month, 0).getDate();
+
+      // Filter karyawan dari db.users
+      let employees = (db.users || []).filter(u => {
+        if (u.username === "admin" || u.role === "Admin System") return false;
+        if (selectedProj !== "ALL" && (u.projectName || "").trim().toLowerCase() !== selectedProj.toLowerCase()) return false;
+        if (selectedUser !== "ALL" && (u.username || "").trim().toLowerCase() !== selectedUser.toLowerCase()) return false;
+        return true;
+      });
+
+      if (employees.length === 0) {
+        Swal.fire("Data Kosong", "Tidak ada karyawan yang sesuai dengan filter tersebut.", "info");
+        return;
+      }
+
+      // Bangun Tabel HTML berformat Microsoft Excel (.xls) persis sesuai gambar
+      let html = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+              xmlns:x="urn:schemas-microsoft-com:office:excel" 
+              xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            table { border-collapse: collapse; font-family: Calibri, Arial, sans-serif; font-size: 10pt; }
+            th, td { border: 1px solid #000000; padding: 3px 5px; vertical-align: middle; }
+            .th-head { background-color: #ffffff; font-weight: normal; text-align: center; }
+            .td-center { text-align: center; }
+            .td-left { text-align: left; }
+            .hadir { background-color: #ffffff; color: #000000; font-weight: bold; text-align: center; font-size: 11pt; }
+            .alfa { background-color: #ff0000; color: #ffffff; text-align: center; }
+            .off-day { background-color: #d9d9d9; text-align: center; }
+          </style>
+        </head>
+        <body>
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" class="th-head" style="width: 35px;">No</th>
+                <th rowspan="2" class="th-head" style="width: 140px;">Nama</th>
+                <th class="th-head" style="width: 95px;">Office/</th>
+                <th rowspan="2" class="th-head" style="width: 90px;">Jabatan</th>
+                <th rowspan="2" class="th-head" style="width: 90px;">Project</th>
+                <th rowspan="2" class="th-head" style="width: 105px;">Region</th>
+                <th colspan="31" class="th-head">TANGGAL ABSENSI KEHADIRAN</th>
+                <th rowspan="2" class="th-head" style="width: 130px;">Keterangan</th>
+              </tr>
+              <tr>
+                <th class="th-head">Non_Office</th>
+      `;
+
+      for (let d = 1; d <= 31; d++) {
+        html += `<th class="th-head" style="width: 26px;">${d}</th>`;
+      }
+      html += `</tr></thead><tbody>`;
+
+      employees.forEach((emp, index) => {
+        const uName = String(emp.username || "").toLowerCase().trim();
+        const empFullName = String(emp.name || "").toLowerCase().trim();
+        const empId = String(emp.idKaryawan || "").toLowerCase().trim();
+
+        const officeType = (emp.role === "Office" || emp.role === "Non_Office") ? emp.role : "Office";
+        const jabatanTxt = (emp.jabatan && emp.jabatan !== "-") ? emp.jabatan : (emp.idKaryawan && isNaN(emp.idKaryawan) ? emp.idKaryawan : "-");
+        const projectTxt = emp.projectName || "-";
+        const regionTxt = emp.projectCode || "-";
+
+        let hadirTotal = 0;
+        let alfaTotal = 0;
+        let dateCols = "";
+
+        for (let d = 1; d <= 31; d++) {
+          if (d > daysInMonth) {
+            // Jika bulan hanya memiliki 28/29/30 hari, sisa kolom (misal tgl 31) diberi warna abu-abu
+            dateCols += `<td class="off-day"></td>`;
+            continue;
+          }
+
+          const targetDateYMD = `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+
+          // Cek di db.progress apakah karyawan ini absen pada tanggal tersebut
+          const isHadir = (db.progress || []).some(p => {
+            const pU = String(p.username || "").toLowerCase().trim();
+            const pN = String(p.name || p.nama || "").toLowerCase().trim();
+            const pI = String(p.idKaryawan || "").toLowerCase().trim();
+
+            const matchPerson =
+              (uName && pU === uName) ||
+              (empFullName && pN === empFullName) ||
+              (empId && empId !== "-" && pI === empId);
+
+            if (!matchPerson) return false;
+
+            const recDateYMD = formatToYMD(p.date);
+            if (recDateYMD !== targetDateYMD) return false;
+
+            // Dianggap hadir jika ada jam masuk, foto masuk, atau mengisi jobs progress
+            const hasTime = p.timeMasuk && p.timeMasuk !== "-" && p.timeMasuk !== "undefined";
+            const hasJobs = p.hasJobsProgress || (p.activityDesc && p.activityDesc !== "-");
+            return Boolean(hasTime || hasJobs);
+          });
+
+          if (isHadir) {
+            hadirTotal++;
+            dateCols += `<td class="hadir">✓</td>`; // Tanda centang ✓
+          } else {
+            alfaTotal++;
+            dateCols += `<td class="alfa"></td>`; // Sel warna merah penuh
+          }
+        }
+
+        html += `
+          <tr>
+            <td class="td-center">${index + 1}</td>
+            <td class="td-left">${escapeHtml(emp.name || emp.username)}</td>
+            <td class="td-left">${escapeHtml(officeType)}</td>
+            <td class="td-left">${escapeHtml(jabatanTxt)}</td>
+            <td class="td-left">${escapeHtml(projectTxt)}</td>
+            <td class="td-left">${escapeHtml(regionTxt)}</td>
+            ${dateCols}
+            <td class="td-left">Hadir: ${hadirTotal}, Tidak: ${alfaTotal}</td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table></body></html>`;
+
+      const blob = new Blob(["\ufeff", html], { type: "application/vnd.ms-excel;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const cleanProj = selectedProj === "ALL" ? "Semua_Project" : selectedProj.replace(/\s+/g, "_");
+      a.download = `Report_Absensi_${monthVal}_${cleanProj}.xls`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
   </script>
   
   <datalist id="datalistSiteId"></datalist>
